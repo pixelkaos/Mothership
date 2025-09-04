@@ -59,7 +59,7 @@ const StatInput: React.FC<{
             ? <p className="text-xs text-secondary mt-2 italic">The number in brackets is your base roll before class modifiers.</p>
             : null;
 
-        const rollPrompt = onRollRequest ? <p className="text-xs text-primary mt-2 italic">Click the value to open the dice roller for a check.</p> : null;
+        const rollPrompt = onRollRequest ? <p className="text-xs text-primary mt-2 italic">Click anywhere on this component to open the dice roller.</p> : null;
 
         return (
             <>
@@ -70,25 +70,34 @@ const StatInput: React.FC<{
         );
     }, [tooltipContent, baseValue, value, onRollRequest]);
 
+    const commonClasses = `w-20 h-12 bg-transparent border border-muted text-center text-2xl font-bold text-foreground mt-1 focus:ring-0 focus:outline-none focus:border-primary appearance-none transition-colors group-hover:border-primary`;
+
     return (
         <div 
-            className="flex flex-col items-center"
+            className={`flex flex-col items-center group ${onRollRequest ? 'cursor-pointer' : ''}`}
             onMouseEnter={(e) => showTooltip(fullTooltipContent, e)}
             onMouseLeave={hideTooltip}
+            onClick={onRollRequest}
         >
-            <label htmlFor={id} className="text-xs uppercase text-muted cursor-pointer">{label}</label>
+            <span id={`${id}-label`} className="text-xs uppercase text-muted">{label}</span>
             <div className="relative">
                  <input
                     id={id}
+                    aria-labelledby={`${id}-label`}
                     type="number"
-                    className={`w-20 h-12 bg-transparent border border-muted text-center text-2xl font-bold text-foreground mt-1 focus:ring-0 focus:outline-none focus:border-primary appearance-none ${onRollRequest ? 'cursor-pointer' : ''}`}
+                    className={commonClasses}
                     value={value || ''}
                     onChange={onChange}
+                    placeholder=" "
                     onClick={onRollRequest}
-                    placeholder="0"
                 />
+                 {(!value || value === 0) && onRollRequest && (
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="absolute inset-0 m-auto h-6 w-6 text-primary/50 pointer-events-none group-hover:text-primary transition-colors">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                )}
                  {baseValue !== undefined && value !== baseValue && baseValue !== 0 && (
-                    <span className={`absolute -bottom-3 left-1/2 -translate-x-1/2 text-xs mt-1 ${value > baseValue ? 'text-secondary' : 'text-primary'}`}>
+                    <span className={`absolute -bottom-3 left-1/2 -translate-x-1/2 text-xs mt-1 ${value > baseValue ? 'text-positive' : 'text-negative'}`}>
                         ({baseValue})
                     </span>
                 )}
@@ -96,6 +105,74 @@ const StatInput: React.FC<{
         </div>
     );
 };
+
+const SplitStatInput: React.FC<{
+    label: string;
+    id: string;
+    currentValue: number;
+    maxValue: number;
+    onCurrentChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onMaxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    tooltipContent: React.ReactNode;
+    isMaxReadOnly?: boolean;
+    onRollRequestCurrent?: () => void;
+    onRollRequestMax?: () => void;
+}> = ({ label, id, currentValue, maxValue, onCurrentChange, onMaxChange, tooltipContent, isMaxReadOnly = false, onRollRequestCurrent, onRollRequestMax }) => {
+    const { showTooltip, hideTooltip } = useTooltip();
+    
+    const fullTooltipContent = (
+        <>
+            {tooltipContent}
+            {(onRollRequestCurrent || onRollRequestMax) && (
+                 <p className="text-xs text-primary mt-2 italic">Click a value to open the dice roller for it or type to edit.</p>
+            )}
+        </>
+    );
+
+    return (
+        <div 
+            className="flex flex-col items-center group"
+            onMouseEnter={(e) => showTooltip(fullTooltipContent, e)}
+            onMouseLeave={hideTooltip}
+        >
+            <span id={`${id}-label`} className="text-xs uppercase text-muted mb-1">{label}</span>
+            <div className="relative flex items-center w-48 h-16 bg-transparent border border-muted rounded-full group-hover:border-primary transition-colors px-4 overflow-hidden">
+                {/* Current Value Input */}
+                <input
+                    id={`${id}-current`}
+                    aria-label={`${label} Current`}
+                    type="number"
+                    className={`w-1/2 bg-transparent text-center text-3xl font-bold text-foreground focus:ring-0 focus:outline-none appearance-none z-10 ${onRollRequestCurrent ? 'cursor-pointer' : ''}`}
+                    value={currentValue || ''}
+                    onChange={onCurrentChange}
+                    onClick={onRollRequestCurrent}
+                    placeholder="0"
+                />
+                
+                {/* Separator */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[125%] w-1 bg-muted transform rotate-[25deg] group-hover:bg-primary transition-colors"></div>
+
+                {/* Max Value Input */}
+                <input
+                    id={`${id}-max`}
+                    aria-label={`${label} Maximum`}
+                    type="number"
+                    className={`w-1/2 bg-transparent text-center text-3xl font-bold text-foreground focus:ring-0 focus:outline-none appearance-none z-10 ${onRollRequestMax ? 'cursor-pointer' : ''} ${isMaxReadOnly ? 'cursor-default' : ''}`}
+                    value={maxValue || ''}
+                    onChange={onMaxChange}
+                    onClick={onRollRequestMax}
+                    placeholder="0"
+                    readOnly={isMaxReadOnly}
+                />
+            </div>
+             <div className="flex justify-between w-48 mt-1 px-4">
+                <span className="text-xs text-muted">Current</span>
+                <span className="text-xs text-muted">Maximum</span>
+            </div>
+        </div>
+    );
+};
+
 
 const autoSelectSkills = (characterClass: CharacterClass, allSkills: SkillDefinition[]): Character['skills'] => {
     const BASE_SKILLS = { trained: 2, expert: 1, master: 0 };
@@ -218,7 +295,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
         isVisible: false,
         isMinimized: false,
         position: { x: window.innerWidth - 420, y: 100 },
-        activeCheck: null as { type: 'stat' | 'save', name: string } | null,
+        activeCheck: null as { type: 'stat' | 'save' | 'wound' | 'panic' | 'creation', name: string } | null,
     });
     const lastPositionRef = useRef(rollerState.position);
 
@@ -236,7 +313,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
         });
     }, []);
 
-    const handleRollRequest = useCallback((type: 'stat' | 'save', name: string) => {
+    const handleRollRequest = useCallback((type: 'stat' | 'save' | 'wound' | 'panic' | 'creation', name: string) => {
         setRollerState(prev => ({
             ...prev,
             isVisible: true,
@@ -245,23 +322,6 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
             activeCheck: { type, name },
         }));
     }, []);
-
-    // Sync component state with parent prop.
-    useEffect(() => {
-        if (characterData) {
-            setChar(characterData.character);
-            setBaseStats(characterData.baseStats);
-            setBaseSaves(characterData.baseSaves);
-            setAndroidPenalty(characterData.androidPenalty);
-            setScientistBonus(characterData.scientistBonus);
-        } else {
-            setChar(initialCharacter);
-            setBaseStats(initialCharacter.stats);
-            setBaseSaves(initialCharacter.saves);
-            setAndroidPenalty(null);
-            setScientistBonus(null);
-        }
-    }, [characterData]);
 
     const { finalStats, finalSaves, finalMaxWounds } = useMemo(() => {
         const classData = char.class;
@@ -304,17 +364,18 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
 
     // Propagate all local state changes up to the parent App component.
     useEffect(() => {
-       if (finalCharacter.class) {
-           onCharacterUpdate({
-               character: finalCharacter,
-               baseStats,
-               baseSaves,
-               androidPenalty,
-               scientistBonus,
-           });
-       } else {
-           onCharacterUpdate(null);
-       }
+        const hasData = finalCharacter.name || finalCharacter.class || Object.values(baseStats).some(v => v > 0) || Object.values(baseSaves).some(v => v > 0) || finalCharacter.health.max > 0;
+        if (hasData) {
+            onCharacterUpdate({
+                character: finalCharacter,
+                baseStats,
+                baseSaves,
+                androidPenalty,
+                scientistBonus,
+            });
+        } else {
+            onCharacterUpdate(null);
+        }
     }, [finalCharacter, baseStats, baseSaves, androidPenalty, scientistBonus, onCharacterUpdate]);
 
     useEffect(() => {
@@ -330,7 +391,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
         setChar(updatedCharacter);
     }, []);
 
-    const handleFieldChange = (path: string, value: string) => {
+    const handleFieldChange = useCallback((path: string, value: string) => {
         const numValue = parseInt(value, 10) || 0;
         const [statType, statName] = path.split('.');
 
@@ -340,16 +401,24 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
             setBaseSaves(prev => ({...prev, [statName]: numValue}));
         } else {
             setChar(prevChar => {
-                const newChar = { ...prevChar };
+                const newChar = JSON.parse(JSON.stringify(prevChar));
                 set(newChar, path, numValue);
                 if (path === 'health.max') {
-                    set(newChar, 'health.current', numValue);
+                    // Only set current to max if current is higher than new max or 0
+                    if (newChar.health.current > numValue || newChar.health.current === 0) {
+                        set(newChar, 'health.current', numValue);
+                    }
                 }
                 return newChar;
             });
         }
-    };
+    }, []);
     
+    const handleApplyRoll = useCallback((path: string, value: number) => {
+        handleFieldChange(path, String(value));
+        setRollerState(prev => ({ ...prev, activeCheck: null }));
+    }, [handleFieldChange]);
+
     const handleSkillsChange = useCallback((newSkills: Character['skills']) => {
         setChar(prev => ({
             ...prev,
@@ -483,6 +552,14 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
         reader.readAsText(file);
     }, []);
 
+    const tertiarySelectionClasses = (isSelected: boolean) => {
+        const base = 'flex-1 p-2 text-center uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus';
+        if (isSelected) {
+            return `${base} bg-tertiary text-background border border-tertiary`;
+        }
+        return `${base} bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed active:border-tertiary-pressed`;
+    }
+
     return (
         <div>
             <div className="border border-primary/50 p-6 bg-black/30 space-y-6 max-w-4xl mx-auto">
@@ -491,11 +568,11 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                     <div className="flex flex-wrap gap-2">
                         <button 
                             onClick={handleSaveCharacter}
-                            className="px-4 py-2 border border-primary/80 text-primary/80 uppercase tracking-widest text-xs hover:bg-primary/20 hover:text-primary"
+                            className="px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed disabled:border-secondary-hover disabled:text-secondary-hover/70 disabled:cursor-not-allowed"
                         >
                             Save Character
                         </button>
-                        <label className="px-4 py-2 border border-primary/80 text-primary/80 uppercase tracking-widest text-xs hover:bg-primary/20 hover:text-primary cursor-pointer">
+                        <label className="px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed disabled:border-secondary-hover disabled:text-secondary-hover/70 disabled:cursor-not-allowed cursor-pointer">
                             Load Character
                             <input
                                 ref={fileInputRef}
@@ -507,7 +584,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                         </label>
                         <button 
                             onClick={handleFullCharacterRoll}
-                            className="px-4 py-2 bg-primary text-background uppercase tracking-widest hover:bg-primary-dark"
+                            className="px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary-hover disabled:text-background/70 disabled:cursor-not-allowed"
                         >
                             Generate Random Recruit
                         </button>
@@ -552,18 +629,18 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                     <div className="border border-primary/30 p-4">
                         <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Stats</h3>
                         <div className="flex justify-around">
-                            <StatInput id="stats.strength" label="Strength" value={finalStats.strength} baseValue={baseStats.strength} onChange={(e) => handleFieldChange('stats.strength', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Strength']} onRollRequest={() => handleRollRequest('stat', 'strength')} />
-                            <StatInput id="stats.speed" label="Speed" value={finalStats.speed} baseValue={baseStats.speed} onChange={(e) => handleFieldChange('stats.speed', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Speed']} onRollRequest={() => handleRollRequest('stat', 'speed')} />
-                            <StatInput id="stats.intellect" label="Intellect" value={finalStats.intellect} baseValue={baseStats.intellect} onChange={(e) => handleFieldChange('stats.intellect', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Intellect']} onRollRequest={() => handleRollRequest('stat', 'intellect')} />
-                            <StatInput id="stats.combat" label="Combat" value={finalStats.combat} baseValue={baseStats.combat} onChange={(e) => handleFieldChange('stats.combat', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Combat']} onRollRequest={() => handleRollRequest('stat', 'combat')} />
+                            <StatInput id="stats.strength" label="Strength" value={finalStats.strength} baseValue={baseStats.strength} onChange={(e) => handleFieldChange('stats.strength', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Strength']} onRollRequest={char.class ? () => handleRollRequest('stat', 'strength') : () => handleRollRequest('creation', 'stats.strength')} />
+                            <StatInput id="stats.speed" label="Speed" value={finalStats.speed} baseValue={baseStats.speed} onChange={(e) => handleFieldChange('stats.speed', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Speed']} onRollRequest={char.class ? () => handleRollRequest('stat', 'speed') : () => handleRollRequest('creation', 'stats.speed')} />
+                            <StatInput id="stats.intellect" label="Intellect" value={finalStats.intellect} baseValue={baseStats.intellect} onChange={(e) => handleFieldChange('stats.intellect', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Intellect']} onRollRequest={char.class ? () => handleRollRequest('stat', 'intellect') : () => handleRollRequest('creation', 'stats.intellect')} />
+                            <StatInput id="stats.combat" label="Combat" value={finalStats.combat} baseValue={baseStats.combat} onChange={(e) => handleFieldChange('stats.combat', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Combat']} onRollRequest={char.class ? () => handleRollRequest('stat', 'combat') : () => handleRollRequest('creation', 'stats.combat')} />
                         </div>
                     </div>
                      <div className="border border-primary/30 p-4">
                         <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Saves</h3>
                         <div className="flex justify-around">
-                            <StatInput id="saves.sanity" label="Sanity" value={finalSaves.sanity} baseValue={baseSaves.sanity} onChange={(e) => handleFieldChange('saves.sanity', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Sanity']} onRollRequest={() => handleRollRequest('save', 'sanity')} />
-                            <StatInput id="saves.fear" label="Fear" value={finalSaves.fear} baseValue={baseSaves.fear} onChange={(e) => handleFieldChange('saves.fear', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Fear']} onRollRequest={() => handleRollRequest('save', 'fear')} />
-                            <StatInput id="saves.body" label="Body" value={finalSaves.body} baseValue={baseSaves.body} onChange={(e) => handleFieldChange('saves.body', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Body']} onRollRequest={() => handleRollRequest('save', 'body')} />
+                            <StatInput id="saves.sanity" label="Sanity" value={finalSaves.sanity} baseValue={baseSaves.sanity} onChange={(e) => handleFieldChange('saves.sanity', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Sanity']} onRollRequest={char.class ? () => handleRollRequest('save', 'sanity') : () => handleRollRequest('creation', 'saves.sanity')} />
+                            <StatInput id="saves.fear" label="Fear" value={finalSaves.fear} baseValue={baseSaves.fear} onChange={(e) => handleFieldChange('saves.fear', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Fear']} onRollRequest={char.class ? () => handleRollRequest('save', 'fear') : () => handleRollRequest('creation', 'saves.fear')} />
+                            <StatInput id="saves.body" label="Body" value={finalSaves.body} baseValue={baseSaves.body} onChange={(e) => handleFieldChange('saves.body', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Body']} onRollRequest={char.class ? () => handleRollRequest('save', 'body') : () => handleRollRequest('creation', 'saves.body')} />
                         </div>
                     </div>
                 </div>
@@ -577,7 +654,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                                 <button
                                     key={stat}
                                     onClick={() => setAndroidPenalty(stat)}
-                                    className={`flex-1 p-2 border text-center uppercase tracking-widest transition-colors ${androidPenalty === stat ? 'border-primary bg-primary/20' : 'border-muted hover:bg-muted/20'}`}
+                                    className={tertiarySelectionClasses(androidPenalty === stat)}
                                 >
                                     {stat}
                                 </button>
@@ -595,7 +672,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                                 <button
                                     key={stat}
                                     onClick={() => setScientistBonus(stat)}
-                                    className={`flex-1 p-2 border text-center uppercase tracking-widest transition-colors ${scientistBonus === stat ? 'border-primary bg-primary/20' : 'border-muted hover:bg-muted/20'}`}
+                                    className={tertiarySelectionClasses(scientistBonus === stat)}
                                 >
                                     {stat}
                                 </button>
@@ -629,12 +706,16 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                                 if (trainedTotal > 0) parts.push(`${trainedTotal} Trained`);
                                 totalSkillsText = parts.join(', ');
                             }
+                             const isSelected = char.class?.name === classData.name;
+                            const buttonClasses = isSelected 
+                                ? 'bg-tertiary text-background border border-tertiary' 
+                                : 'bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed';
 
                             return (
                                 <button 
                                     key={classData.name} 
                                     onClick={() => handleSelectClass(classData.name as ClassName)} 
-                                    className={`p-4 border text-left transition-colors ${char.class?.name === classData.name ? 'border-primary bg-primary/20' : 'border-muted hover:bg-muted/20'}`}
+                                    className={`p-4 text-left transition-colors ${buttonClasses}`}
                                     onMouseEnter={(e) => showTooltip(
                                         <div className="text-left space-y-2">
                                             <h5 className="font-bold text-lg text-secondary uppercase">{classData.name}</h5>
@@ -683,18 +764,34 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                      <div className="border border-primary/30 p-4">
                          <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Vitals</h3>
                          <div className="flex justify-around items-center">
-                            <StatInput id="health.current" label="Health" value={char.health.current} onChange={(e) => handleFieldChange('health.current', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Health']} />
-                            <StatInput id="wounds.current" label="Wounds" value={char.wounds.current} onChange={(e) => handleFieldChange('wounds.current', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Wounds']} />
+                            <SplitStatInput
+                                label="Health"
+                                id="health"
+                                currentValue={char.health.current}
+                                maxValue={char.health.max}
+                                onCurrentChange={(e) => handleFieldChange('health.current', e.target.value)}
+                                onMaxChange={(e) => handleFieldChange('health.max', e.target.value)}
+                                tooltipContent={STAT_DESCRIPTIONS['Health']}
+                                onRollRequestCurrent={char.class ? () => handleRollRequest('save', 'body') : undefined}
+                                onRollRequestMax={() => handleRollRequest('creation', 'health.max')}
+                            />
                          </div>
                     </div>
                     <div className="border border-primary/30 p-4">
                          <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Condition</h3>
-                         <div className="flex justify-around items-center">
-                            <StatInput id="stress.current" label="Stress" value={char.stress.current} onChange={(e) => handleFieldChange('stress.current', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Stress']} />
-                            <div className="text-center">
-                                <p className="text-xs text-muted max-w-xs">Max Health: {char.health.max}</p>
-                                <p className="text-xs text-muted max-w-xs">Max Wounds: {finalMaxWounds}</p>
-                            </div>
+                         <div className="flex justify-around items-center gap-4">
+                            <SplitStatInput
+                                label="Wounds"
+                                id="wounds"
+                                currentValue={char.wounds.current}
+                                maxValue={finalMaxWounds}
+                                onCurrentChange={(e) => handleFieldChange('wounds.current', e.target.value)}
+                                onMaxChange={() => {}} // Read-only
+                                tooltipContent={STAT_DESCRIPTIONS['Wounds']}
+                                isMaxReadOnly={true}
+                                onRollRequestCurrent={() => handleRollRequest('wound', 'wound')}
+                            />
+                            <StatInput id="stress.current" label="Stress" value={char.stress.current} onChange={(e) => handleFieldChange('stress.current', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Stress']} onRollRequest={() => handleRollRequest('panic', 'panic')} />
                          </div>
                     </div>
                 </div>
@@ -733,23 +830,16 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                 </div>
             </div>
              
-            {finalCharacter && finalCharacter.class ? (
-                <CharacterRoller 
-                    character={finalCharacter} 
-                    onUpdate={handleRollerUpdate}
-                    isVisible={rollerState.isVisible}
-                    isMinimized={rollerState.isMinimized}
-                    initialPosition={rollerState.position}
-                    onStateChange={handleRollerStateChange}
-                    activeCheck={rollerState.activeCheck}
-                />
-            ) : (
-                <div className="fixed bottom-8 right-8 max-w-sm">
-                    <div className="flex items-center justify-center h-full border border-dashed border-primary/30 p-8 text-center bg-black/30">
-                        <p className="text-muted">Create a character and select a class to access the integrated Dice Roller.</p>
-                    </div>
-                </div>
-            )}
+            <CharacterRoller 
+                character={finalCharacter} 
+                onUpdate={handleRollerUpdate}
+                isVisible={rollerState.isVisible}
+                isMinimized={rollerState.isMinimized}
+                initialPosition={rollerState.position}
+                onStateChange={handleRollerStateChange}
+                activeCheck={rollerState.activeCheck}
+                onApplyRoll={handleApplyRoll}
+            />
         </div>
     );
 };

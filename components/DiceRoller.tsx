@@ -148,7 +148,7 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({
                             <p className="text-xs text-muted mb-1">Suggestion for <span className="font-bold capitalize">{formatFieldName(activeField)}</span>:</p>
                             <button 
                                 onClick={() => handleRoll(suggestedRoll)}
-                                className="w-full px-3 py-2 border border-primary text-primary uppercase tracking-widest hover:bg-primary/20 transition-colors"
+                                className="w-full px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed"
                             >
                                 Roll {suggestedRoll}
                             </button>
@@ -163,21 +163,26 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({
                             className="flex-grow bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary"
                             placeholder="e.g., 2d6+3"
                         />
-                        <button onClick={() => handleRoll(manualFormula)} className="px-3 py-2 border border-primary text-primary hover:bg-primary/20">Roll</button>
+                        <button 
+                            onClick={() => handleRoll(manualFormula)} 
+                            className="px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed"
+                        >
+                            Roll
+                        </button>
                     </div>
 
-                    {error && <p className="text-primary text-xs text-center">{error}</p>}
+                    {error && <p className="text-negative text-xs text-center">{error}</p>}
 
                     {lastRoll && (
                         <div className="border-t border-primary/50 pt-3 mt-3 text-center">
-                            <p className="text-3xl font-bold text-secondary">{lastRoll.total}</p>
+                            <p className="text-3xl font-bold text-primary">{lastRoll.total}</p>
                             <p className="text-xs text-muted">
                                 ({lastRoll.rolls.join(' + ')}{lastRoll.modifier !== 0 ? `) ${lastRoll.modifier > 0 ? '+' : '-'} ${Math.abs(lastRoll.modifier)}` : ')'}
                             </p>
                             {activeField && (
                                 <button
                                     onClick={handleApply}
-                                    className="mt-2 w-full px-3 py-2 bg-primary text-background uppercase tracking-widest hover:bg-primary-dark"
+                                    className="mt-2 w-full px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed"
                                 >
                                     Apply to <span className="capitalize">{formatFieldName(activeField)}</span>
                                 </button>

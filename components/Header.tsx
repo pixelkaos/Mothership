@@ -13,12 +13,14 @@ const NavButton: React.FC<{
     isActive: boolean;
     onClick: () => void;
 }> = ({ label, isActive, onClick }) => {
-    const activeClasses = 'bg-primary/20 text-primary';
-    const inactiveClasses = 'text-foreground/70 hover:bg-primary/10 hover:text-foreground';
+    const baseClasses = 'px-4 py-2 uppercase text-sm tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus';
+    const activeClasses = 'bg-secondary text-background';
+    const inactiveClasses = 'bg-transparent text-secondary hover:bg-secondary hover:text-background';
+    
     return (
         <button
             onClick={onClick}
-            className={`px-4 py-2 uppercase text-sm tracking-widest transition-all duration-200 ${isActive ? activeClasses : inactiveClasses}`}
+            className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
         >
             {label}
         </button>
@@ -34,14 +36,14 @@ export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSe
             RPG COMPANION
         </h2>
         
-        <div className="flex justify-center border-y border-primary/50">
+        <div className="flex justify-center border-y border-secondary/50">
             <NavButton label="Derelict Generator" isActive={activeView === 'derelict'} onClick={() => onSetView('derelict')} />
             <NavButton label="Character Hangar" isActive={activeView === 'character'} onClick={() => onSetView('character')} />
         </div>
 
         <button
             onClick={onShowTutorial}
-            className="absolute top-2 right-2 px-3 py-2 border border-primary/50 text-primary/80 uppercase text-xs tracking-widest hover:bg-primary/20 hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-200"
+            className="absolute top-2 right-2 px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed disabled:border-secondary-hover disabled:text-secondary-hover/70 disabled:cursor-not-allowed"
         >
             How to Play
         </button>

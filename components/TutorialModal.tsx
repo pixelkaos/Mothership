@@ -56,11 +56,11 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                         </p>
                         <h4 className="text-xl font-bold text-primary mb-2 uppercase">Character Creation Basics</h4>
                         <ol className="list-decimal list-inside text-foreground space-y-2">
-                            <li><strong className="text-secondary">Stats:</strong> Roll 2d10+25 for your four Stats: Strength, Speed, Intellect, and Combat.</li>
-                            <li><strong className="text-secondary">Saves:</strong> Roll 2d10+10 for your Saves: Sanity, Fear, and Body. Armor is determined by gear.</li>
-                            <li><strong className="text-secondary">Class:</strong> Pick from Teamster, Android, Scientist, or Marine. Each class adjusts stats/saves and provides unique skills.</li>
-                            <li><strong className="text-secondary">Health:</strong> Your Maximum Health is equal to 1d10+10.</li>
-                            <li><strong className="text-secondary">Final Touches:</strong> Spend skill points, pick your starting equipment, and give your character a name. You're ready to play!</li>
+                            <li><strong className="text-primary">Stats:</strong> Roll 2d10+25 for your four Stats: Strength, Speed, Intellect, and Combat.</li>
+                            <li><strong className="text-primary">Saves:</strong> Roll 2d10+10 for your Saves: Sanity, Fear, and Body. Armor is determined by gear.</li>
+                            <li><strong className="text-primary">Class:</strong> Pick from Teamster, Android, Scientist, or Marine. Each class adjusts stats/saves and provides unique skills.</li>
+                            <li><strong className="text-primary">Health:</strong> Your Maximum Health is equal to 1d10+10.</li>
+                            <li><strong className="text-primary">Final Touches:</strong> Spend skill points, pick your starting equipment, and give your character a name. You're ready to play!</li>
                         </ol>
                     </div>
                 );
@@ -95,15 +95,15 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                         <div className="space-y-6">
                             {QUIZ_QUESTIONS.map((q, i) => (
                                 <div key={i}>
-                                    <p className="mb-2 text-secondary">{i + 1}. {q.question}</p>
+                                    <p className="mb-2 text-primary">{i + 1}. {q.question}</p>
                                     <div className="space-y-1">
                                         {q.options.map((option, j) => {
                                             const isCorrect = j === q.correctAnswerIndex;
                                             const isSelected = answers[i] === j;
                                             let bgColor = 'bg-black/20';
                                             if (showResults) {
-                                                if (isCorrect) bgColor = 'bg-secondary/30';
-                                                else if (isSelected && !isCorrect) bgColor = 'bg-primary/30';
+                                                if (isCorrect) bgColor = 'bg-positive/30';
+                                                else if (isSelected && !isCorrect) bgColor = 'bg-negative/30';
                                             }
                                             return (
                                                 <label key={j} className={`block p-2 border border-muted cursor-pointer ${bgColor} transition-colors`}>
@@ -125,13 +125,13 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                         </div>
                         <div className="mt-6 text-center">
                             {showResults ? (
-                                <p className="text-xl text-secondary">
+                                <p className={`text-xl ${score === QUIZ_QUESTIONS.length ? 'text-positive' : 'text-primary'}`}>
                                     You scored {score} out of {QUIZ_QUESTIONS.length}. {score === QUIZ_QUESTIONS.length ? "Excellent work, Marine!" : "Back to the simulator, recruit."}
                                 </p>
                             ) : (
                                 <button
                                     onClick={handleSubmitQuiz}
-                                    className="px-6 py-2 bg-primary text-background uppercase tracking-widest hover:bg-primary-dark"
+                                    className="px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary-hover disabled:text-background/70 disabled:cursor-not-allowed"
                                 >
                                     Submit Answers
                                 </button>
@@ -155,7 +155,7 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                     <button
                         onClick={() => setPage(p => Math.max(1, p - 1))}
                         disabled={page === 1}
-                        className="px-4 py-2 border border-primary/50 text-primary uppercase tracking-widest hover:bg-primary/20 disabled:opacity-50"
+                        className="px-4 py-2 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-primary text-primary hover:bg-primary hover:text-background active:bg-primary-pressed active:border-primary-pressed disabled:border-primary-hover disabled:text-primary-hover/70 disabled:cursor-not-allowed"
                     >
                         Prev
                     </button>
@@ -163,14 +163,14 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                     {page < TUTORIAL_PAGES ? (
                         <button
                             onClick={() => setPage(p => Math.min(TUTORIAL_PAGES, p + 1))}
-                            className="px-4 py-2 border border-primary/50 text-primary uppercase tracking-widest hover:bg-primary/20"
+                            className="px-4 py-2 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-primary text-primary hover:bg-primary hover:text-background active:bg-primary-pressed active:border-primary-pressed disabled:border-primary-hover disabled:text-primary-hover/70 disabled:cursor-not-allowed"
                         >
                             Next
                         </button>
                     ) : (
                          <button
                             onClick={onClose}
-                            className="px-4 py-2 bg-primary text-background uppercase tracking-widest hover:bg-primary-dark"
+                            className="px-4 py-2 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary-hover disabled:text-background/70 disabled:cursor-not-allowed"
                         >
                             Close
                         </button>

@@ -1,9 +1,10 @@
 
+
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { RollResult, Character, Stat, Save } from '../types';
 import { parseAndRoll } from '../utils/dice';
 
-type DiceScreen = 'main' | 'stat' | 'save' | 'damage' | 'wound' | 'other';
+type DiceScreen = 'main' | 'stat' | 'save' | 'damage' | 'wound' | 'other' | 'creation';
 
 interface HistoryEntry extends RollResult {
     name: string;
@@ -21,6 +22,17 @@ const getSkillBonus = (skillName: string, character: Character): number => {
     return 0;
 };
 
+const CREATION_ROLLS_MAP: { [key: string]: { name: string, formula: string } } = {
+    'strength': { name: 'Strength', formula: '2d10+25' },
+    'speed': { name: 'Speed', formula: '2d10+25' },
+    'intellect': { name: 'Intellect', formula: '2d10+25' },
+    'combat': { name: 'Combat', formula: '2d10+25' },
+    'sanity': { name: 'Sanity', formula: '2d10+10' },
+    'fear': { name: 'Fear', formula: '2d10+10' },
+    'body': { name: 'Body', formula: '2d10+10' },
+    'health.max': { name: 'Max Health', formula: '1d10+10' },
+};
+
 interface CharacterRollerProps {
     character: Character;
     onUpdate: (updatedCharacter: Character) => void;
@@ -28,14 +40,16 @@ interface CharacterRollerProps {
     isMinimized: boolean;
     initialPosition: { x: number, y: number };
     onStateChange: (newState: { isVisible?: boolean; isMinimized?: boolean; position?: { x: number; y: number }; activeCheck?: null }) => void;
-    activeCheck: { type: 'stat' | 'save', name: string } | null;
+    activeCheck: { type: 'stat' | 'save' | 'wound' | 'panic' | 'creation', name: string } | null;
+    onApplyRoll: (path: string, value: number) => void;
 }
 
-export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onUpdate, isVisible, isMinimized, initialPosition, onStateChange, activeCheck }) => {
+export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onUpdate, isVisible, isMinimized, initialPosition, onStateChange, activeCheck, onApplyRoll }) => {
     const [screen, setScreen] = useState<DiceScreen>('main');
     const [result, setResult] = useState<HistoryEntry | null>(null);
     const [history, setHistory] = useState<HistoryEntry[]>([]);
     const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+    const [creationResult, setCreationResult] = useState<RollResult | null>(null);
 
     const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
     const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
@@ -97,24 +111,14 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
             window.removeEventListener('mouseup', handleMouseUp);
         };
     }, [isDragging, handleMouseMove, handleMouseUp]);
-
-    useEffect(() => {
-        if (activeCheck) {
-            setScreen(activeCheck.type);
-            setSelectedTarget(activeCheck.name);
-        } else {
-            // If roller is made visible without a check, go to main.
-            setScreen('main');
-        }
-    }, [activeCheck, isVisible]); // Re-evaluate when visibility changes
     // --- End Floating Window Logic ---
-
+    
     const resetCheckState = useCallback(() => {
         setSelectedTarget(null);
         setSelectedSkills([]);
         setAdvantage('none');
     }, []);
-
+    
     const addToHistory = useCallback((entry: Omit<HistoryEntry, 'timestamp'>) => {
         const newEntry = { ...entry, timestamp: Date.now() };
         setHistory(prev => [newEntry, ...prev].slice(0, 10));
@@ -166,6 +170,57 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
         if (needsUpdate) onUpdate(newChar);
 
     }, [character, onUpdate]);
+
+    const handleSimpleRoll = useCallback((name: string, formula: string, adv: Advantage = 'none') => {
+        let roll1 = parseAndRoll(formula);
+        let finalRoll = roll1;
+        
+        if (adv !== 'none') {
+            const roll2 = parseAndRoll(formula);
+            if (adv === 'adv') {
+                finalRoll = roll1.total < roll2.total ? roll1 : roll2;
+            } else {
+                finalRoll = roll1.total > roll2.total ? roll1 : roll2;
+            }
+             finalRoll.formula = `${formula.replace('1d', '2d')} (${adv})`;
+        }
+        
+        addToHistory({
+            name,
+            total: finalRoll.total,
+            rolls: finalRoll.rolls,
+            modifier: finalRoll.modifier,
+            formula: finalRoll.formula,
+        });
+        setAdvantage('none');
+        setScreen('main');
+    }, [addToHistory]);
+    
+    useEffect(() => {
+        if (activeCheck) {
+            if (activeCheck.type === 'creation') {
+                setScreen('creation');
+            } else if (activeCheck.type === 'stat' || activeCheck.type === 'save') {
+                setScreen(activeCheck.type);
+                setSelectedTarget(activeCheck.name);
+            } else if (activeCheck.type === 'wound') {
+                setScreen('wound');
+            } else if (activeCheck.type === 'panic') {
+                handleSimpleRoll('Panic', '2d10');
+                onStateChange({ activeCheck: null });
+            }
+        } else {
+            if (isVisible) {
+                 setScreen('main');
+                 resetCheckState();
+            }
+        }
+        
+        if (activeCheck?.type !== 'creation') {
+            setCreationResult(null);
+        }
+
+    }, [activeCheck, isVisible, resetCheckState, handleSimpleRoll, onStateChange]);
     
     const handleCheckRoll = (type: 'stat' | 'save') => {
         if (!character || !selectedTarget) return;
@@ -206,31 +261,6 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
         setScreen('main');
     };
     
-    const handleSimpleRoll = (name: string, formula: string, adv: Advantage = 'none') => {
-        let roll1 = parseAndRoll(formula);
-        let finalRoll = roll1;
-        
-        if (adv !== 'none') {
-            const roll2 = parseAndRoll(formula);
-            if (adv === 'adv') {
-                finalRoll = roll1.total < roll2.total ? roll1 : roll2;
-            } else {
-                finalRoll = roll1.total > roll2.total ? roll1 : roll2;
-            }
-             finalRoll.formula = `${formula.replace('1d', '2d')} (${adv})`;
-        }
-        
-        addToHistory({
-            name,
-            total: finalRoll.total,
-            rolls: finalRoll.rolls,
-            modifier: finalRoll.modifier,
-            formula: finalRoll.formula,
-        });
-        setAdvantage('none');
-        setScreen('main');
-    }
-
     const allCharacterSkills = useMemo(() => {
         if (!character) return [];
         return [
@@ -241,7 +271,7 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
     }, [character]);
 
     const renderResult = () => (
-        <div className="relative flex-1 flex flex-col items-center justify-center p-4 border border-primary/50 rounded-2xl min-h-[240px]">
+        <div className="relative flex-1 flex flex-col items-center justify-center p-4 border border-primary/50 min-h-[240px]">
              {result && <button onClick={() => setResult(null)} className="absolute top-4 right-4 text-muted hover:text-primary" aria-label="Clear Result">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -252,7 +282,7 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
                     <span className="text-9xl font-bold text-foreground">{result.total}</span>
                     <div className="w-1/4 h-px bg-primary/50 my-4" />
                     {result.target !== undefined && (
-                         <span className={`text-2xl font-bold uppercase tracking-wider ${result.success ? 'text-secondary' : 'text-primary'}`}>
+                         <span className={`text-2xl font-bold uppercase tracking-wider ${result.success ? 'text-positive' : 'text-negative'}`}>
                             {result.success ? 'Success' : 'Failure'}
                         </span>
                     )}
@@ -268,6 +298,14 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
         </div>
     );
 
+    const tertiarySelectionClasses = (isSelected: boolean) => {
+        const base = 'py-2 uppercase transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus';
+        if (isSelected) {
+            return `${base} bg-tertiary text-background border border-tertiary`;
+        }
+        return `${base} bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed`;
+    }
+
     const renderCheckScreen = (type: 'stat' | 'save') => {
         if (!character) return null;
         const targets = type === 'stat' ? character.stats : character.saves;
@@ -277,7 +315,7 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
                 <div className="flex justify-around my-4">
                     {Object.entries(targets).map(([key, value]) => (
                         <button key={key} onClick={() => setSelectedTarget(key)} className="flex flex-col items-center group">
-                            <span className={`w-16 h-16 flex items-center justify-center text-2xl font-bold border rounded-2xl transition-colors ${selectedTarget === key ? 'bg-primary/20 text-primary border-primary' : 'bg-black/20 text-foreground border-muted group-hover:bg-muted/20'}`}>{value}</span>
+                            <span className={`w-16 h-16 flex items-center justify-center text-2xl font-bold border transition-colors ${selectedTarget === key ? 'bg-primary text-background border-primary' : 'bg-black/20 text-foreground border-muted group-hover:bg-muted/20'}`}>{value}</span>
                             <span className="text-xs uppercase mt-2 tracking-wider text-muted">{key}</span>
                         </button>
                     ))}
@@ -285,22 +323,82 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
                 <hr className="border-primary/50" />
                 <div className="my-3 grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-1">
                     {allCharacterSkills.map(({name, bonus}) => (
-                        <button key={name} onClick={() => setSelectedSkills(p => p.includes(name) ? p.filter(s => s !== name) : [...p, name])} className={`p-2 text-xs text-left flex items-center justify-between rounded-md transition-colors ${selectedSkills.includes(name) ? 'bg-primary/20 text-primary' : 'bg-black/20 text-foreground hover:bg-muted/20'}`}>
-                            <span className="font-bold bg-muted text-background rounded-sm px-1 mr-2">+{bonus}</span>
+                        <button key={name} onClick={() => setSelectedSkills(p => p.includes(name) ? p.filter(s => s !== name) : [...p, name])} className={`p-2 text-xs text-left flex items-center justify-between transition-colors ${selectedSkills.includes(name) ? 'bg-primary/20 text-primary' : 'bg-black/20 text-foreground hover:bg-muted/20'}`}>
+                            <span className="font-bold bg-muted text-background px-1 mr-2">+{bonus}</span>
                             <span className="flex-1 uppercase text-ellipsis overflow-hidden whitespace-nowrap">{name}</span>
                         </button>
                     ))}
                 </div>
                 <hr className="border-primary/50" />
                 <div className="my-3 grid grid-cols-2 gap-3">
-                    <button onClick={() => setAdvantage(p => p === 'adv' ? 'none' : 'adv')} className={`py-2 border rounded-lg uppercase transition-colors ${advantage === 'adv' ? 'bg-primary/20 text-primary border-primary' : 'bg-black/20 border-muted hover:bg-muted/20'}`}>Advantage</button>
-                    <button onClick={() => setAdvantage(p => p === 'disadv' ? 'none' : 'disadv')} className={`py-2 border rounded-lg uppercase transition-colors ${advantage === 'disadv' ? 'bg-primary/20 text-primary border-primary' : 'bg-black/20 border-muted hover:bg-muted/20'}`}>Disadvantage</button>
+                    <button onClick={() => setAdvantage(p => p === 'adv' ? 'none' : 'adv')} className={tertiarySelectionClasses(advantage === 'adv')}>Advantage</button>
+                    <button onClick={() => setAdvantage(p => p === 'disadv' ? 'none' : 'disadv')} className={tertiarySelectionClasses(advantage === 'disadv')}>Disadvantage</button>
                 </div>
-                <button onClick={() => handleCheckRoll(type)} disabled={!selectedTarget} className="w-full mt-2 py-3 bg-primary text-background font-bold uppercase tracking-wider rounded-xl hover:bg-primary-dark disabled:bg-muted disabled:opacity-50">Roll</button>
-                <button onClick={() => { setScreen('main'); resetCheckState(); }} className="mt-4 text-muted uppercase tracking-widest text-sm font-semibold hover:text-primary">Back</button>
+                 <button 
+                    onClick={() => handleCheckRoll(type)} 
+                    disabled={!selectedTarget} 
+                    className="w-full mt-2 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary-hover disabled:text-background/70 disabled:cursor-not-allowed"
+                >
+                    Roll
+                </button>
+                <button onClick={() => { setScreen('main'); resetCheckState(); onStateChange({ activeCheck: null }); }} className="mt-4 text-muted uppercase tracking-widest text-sm font-semibold hover:text-primary">Back</button>
             </div>
         );
     };
+
+    const renderCreationScreen = () => {
+        if (!activeCheck || activeCheck.type !== 'creation') return null;
+
+        const statKey = activeCheck.name.includes('.') ? activeCheck.name.split('.')[1] : activeCheck.name;
+        const rollInfo = CREATION_ROLLS_MAP[statKey] || CREATION_ROLLS_MAP[activeCheck.name];
+
+        if (!rollInfo) {
+            return (
+                 <div className="w-full mx-auto flex flex-col items-center text-center">
+                    <h3 className="text-xl font-bold tracking-wider uppercase text-negative">Error</h3>
+                    <p className="text-muted mt-4">Invalid character roll request for "{activeCheck.name}".</p>
+                    <button onClick={() => onStateChange({ activeCheck: null })} className="mt-8 text-muted uppercase tracking-widest text-sm font-semibold hover:text-primary">Back</button>
+                </div>
+            )
+        }
+        
+        const handleRoll = () => {
+            const res = parseAndRoll(rollInfo.formula);
+            setCreationResult(res);
+        }
+
+        return (
+            <div className="w-full mx-auto flex flex-col text-center">
+                <h3 className="text-xl font-bold tracking-wider uppercase text-primary">Character Roll</h3>
+                <p className="text-muted mt-2">Roll to determine your base <strong className="text-secondary">{rollInfo.name}</strong> score.</p>
+                
+                <div className="my-6">
+                    <button 
+                        onClick={handleRoll}
+                        className="w-full py-4 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed"
+                    >
+                        Roll {rollInfo.formula}
+                    </button>
+                </div>
+
+                {creationResult && (
+                    <div className="border-t border-primary/50 pt-4 space-y-4">
+                        <p className="text-7xl font-bold text-primary">{creationResult.total}</p>
+                        <p className="text-xs text-muted">
+                            ({creationResult.rolls.join(' + ')}{creationResult.modifier !== 0 ? `) ${creationResult.modifier > 0 ? '+' : '-'} ${Math.abs(creationResult.modifier)}` : ')'}
+                        </p>
+                        <button
+                            onClick={() => onApplyRoll(activeCheck.name, creationResult.total)}
+                            className="w-full mt-2 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed"
+                        >
+                            Apply to Character
+                        </button>
+                    </div>
+                )}
+                 <button onClick={() => { setScreen('main'); onStateChange({ activeCheck: null }); }} className="mt-4 text-muted uppercase tracking-widest text-sm font-semibold hover:text-primary">Back</button>
+            </div>
+        )
+    }
 
     const renderSimpleRollScreen = (title: string, buttons: {name: string, formula: string}[], showAdvantage: boolean) => (
          <div className="w-full mx-auto flex flex-col">
@@ -308,19 +406,25 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
             <hr className="border-primary/50 my-4" />
             <div className="space-y-3 flex-grow">
                 {buttons.map(({name, formula}) => (
-                     <button key={name} onClick={() => handleSimpleRoll(name, formula, showAdvantage ? advantage: 'none')} className="w-full py-4 bg-transparent border border-primary text-primary font-bold uppercase tracking-wider rounded-xl hover:bg-primary/20">{name} <span className="font-normal normal-case text-secondary">({formula})</span></button>
+                     <button 
+                        key={name} 
+                        onClick={() => handleSimpleRoll(name, formula, showAdvantage ? advantage: 'none')} 
+                        className="w-full py-4 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed"
+                     >
+                        {name} <span className="font-normal normal-case text-primary">({formula})</span>
+                     </button>
                 ))}
             </div>
             {showAdvantage && (
                 <>
                     <hr className="border-primary/50 my-3" />
                     <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => setAdvantage(p => p === 'adv' ? 'none' : 'adv')} className={`py-2 border rounded-lg uppercase transition-colors ${advantage === 'adv' ? 'bg-primary/20 text-primary border-primary' : 'bg-black/20 border-muted hover:bg-muted/20'}`}>Advantage</button>
-                        <button onClick={() => setAdvantage(p => p === 'disadv' ? 'none' : 'disadv')} className={`py-2 border rounded-lg uppercase transition-colors ${advantage === 'disadv' ? 'bg-primary/20 text-primary border-primary' : 'bg-black/20 border-muted hover:bg-muted/20'}`}>Disadvantage</button>
+                        <button onClick={() => setAdvantage(p => p === 'adv' ? 'none' : 'adv')} className={tertiarySelectionClasses(advantage === 'adv')}>Advantage</button>
+                        <button onClick={() => setAdvantage(p => p === 'disadv' ? 'none' : 'disadv')} className={tertiarySelectionClasses(advantage === 'disadv')}>Disadvantage</button>
                     </div>
                 </>
             )}
-            <button onClick={() => {setScreen('main'); setAdvantage('none');}} className="mt-4 text-muted uppercase tracking-widest text-sm font-semibold hover:text-primary">Back</button>
+            <button onClick={() => {setScreen('main'); setAdvantage('none'); onStateChange({ activeCheck: null });}} className="mt-4 text-muted uppercase tracking-widest text-sm font-semibold hover:text-primary">Back</button>
         </div>
     );
     
@@ -330,17 +434,17 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
             {renderResult()}
              <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
-                    <button onClick={() => setScreen('stat')} className="py-6 bg-background border border-muted text-foreground/80 font-bold uppercase tracking-wider rounded-2xl hover:bg-muted/20 hover:text-foreground transition-colors">STAT</button>
-                    <button onClick={() => setScreen('save')} className="py-6 bg-background border border-muted text-foreground/80 font-bold uppercase tracking-wider rounded-2xl hover:bg-muted/20 hover:text-foreground transition-colors">SAVE</button>
+                    <button onClick={() => setScreen('stat')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">STAT</button>
+                    <button onClick={() => setScreen('save')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">SAVE</button>
                 </div>
                 <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center">
-                    <button onClick={() => setScreen('damage')} className="py-6 bg-background border border-muted text-foreground/80 font-bold uppercase tracking-wider rounded-2xl hover:bg-muted/20 hover:text-foreground transition-colors">DAMAGE</button>
-                    <button onClick={() => handleSimpleRoll('Dice', '1d100')} className="w-20 h-20 bg-primary border-4 border-primary-dark rounded-full flex items-center justify-center text-background font-bold uppercase tracking-wider hover:bg-secondary transition-colors">DICE</button>
-                    <button onClick={() => setScreen('wound')} className="py-6 bg-background border border-muted text-foreground/80 font-bold uppercase tracking-wider rounded-2xl hover:bg-muted/20 hover:text-foreground transition-colors">WOUND</button>
+                    <button onClick={() => setScreen('damage')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">DAMAGE</button>
+                    <button onClick={() => handleSimpleRoll('Dice', '1d100')} className="w-20 h-20 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed">DICE</button>
+                    <button onClick={() => setScreen('wound')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">WOUND</button>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                    <button onClick={() => handleSimpleRoll('Panic', '2d10')} className="py-6 bg-background border border-muted text-foreground/80 font-bold uppercase tracking-wider rounded-2xl hover:bg-muted/20 hover:text-foreground transition-colors">PANIC</button>
-                    <button onClick={() => setScreen('other')} className="py-6 bg-background border border-muted text-foreground/80 font-bold uppercase tracking-wider rounded-2xl hover:bg-muted/20 hover:text-foreground transition-colors">OTHER</button>
+                    <button onClick={() => handleSimpleRoll('Panic', '2d10')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">PANIC</button>
+                    <button onClick={() => setScreen('other')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">OTHER</button>
                 </div>
             </div>
              <div className="mt-auto pt-2">
@@ -355,12 +459,12 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
                                 <>
                                     <ul className="space-y-2 text-sm max-h-32 overflow-y-auto pr-2">
                                         {history.map(entry => (
-                                            <li key={entry.timestamp} className="flex justify-between items-center bg-black/20 p-2 rounded-md">
+                                            <li key={entry.timestamp} className="flex justify-between items-center bg-black/20 p-2">
                                                 <div>
                                                     <span className="font-bold text-foreground">{entry.name}</span>
                                                     <span className="text-muted ml-2">({entry.formula}) {entry.target && `vs ${entry.target}`}</span>
                                                 </div>
-                                                <span className={`text-lg font-bold ${entry.success === true ? 'text-secondary' : entry.success === false ? 'text-primary' : 'text-foreground'}`}>{entry.total}</span>
+                                                <span className={`text-lg font-bold ${entry.success === true ? 'text-positive' : entry.success === false ? 'text-negative' : 'text-foreground'}`}>{entry.total}</span>
                                             </li>
                                         ))}
                                     </ul>
@@ -378,6 +482,7 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
         main: renderMainScreen(),
         stat: renderCheckScreen('stat'),
         save: renderCheckScreen('save'),
+        creation: renderCreationScreen(),
         damage: renderSimpleRollScreen('Damage Roll', [{name: 'Unarmed', formula: '1d10'}], false),
         wound: renderSimpleRollScreen('Wound Roll', [
             { name: 'Blunt Force', formula: '1d10' },

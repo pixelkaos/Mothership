@@ -37,14 +37,14 @@ export const GeneratorPanel: React.FC<GeneratorPanelProps> = ({ ship, onGenerate
                 <button
                     onClick={onGenerate}
                     disabled={isLoading}
-                    className="flex-1 px-4 py-3 border border-primary text-primary uppercase tracking-widest hover:bg-primary/20 focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="flex-1 px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-primary text-primary hover:bg-primary hover:text-background active:bg-primary-pressed active:border-primary-pressed disabled:border-primary-hover disabled:text-primary-hover/70 disabled:cursor-not-allowed"
                 >
                     {ship ? 'New Signal' : 'Scan for Signal'}
                 </button>
                 <button
                     onClick={onEnhance}
                     disabled={!ship || isLoading}
-                    className="flex-1 px-4 py-3 bg-primary text-background uppercase tracking-widest hover:bg-primary-dark focus:outline-none focus:ring-1 focus:ring-secondary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="flex-1 px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary-hover disabled:text-background/70 disabled:cursor-not-allowed"
                 >
                     {isLoading ? 'Processing...' : 'Enhance Signal'}
                 </button>

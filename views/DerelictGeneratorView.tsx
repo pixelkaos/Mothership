@@ -17,22 +17,16 @@ export const DerelictGeneratorView: React.FC = () => {
         setAiDescription('');
         setError('');
         
-        const roll = rollDice('1d100');
-        
-        let shipInfo: ShipClassStatus | undefined;
-        for (const item of SHIP_CLASS_STATUS) {
-            if (roll >= item.range[0] && roll <= item.range[1]) {
-                shipInfo = item;
-                break;
-            }
-        }
-        
-        // Correct for 0-based index vs 1-based roll
-        const lookupRoll = roll > 0 ? roll - 1 : 0;
+        // A d100 roll results in 1-100. The table uses 0-99 ranges.
+        const roll = rollDice('1d100') - 1; // Correctly maps to 0-99
+
+        let shipInfo = SHIP_CLASS_STATUS.find(item => roll >= item.range[0] && roll <= item.range[1]);
 
         if (!shipInfo) {
-             // Fallback to the closest one if something goes wrong.
-            shipInfo = SHIP_CLASS_STATUS.find(item => lookupRoll >= item.range[0] && lookupRoll <= item.range[1]) || SHIP_CLASS_STATUS[0];
+            // This case should not be reached if SHIP_CLASS_STATUS covers all 0-99 outcomes.
+            // As a fallback, log an error and use the first entry to prevent a crash.
+            console.error(`Could not find ship info for roll: ${roll}. Defaulting to the first entry.`);
+            shipInfo = SHIP_CLASS_STATUS[0];
         }
 
         const cause = CAUSE_OF_RUINATION[rollDice('1d100') - 1];

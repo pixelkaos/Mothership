@@ -163,7 +163,7 @@ export const SkillSelector: React.FC<SkillSelectorProps> = ({ characterClass, al
                                     e
                                 )}
                                 onMouseLeave={hideTooltip}
-                                className={`p-2 border text-left text-xs transition-colors ${isSelected ? 'bg-primary/30 border-primary' : 'bg-black/20 border-muted hover:bg-muted/20'}`}
+                                className={`p-2 border text-left text-xs transition-colors ${isSelected ? 'bg-primary text-background border-primary' : 'bg-transparent border-tertiary text-tertiary hover:bg-tertiary hover:text-background'}`}
                             >
                                 {skillName}
                             </button>
@@ -176,7 +176,7 @@ export const SkillSelector: React.FC<SkillSelectorProps> = ({ characterClass, al
     
     return (
         <div className="space-y-4">
-             <div className="mb-3 p-2 border border-primary/30 bg-black/20 text-center text-sm">
+             <div className="mb-3 p-2 border border-secondary/30 bg-black/20 text-center text-sm">
                 <p className="text-foreground">
                     <strong className="uppercase tracking-wider">Skill Points:</strong> Every class gets a base of <strong className="text-secondary">2 Trained</strong> & <strong className="text-secondary">1 Expert</strong> skill.
                 </p>
@@ -230,11 +230,11 @@ export const SkillSelector: React.FC<SkillSelectorProps> = ({ characterClass, al
                                 const canSelect = !isSelected && !isLocked && !limitReached;
                                 const canDeselect = isSelected && !isStarting;
 
-                                let buttonClasses = 'bg-black/20 border-muted ';
-                                if (isStarting) buttonClasses = 'bg-muted/30 border-muted/80 text-foreground cursor-default';
-                                else if (isSelected) buttonClasses = 'bg-primary/20 border-primary text-secondary';
+                                let buttonClasses = '';
+                                if (isStarting) buttonClasses = 'bg-tertiary text-background/70 border-tertiary cursor-default';
+                                else if (isSelected) buttonClasses = 'bg-primary text-background border-primary';
                                 else if (isLocked) buttonClasses = 'bg-black/30 border-muted/50 text-muted cursor-not-allowed';
-                                else buttonClasses += 'hover:bg-muted/20';
+                                else buttonClasses += 'bg-transparent border-tertiary text-tertiary hover:bg-tertiary hover:text-background';
 
                                 return (
                                     <div
@@ -250,7 +250,7 @@ export const SkillSelector: React.FC<SkillSelectorProps> = ({ characterClass, al
                                                 <p className="text-sm text-foreground mb-2">{skill.description}</p>
                                                 {skill.effects && (
                                                      <p className="text-sm text-foreground mb-2">
-                                                        <strong className="text-secondary">Effect:</strong> {skill.effects}
+                                                        <strong className="text-primary">Effect:</strong> {skill.effects}
                                                     </p>
                                                 )}
                                                 {skill.prerequisites && skill.prerequisites.length > 0 && (
