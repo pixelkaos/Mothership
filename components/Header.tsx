@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import type { View } from '../App';
 
@@ -39,6 +40,7 @@ export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSe
         <div className="flex justify-center border-y border-secondary/50">
             <NavButton label="Derelict Generator" isActive={activeView === 'derelict'} onClick={() => onSetView('derelict')} />
             <NavButton label="Character Hangar" isActive={activeView === 'character'} onClick={() => onSetView('character')} />
+            <NavButton label="Rules" isActive={activeView === 'rules'} onClick={() => onSetView('rules')} />
         </div>
 
         <button
