@@ -97,6 +97,15 @@ export interface Character {
   credits: number;
 }
 
+export interface CharacterSaveData {
+  character: Character;
+  baseStats: CharacterStats;
+  baseSaves: CharacterSaves;
+  androidPenalty: Stat | null;
+  scientistBonus: Stat | null;
+}
+
+
 export interface SkillDefinition {
   name: string;
   description: string;

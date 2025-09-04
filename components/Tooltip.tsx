@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, ReactNode, useRef, useCallback } from 'react';
 
 // --- Context Definition ---
@@ -86,7 +87,7 @@ const TooltipDisplay: React.FC<TooltipState> = ({ isVisible, content, position }
 
     return (
         <div
-            className="fixed z-[999] p-3 bg-black border-2 border-green-500 text-green-300 text-sm rounded-md shadow-lg shadow-green-900/50 max-w-xs pointer-events-none transition-opacity duration-200"
+            className="fixed z-[999] p-3 bg-background border border-primary text-foreground text-sm shadow-lg shadow-primary/20 max-w-xs pointer-events-none transition-opacity duration-200"
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,

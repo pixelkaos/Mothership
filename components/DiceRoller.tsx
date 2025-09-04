@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { RollResult } from '../types';
 import { parseAndRoll } from '../utils/dice';
@@ -114,7 +115,7 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({
     return (
         <div
             ref={rollerRef}
-            className="fixed w-72 bg-black border-2 border-green-700/80 shadow-2xl shadow-green-900/50 z-50 text-sm"
+            className="fixed w-72 bg-background border border-primary/80 shadow-2xl shadow-primary/20 z-50 text-sm"
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,
@@ -122,17 +123,17 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({
             }}
         >
             <div
-                className="flex justify-between items-center p-2 bg-green-900/30 cursor-move"
+                className="flex justify-between items-center p-2 bg-black/30 cursor-move"
                 onMouseDown={handleMouseDown}
             >
-                <h4 className="font-bold text-green-300 uppercase tracking-wider">Dice Roller</h4>
+                <h4 className="font-bold text-primary uppercase tracking-wider">Dice Roller</h4>
                 <div className="flex items-center space-x-2">
-                    <button onClick={handleToggleMinimize} className="text-green-400 hover:text-green-200" aria-label={isMinimized ? "Expand" : "Minimize"}>
+                    <button onClick={handleToggleMinimize} className="text-primary/70 hover:text-primary" aria-label={isMinimized ? "Expand" : "Minimize"}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            {isMinimized ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4h4m12 4V4h-4M4 16v4h4m12-4v4h-4" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />}
                         </svg>
                     </button>
-                    <button onClick={handleClose} className="text-green-400 hover:text-green-200" aria-label="Close">
+                    <button onClick={handleClose} className="text-primary/70 hover:text-primary" aria-label="Close">
                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -144,10 +145,10 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({
                  <div className="p-4 space-y-3">
                     {suggestedRoll && activeField && (
                         <div className="text-center">
-                            <p className="text-xs text-green-500 mb-1">Suggestion for <span className="font-bold capitalize">{formatFieldName(activeField)}</span>:</p>
+                            <p className="text-xs text-muted mb-1">Suggestion for <span className="font-bold capitalize">{formatFieldName(activeField)}</span>:</p>
                             <button 
                                 onClick={() => handleRoll(suggestedRoll)}
-                                className="w-full px-3 py-2 bg-green-800/50 border border-green-600 text-green-300 uppercase tracking-widest hover:bg-green-700/50 transition-colors"
+                                className="w-full px-3 py-2 border border-primary text-primary uppercase tracking-widest hover:bg-primary/20 transition-colors"
                             >
                                 Roll {suggestedRoll}
                             </button>
@@ -159,24 +160,24 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({
                             type="text"
                             value={manualFormula}
                             onChange={(e) => setManualFormula(e.target.value)}
-                            className="flex-grow bg-black/50 border border-green-700 p-2 focus:ring-green-400 focus:outline-none"
+                            className="flex-grow bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary"
                             placeholder="e.g., 2d6+3"
                         />
-                        <button onClick={() => handleRoll(manualFormula)} className="px-3 py-2 bg-green-800/50 border border-green-600 hover:bg-green-700/50">Roll</button>
+                        <button onClick={() => handleRoll(manualFormula)} className="px-3 py-2 border border-primary text-primary hover:bg-primary/20">Roll</button>
                     </div>
 
-                    {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+                    {error && <p className="text-primary text-xs text-center">{error}</p>}
 
                     {lastRoll && (
-                        <div className="border-t border-green-800/50 pt-3 mt-3 text-center">
-                            <p className="text-3xl font-bold text-green-200">{lastRoll.total}</p>
-                            <p className="text-xs text-green-500">
+                        <div className="border-t border-primary/50 pt-3 mt-3 text-center">
+                            <p className="text-3xl font-bold text-secondary">{lastRoll.total}</p>
+                            <p className="text-xs text-muted">
                                 ({lastRoll.rolls.join(' + ')}{lastRoll.modifier !== 0 ? `) ${lastRoll.modifier > 0 ? '+' : '-'} ${Math.abs(lastRoll.modifier)}` : ')'}
                             </p>
                             {activeField && (
                                 <button
                                     onClick={handleApply}
-                                    className="mt-2 w-full px-3 py-2 bg-green-600/50 border border-green-400 text-green-200 uppercase tracking-widest hover:bg-green-500/50"
+                                    className="mt-2 w-full px-3 py-2 bg-primary text-background uppercase tracking-widest hover:bg-primary-dark"
                                 >
                                     Apply to <span className="capitalize">{formatFieldName(activeField)}</span>
                                 </button>

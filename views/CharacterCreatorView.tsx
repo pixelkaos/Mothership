@@ -1,11 +1,13 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import type { Character, CharacterClass, ClassName, SkillDefinition, SkillTier, Stat } from '../types';
+
+
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, SkillTier, Stat } from '../types';
 import { ALL_SKILLS, CLASSES_DATA, LOADOUTS, TRINKETS, PATCHES, SCIENTIST_SKILL_CHOICES, FIRST_NAMES, LAST_NAMES, PRONOUNS } from '../constants';
 import { rollDice } from '../utils/dice';
-import { DiceRoller } from '../components/DiceRoller';
 import { set } from '../utils/helpers';
 import { SkillSelector } from '../components/SkillSelector';
 import { useTooltip } from '../components/Tooltip';
+import { CharacterRoller } from '../components/CharacterRoller';
 
 
 const initialCharacter: Character = {
@@ -23,18 +25,6 @@ const initialCharacter: Character = {
     credits: 0,
 };
 
-const DICE_SUGGESTIONS: { [key: string]: string } = {
-    'stats.strength': '2d10+25',
-    'stats.speed': '2d10+25',
-    'stats.intellect': '2d10+25',
-    'stats.combat': '2d10+25',
-    'saves.sanity': '2d10+10',
-    'saves.fear': '2d10+10',
-    'saves.body': '2d10+10',
-    'health.max': '1d10+10',
-    'credits': '2d10*10',
-};
-
 const STAT_DESCRIPTIONS: { [key: string]: React.ReactNode } = {
     'Strength': "Represents physical power, lifting capacity, and melee damage. Crucial for Body Saves and physically demanding tasks.",
     'Speed': "Determines agility, reaction time, and movement. Important for avoiding hazards, acting quickly, and piloting.",
@@ -48,29 +38,37 @@ const STAT_DESCRIPTIONS: { [key: string]: React.ReactNode } = {
     'Stress': "Your accumulated anxiety and terror. The higher your Stress, the more likely you are to Panic when things go wrong."
 };
 
+interface CharacterCreatorViewProps {
+  characterData: CharacterSaveData | null;
+  onCharacterUpdate: (character: CharacterSaveData | null) => void;
+}
+
 const StatInput: React.FC<{
     label: string;
     id: string;
     value: number;
     baseValue?: number;
-    onFocus: () => void;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     tooltipContent: React.ReactNode;
-}> = ({ label, id, value, baseValue, onFocus, onChange, tooltipContent }) => {
+    onRollRequest?: () => void;
+}> = ({ label, id, value, baseValue, onChange, tooltipContent, onRollRequest }) => {
     const { showTooltip, hideTooltip } = useTooltip();
     
     const fullTooltipContent = useMemo(() => {
         const baseRollInfo = (baseValue !== undefined && value !== baseValue && baseValue !== 0)
-            ? <p className="text-xs text-yellow-400 mt-2 italic">The number in brackets is your base roll before class modifiers.</p>
+            ? <p className="text-xs text-secondary mt-2 italic">The number in brackets is your base roll before class modifiers.</p>
             : null;
+
+        const rollPrompt = onRollRequest ? <p className="text-xs text-primary mt-2 italic">Click the value to open the dice roller for a check.</p> : null;
 
         return (
             <>
                 {tooltipContent}
                 {baseRollInfo}
+                {rollPrompt}
             </>
         );
-    }, [tooltipContent, baseValue, value]);
+    }, [tooltipContent, baseValue, value, onRollRequest]);
 
     return (
         <div 
@@ -78,19 +76,19 @@ const StatInput: React.FC<{
             onMouseEnter={(e) => showTooltip(fullTooltipContent, e)}
             onMouseLeave={hideTooltip}
         >
-            <label htmlFor={id} className="text-xs uppercase text-green-500 cursor-pointer">{label}</label>
+            <label htmlFor={id} className="text-xs uppercase text-muted cursor-pointer">{label}</label>
             <div className="relative">
                  <input
                     id={id}
                     type="number"
-                    className="w-16 h-16 bg-black/50 border-2 border-green-600 rounded-full text-center text-2xl font-bold text-green-300 mt-1 focus:ring-green-400 focus:outline-none focus:border-green-400 appearance-none"
+                    className={`w-20 h-12 bg-transparent border border-muted text-center text-2xl font-bold text-foreground mt-1 focus:ring-0 focus:outline-none focus:border-primary appearance-none ${onRollRequest ? 'cursor-pointer' : ''}`}
                     value={value || ''}
-                    onFocus={onFocus}
                     onChange={onChange}
+                    onClick={onRollRequest}
                     placeholder="0"
                 />
                  {baseValue !== undefined && value !== baseValue && baseValue !== 0 && (
-                    <span className={`absolute -bottom-3 left-1/2 -translate-x-1/2 text-xs mt-1 ${value > baseValue ? 'text-green-400' : 'text-red-400'}`}>
+                    <span className={`absolute -bottom-3 left-1/2 -translate-x-1/2 text-xs mt-1 ${value > baseValue ? 'text-secondary' : 'text-primary'}`}>
                         ({baseValue})
                     </span>
                 )}
@@ -205,79 +203,132 @@ const autoSelectSkills = (characterClass: CharacterClass, allSkills: SkillDefini
 };
 
 
-export const CharacterCreatorView: React.FC = () => {
-    const [char, setChar] = useState<Character>(initialCharacter);
-    const [baseStats, setBaseStats] = useState(initialCharacter.stats);
-    const [baseSaves, setBaseSaves] = useState(initialCharacter.saves);
-    const [activeField, setActiveField] = useState<string | null>(null);
-    const [androidPenalty, setAndroidPenalty] = useState<Stat | null>(null);
-    const [scientistBonus, setScientistBonus] = useState<Stat | null>(null);
+export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ characterData, onCharacterUpdate }) => {
+    const [char, setChar] = useState<Character>(characterData?.character || initialCharacter);
+    const [baseStats, setBaseStats] = useState(characterData?.baseStats || initialCharacter.stats);
+    const [baseSaves, setBaseSaves] = useState(characterData?.baseSaves || initialCharacter.saves);
+    const [androidPenalty, setAndroidPenalty] = useState<Stat | null>(characterData?.androidPenalty || null);
+    const [scientistBonus, setScientistBonus] = useState<Stat | null>(characterData?.scientistBonus || null);
+    const [isCustomPronoun, setIsCustomPronoun] = useState(false);
 
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const { showTooltip, hideTooltip } = useTooltip();
 
-    const [diceRollerState, setDiceRollerState] = useState(() => {
-        const initialX = window.innerWidth - 320; // 288px width + 32px padding
-        const initialY = window.innerHeight - 450;
-        return {
-            isVisible: false,
-            isMinimized: false,
-            position: {
-                x: Math.max(16, initialX),
-                y: Math.max(16, initialY),
-            },
-        };
+    const [rollerState, setRollerState] = useState({
+        isVisible: false,
+        isMinimized: false,
+        position: { x: window.innerWidth - 420, y: 100 },
+        activeCheck: null as { type: 'stat' | 'save', name: string } | null,
     });
-    
-    // Reactive calculation of stats, saves, and wounds
-    useEffect(() => {
-        const classData = char.class;
+    const lastPositionRef = useRef(rollerState.position);
 
-        let newStats = { ...baseStats };
-        let newSaves = { ...baseSaves };
-        let newMaxWounds = 2; // Base wounds for all classes
+    const handleRollerStateChange = useCallback((newState: Partial<typeof rollerState>) => {
+        setRollerState(prev => {
+            const updatedState = { ...prev, ...newState };
+            if (newState.position) {
+                lastPositionRef.current = newState.position;
+            }
+            if (newState.isVisible === false) {
+                lastPositionRef.current = prev.position;
+                updatedState.activeCheck = null; 
+            }
+            return updatedState;
+        });
+    }, []);
+
+    const handleRollRequest = useCallback((type: 'stat' | 'save', name: string) => {
+        setRollerState(prev => ({
+            ...prev,
+            isVisible: true,
+            isMinimized: false,
+            position: lastPositionRef.current,
+            activeCheck: { type, name },
+        }));
+    }, []);
+
+    // Sync component state with parent prop.
+    useEffect(() => {
+        if (characterData) {
+            setChar(characterData.character);
+            setBaseStats(characterData.baseStats);
+            setBaseSaves(characterData.baseSaves);
+            setAndroidPenalty(characterData.androidPenalty);
+            setScientistBonus(characterData.scientistBonus);
+        } else {
+            setChar(initialCharacter);
+            setBaseStats(initialCharacter.stats);
+            setBaseSaves(initialCharacter.saves);
+            setAndroidPenalty(null);
+            setScientistBonus(null);
+        }
+    }, [characterData]);
+
+    const { finalStats, finalSaves, finalMaxWounds } = useMemo(() => {
+        const classData = char.class;
+        let stats = { ...baseStats };
+        let saves = { ...baseSaves };
+        let maxWounds = 2;
 
         if (classData) {
-            newMaxWounds += classData.max_wounds_mod;
+            maxWounds += classData.max_wounds_mod;
 
-            // Apply static mods from constants
             for (const [stat, mod] of Object.entries(classData.stats_mods)) {
-                if (newStats[stat as keyof typeof newStats] !== undefined) {
-                    newStats[stat as keyof typeof newStats] += mod;
+                if (stats[stat as keyof typeof stats] !== undefined) {
+                    stats[stat as keyof typeof stats] += mod;
                 }
             }
             for (const [save, mod] of Object.entries(classData.saves_mods)) {
-                if (newSaves[save as keyof typeof newSaves] !== undefined) {
-                    newSaves[save as keyof typeof newSaves] += mod;
+                if (saves[save as keyof typeof saves] !== undefined) {
+                    saves[save as keyof typeof saves] += mod;
                 }
             }
 
-            // Apply dynamic, user-selected mods
             if (classData.name === 'Android' && androidPenalty) {
-                newStats[androidPenalty] -= 10;
+                stats[androidPenalty] -= 10;
             }
             if (classData.name === 'Scientist' && scientistBonus) {
-                newStats[scientistBonus] += 5;
+                stats[scientistBonus] += 5;
             }
         }
-        
-        setChar(c => ({
-            ...c,
-            stats: newStats,
-            saves: newSaves,
-            wounds: { ...c.wounds, max: newMaxWounds },
-        }));
 
+        return { finalStats: stats, finalSaves: saves, finalMaxWounds: maxWounds };
     }, [char.class, baseStats, baseSaves, androidPenalty, scientistBonus]);
 
+    const finalCharacter = useMemo<Character>(() => ({
+        ...char,
+        stats: finalStats,
+        saves: finalSaves,
+        wounds: { ...char.wounds, max: finalMaxWounds },
+    }), [char, finalStats, finalSaves, finalMaxWounds]);
 
-    const handleDiceRollerStateChange = useCallback((newState: Partial<typeof diceRollerState>) => {
-        setDiceRollerState(prev => ({ ...prev, ...newState }));
+
+    // Propagate all local state changes up to the parent App component.
+    useEffect(() => {
+       if (finalCharacter.class) {
+           onCharacterUpdate({
+               character: finalCharacter,
+               baseStats,
+               baseSaves,
+               androidPenalty,
+               scientistBonus,
+           });
+       } else {
+           onCharacterUpdate(null);
+       }
+    }, [finalCharacter, baseStats, baseSaves, androidPenalty, scientistBonus, onCharacterUpdate]);
+
+    useEffect(() => {
+        if (char.pronouns && !PRONOUNS.includes(char.pronouns)) {
+            setIsCustomPronoun(true);
+        } else {
+            setIsCustomPronoun(false);
+        }
+    }, [char.pronouns]);
+
+
+    const handleRollerUpdate = useCallback((updatedCharacter: Character) => {
+        setChar(updatedCharacter);
     }, []);
-
-    const handleInputFocus = (fieldName: string) => {
-        setActiveField(fieldName);
-        setDiceRollerState(prev => ({ ...prev, isVisible: true }));
-    };
 
     const handleFieldChange = (path: string, value: string) => {
         const numValue = parseInt(value, 10) || 0;
@@ -288,7 +339,6 @@ export const CharacterCreatorView: React.FC = () => {
         } else if (statType === 'saves') {
             setBaseSaves(prev => ({...prev, [statName]: numValue}));
         } else {
-            // Handle other fields like health, credits, etc.
             setChar(prevChar => {
                 const newChar = { ...prevChar };
                 set(newChar, path, numValue);
@@ -299,12 +349,6 @@ export const CharacterCreatorView: React.FC = () => {
             });
         }
     };
-    
-    const handleApplyRoll = useCallback((result: number) => {
-        if (activeField) {
-           handleFieldChange(activeField, result.toString());
-        }
-    }, [activeField]);
     
     const handleSkillsChange = useCallback((newSkills: Character['skills']) => {
         setChar(prev => ({
@@ -364,14 +408,8 @@ export const CharacterCreatorView: React.FC = () => {
         const newName = `${FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)]} ${LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)]}`;
         const newPronouns = PRONOUNS[Math.floor(Math.random() * PRONOUNS.length)];
         
-        // Set all the base data and choices. The useEffect will compute the final stats.
-        setBaseStats(newBaseStats);
-        setBaseSaves(newBaseSaves);
-        setAndroidPenalty(chosenAndroidPenalty);
-        setScientistBonus(chosenScientistBonus);
-        
-        setChar(c => ({
-            ...c,
+        const newChar = {
+            ...initialCharacter,
             name: newName,
             pronouns: newPronouns,
             class: randomClass,
@@ -379,222 +417,339 @@ export const CharacterCreatorView: React.FC = () => {
             equipment: newEquipment,
             credits: newCredits,
             skills: newSkills,
-        }));
+        };
+        
+        setBaseStats(newBaseStats);
+        setBaseSaves(newBaseSaves);
+        setAndroidPenalty(chosenAndroidPenalty);
+        setScientistBonus(chosenScientistBonus);
+        setChar(newChar);
+
     }, []);
 
-    const suggestedRoll = useMemo(() => {
-        if (!activeField) return null;
-        return DICE_SUGGESTIONS[activeField] || null;
-    }, [activeField]);
+    const handleSaveCharacter = useCallback(() => {
+        const saveData: CharacterSaveData = {
+            character: finalCharacter,
+            baseStats,
+            baseSaves,
+            androidPenalty,
+            scientistBonus,
+        };
+
+        const jsonString = JSON.stringify(saveData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const fileName = finalCharacter.name.replace(/ /g, '_') || 'mothership_character';
+        a.href = url;
+        a.download = `${fileName}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, [finalCharacter, baseStats, baseSaves, androidPenalty, scientistBonus]);
+
+    const handleLoadCharacter = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const text = e.target?.result;
+                if (typeof text !== 'string') {
+                    throw new Error('File content is not a string.');
+                }
+                const data: CharacterSaveData = JSON.parse(text);
+
+                if (!data.character || !data.baseStats || !data.baseSaves) {
+                    throw new Error('Invalid character file format.');
+                }
+
+                setChar(data.character);
+                setBaseStats(data.baseStats);
+                setBaseSaves(data.baseSaves);
+                setAndroidPenalty(data.androidPenalty ?? null);
+                setScientistBonus(data.scientistBonus ?? null);
+
+            } catch (error: any) {
+                alert(`Error loading character file: ${error.message}`);
+            } finally {
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                }
+            }
+        };
+        reader.readAsText(file);
+    }, []);
 
     return (
-        <div className="border-2 border-green-700/50 p-6 bg-green-900/10 space-y-6">
-            <div className="flex justify-between items-start">
-                <h2 className="text-3xl font-bold text-green-400 uppercase tracking-wider">New Character Manifest</h2>
-                <button 
-                    onClick={handleFullCharacterRoll}
-                    className="px-4 py-2 bg-green-600/50 border border-green-400 text-green-200 uppercase tracking-widest hover:bg-green-500/50 focus:outline-none focus:ring-2 focus:ring-green-300"
-                >
-                    Generate Random Recruit
-                </button>
-            </div>
-            
-            <div className="border border-green-800/50 p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <input type="text" placeholder="Character Name" className="bg-black/50 border border-green-700 p-2 focus:ring-green-400 focus:outline-none" onChange={e => setChar(c => ({...c, name: e.target.value}))} value={char.name} />
-                 <input type="text" placeholder="Pronouns" className="bg-black/50 border border-green-700 p-2 focus:ring-green-400 focus:outline-none" onChange={e => setChar(c => ({...c, pronouns: e.target.value}))} value={char.pronouns} />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="border border-green-800/50 p-4">
-                    <h3 className="text-sm uppercase tracking-wider mb-4 text-center">Stats</h3>
-                    <div className="flex justify-around">
-                        <StatInput id="stats.strength" label="Strength" value={char.stats.strength} baseValue={baseStats.strength} onFocus={() => handleInputFocus('stats.strength')} onChange={(e) => handleFieldChange('stats.strength', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Strength']} />
-                        <StatInput id="stats.speed" label="Speed" value={char.stats.speed} baseValue={baseStats.speed} onFocus={() => handleInputFocus('stats.speed')} onChange={(e) => handleFieldChange('stats.speed', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Speed']} />
-                        <StatInput id="stats.intellect" label="Intellect" value={char.stats.intellect} baseValue={baseStats.intellect} onFocus={() => handleInputFocus('stats.intellect')} onChange={(e) => handleFieldChange('stats.intellect', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Intellect']} />
-                        <StatInput id="stats.combat" label="Combat" value={char.stats.combat} baseValue={baseStats.combat} onFocus={() => handleInputFocus('stats.combat')} onChange={(e) => handleFieldChange('stats.combat', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Combat']} />
+        <div>
+            <div className="border border-primary/50 p-6 bg-black/30 space-y-6 max-w-4xl mx-auto">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <h2 className="text-3xl font-bold text-primary uppercase tracking-wider">Character Manifest</h2>
+                    <div className="flex flex-wrap gap-2">
+                        <button 
+                            onClick={handleSaveCharacter}
+                            className="px-4 py-2 border border-primary/80 text-primary/80 uppercase tracking-widest text-xs hover:bg-primary/20 hover:text-primary"
+                        >
+                            Save Character
+                        </button>
+                        <label className="px-4 py-2 border border-primary/80 text-primary/80 uppercase tracking-widest text-xs hover:bg-primary/20 hover:text-primary cursor-pointer">
+                            Load Character
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept=".json"
+                                className="hidden"
+                                onChange={handleLoadCharacter}
+                            />
+                        </label>
+                        <button 
+                            onClick={handleFullCharacterRoll}
+                            className="px-4 py-2 bg-primary text-background uppercase tracking-widest hover:bg-primary-dark"
+                        >
+                            Generate Random Recruit
+                        </button>
                     </div>
                 </div>
-                 <div className="border border-green-800/50 p-4">
-                    <h3 className="text-sm uppercase tracking-wider mb-4 text-center">Saves</h3>
-                    <div className="flex justify-around">
-                        <StatInput id="saves.sanity" label="Sanity" value={char.saves.sanity} baseValue={baseSaves.sanity} onFocus={() => handleInputFocus('saves.sanity')} onChange={(e) => handleFieldChange('saves.sanity', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Sanity']} />
-                        <StatInput id="saves.fear" label="Fear" value={char.saves.fear} baseValue={baseSaves.fear} onFocus={() => handleInputFocus('saves.fear')} onChange={(e) => handleFieldChange('saves.fear', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Fear']} />
-                        <StatInput id="saves.body" label="Body" value={char.saves.body} baseValue={baseSaves.body} onFocus={() => handleInputFocus('saves.body')} onChange={(e) => handleFieldChange('saves.body', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Body']} />
+                
+                <div className="border border-primary/30 p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <input type="text" placeholder="Character Name" className="bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" onChange={e => setChar(c => ({...c, name: e.target.value}))} value={char.name} />
+                     <div className="flex gap-2">
+                        <select
+                            className={`bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary transition-all duration-200 ${isCustomPronoun ? 'w-1/2' : 'w-full'}`}
+                            value={isCustomPronoun ? 'custom' : char.pronouns}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === 'custom') {
+                                    setIsCustomPronoun(true);
+                                    setChar(c => ({ ...c, pronouns: '' }));
+                                } else {
+                                    setIsCustomPronoun(false);
+                                    setChar(c => ({ ...c, pronouns: value }));
+                                }
+                            }}
+                        >
+                            <option value="" disabled>Select Pronouns...</option>
+                            {PRONOUNS.map(p => <option key={p} value={p}>{p}</option>)}
+                            <option value="custom">Custom...</option>
+                        </select>
+                        {isCustomPronoun && (
+                            <input
+                                type="text"
+                                placeholder="Enter pronouns"
+                                className="w-1/2 bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary"
+                                value={char.pronouns}
+                                onChange={e => setChar(c => ({ ...c, pronouns: e.target.value }))}
+                                aria-label="Custom pronouns"
+                            />
+                        )}
                     </div>
                 </div>
-            </div>
 
-             <div className="border border-green-800/50 p-4">
-                <h3 className="text-sm uppercase tracking-wider mb-4">Select Your Class</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {CLASSES_DATA.map(classData => {
-                        const isScientist = classData.name === 'Scientist';
-                        const isFlexible = classData.name === 'Marine' || classData.name === 'Android';
-                        const statMods = Object.entries(classData.stats_mods);
-                        const saveMods = Object.entries(classData.saves_mods);
-                        const hasStatMods = statMods.length > 0;
-                        const hasSaveMods = saveMods.length > 0;
-                        
-                        const BASE_SKILLS = { trained: 2, expert: 1, master: 0 };
-                        let totalSkillsText;
-                        if (isFlexible) {
-                            totalSkillsText = "4 Trained, 1 Expert OR 2 Trained, 2 Expert";
-                        } else {
-                            const trainedTotal = BASE_SKILLS.trained + classData.bonus_skills.trained;
-                            const expertTotal = BASE_SKILLS.expert + classData.bonus_skills.expert;
-                            const masterTotal = BASE_SKILLS.master + classData.bonus_skills.master;
-                            const parts = [];
-                            if (masterTotal > 0) parts.push(`${masterTotal} Master`);
-                            if (expertTotal > 0) parts.push(`${expertTotal} Expert`);
-                            if (trainedTotal > 0) parts.push(`${trainedTotal} Trained`);
-                            totalSkillsText = parts.join(', ');
-                        }
-
-                        return (
-                            <button 
-                                key={classData.name} 
-                                onClick={() => handleSelectClass(classData.name as ClassName)} 
-                                className={`p-4 border-2 text-left transition-colors ${char.class?.name === classData.name ? 'border-green-300 bg-green-500/20' : 'border-green-700 hover:bg-green-700/20'}`}
-                                onMouseEnter={(e) => showTooltip(
-                                    <div className="text-left space-y-2">
-                                        <h5 className="font-bold text-lg text-green-200 uppercase">{classData.name}</h5>
-                                        <p className="text-sm text-green-400">{classData.description}</p>
-                                        
-                                        {(hasStatMods || hasSaveMods || classData.max_wounds_mod > 0 || classData.name === 'Android' || classData.name === 'Scientist') && (
-                                            <div>
-                                                <h6 className="text-xs uppercase text-green-400 tracking-wider">Modifiers</h6>
-                                                <ul className="list-disc list-inside text-sm text-green-400">
-                                                    {statMods.map(([stat, mod]) => <li key={stat} className="capitalize">{stat}: {mod > 0 ? '+' : ''}{mod}</li>)}
-                                                    {saveMods.map(([save, mod]) => <li key={save} className="capitalize">{save}: {mod > 0 ? '+' : ''}{mod}</li>)}
-                                                    {classData.name === 'Android' && <li>-10 to one Stat of your choice</li>}
-                                                    {classData.name === 'Scientist' && <li>+5 to one Stat of your choice</li>}
-                                                    {classData.max_wounds_mod > 0 && <li>Wounds: +{classData.max_wounds_mod}</li>}
-                                                </ul>
-                                            </div>
-                                        )}
-
-                                        <div>
-                                            <h6 className="text-xs uppercase text-green-400 tracking-wider">Total Skills</h6>
-                                            <p className="text-sm text-green-400">{totalSkillsText}</p>
-                                        </div>
-
-                                        {isScientist && (
-                                            <div>
-                                                <h6 className="text-xs uppercase text-green-400 tracking-wider">Starting Skills</h6>
-                                                <p className="text-sm text-green-400">Select 3 skills from: {SCIENTIST_SKILL_CHOICES.join(', ')}.</p>
-                                            </div>
-                                        )}
-
-                                        <p className="text-xs text-green-500"><strong className="text-green-300">Trauma:</strong> {classData.trauma_response}</p>
-                                    </div>,
-                                    e
-                                )}
-                                onMouseLeave={hideTooltip}
-                            >
-                                <h4 className="font-bold text-lg uppercase text-green-300">{classData.name}</h4>
-                                <p className="text-xs text-green-500 mt-2">Trauma: {classData.trauma_response}</p>
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
-
-            {char.class?.name === 'Android' && (
-                <div className="border border-green-800/50 p-4">
-                    <h4 className="text-sm uppercase tracking-wider mb-2 text-green-300">Android Penalty (-10)</h4>
-                    <p className="text-xs text-green-500 mb-3">Androids have a specific operational flaw. Choose one stat to reduce by 10.</p>
-                    <div className="flex gap-4">
-                        {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => (
-                            <button
-                                key={stat}
-                                onClick={() => setAndroidPenalty(stat)}
-                                className={`flex-1 p-2 border-2 text-center uppercase tracking-widest transition-colors ${androidPenalty === stat ? 'border-green-300 bg-green-500/20' : 'border-green-700 hover:bg-green-700/20'}`}
-                            >
-                                {stat}
-                            </button>
-                        ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="border border-primary/30 p-4">
+                        <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Stats</h3>
+                        <div className="flex justify-around">
+                            <StatInput id="stats.strength" label="Strength" value={finalStats.strength} baseValue={baseStats.strength} onChange={(e) => handleFieldChange('stats.strength', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Strength']} onRollRequest={() => handleRollRequest('stat', 'strength')} />
+                            <StatInput id="stats.speed" label="Speed" value={finalStats.speed} baseValue={baseStats.speed} onChange={(e) => handleFieldChange('stats.speed', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Speed']} onRollRequest={() => handleRollRequest('stat', 'speed')} />
+                            <StatInput id="stats.intellect" label="Intellect" value={finalStats.intellect} baseValue={baseStats.intellect} onChange={(e) => handleFieldChange('stats.intellect', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Intellect']} onRollRequest={() => handleRollRequest('stat', 'intellect')} />
+                            <StatInput id="stats.combat" label="Combat" value={finalStats.combat} baseValue={baseStats.combat} onChange={(e) => handleFieldChange('stats.combat', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Combat']} onRollRequest={() => handleRollRequest('stat', 'combat')} />
+                        </div>
+                    </div>
+                     <div className="border border-primary/30 p-4">
+                        <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Saves</h3>
+                        <div className="flex justify-around">
+                            <StatInput id="saves.sanity" label="Sanity" value={finalSaves.sanity} baseValue={baseSaves.sanity} onChange={(e) => handleFieldChange('saves.sanity', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Sanity']} onRollRequest={() => handleRollRequest('save', 'sanity')} />
+                            <StatInput id="saves.fear" label="Fear" value={finalSaves.fear} baseValue={baseSaves.fear} onChange={(e) => handleFieldChange('saves.fear', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Fear']} onRollRequest={() => handleRollRequest('save', 'fear')} />
+                            <StatInput id="saves.body" label="Body" value={finalSaves.body} baseValue={baseSaves.body} onChange={(e) => handleFieldChange('saves.body', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Body']} onRollRequest={() => handleRollRequest('save', 'body')} />
+                        </div>
                     </div>
                 </div>
-            )}
-
-            {char.class?.name === 'Scientist' && (
-                <div className="border border-green-800/50 p-4">
-                    <h4 className="text-sm uppercase tracking-wider mb-2 text-green-300">Scientist Bonus (+5)</h4>
-                    <p className="text-xs text-green-500 mb-3">Scientists have a particular field of expertise. Choose one stat to improve by 5.</p>
-                    <div className="flex gap-4">
-                        {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => (
-                            <button
-                                key={stat}
-                                onClick={() => setScientistBonus(stat)}
-                                className={`flex-1 p-2 border-2 text-center uppercase tracking-widest transition-colors ${scientistBonus === stat ? 'border-green-300 bg-green-500/20' : 'border-green-700 hover:bg-green-700/20'}`}
-                            >
-                                {stat}
-                            </button>
-                        ))}
+                
+                {char.class?.name === 'Android' && (
+                    <div className="border border-primary/30 p-4">
+                        <h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Android Penalty (-10)</h4>
+                        <p className="text-xs text-muted mb-3">Androids have a specific operational flaw. Choose one stat to reduce by 10.</p>
+                        <div className="flex gap-4">
+                            {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => (
+                                <button
+                                    key={stat}
+                                    onClick={() => setAndroidPenalty(stat)}
+                                    className={`flex-1 p-2 border text-center uppercase tracking-widest transition-colors ${androidPenalty === stat ? 'border-primary bg-primary/20' : 'border-muted hover:bg-muted/20'}`}
+                                >
+                                    {stat}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 <div className="border border-green-800/50 p-4">
-                     <h3 className="text-sm uppercase tracking-wider mb-4 text-center">Vitals</h3>
-                     <div className="flex justify-around items-center">
-                        <StatInput id="health.max" label="Health" value={char.health.max} onFocus={() => handleInputFocus('health.max')} onChange={(e) => handleFieldChange('health.max', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Health']} />
-                        <StatInput id="wounds.max" label="Wounds" value={char.wounds.max} onFocus={() => { /* Wounds are calculated */ }} onChange={(e) => handleFieldChange('wounds.max', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Wounds']} />
-                     </div>
-                </div>
-                <div className="border border-green-800/50 p-4">
-                     <h3 className="text-sm uppercase tracking-wider mb-4 text-center">Condition</h3>
-                     <div className="flex justify-around items-center">
-                        <StatInput id="stress.current" label="Stress" value={char.stress.current} onFocus={() => { setActiveField(null); /* No rolling for stress */ }} onChange={(e) => handleFieldChange('stress.current', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Stress']} />
-                        <p className="text-xs text-green-500 max-w-xs">Stress starts at 2. When you fail a save, it increases. When you Panic, you roll 2d10. If it's under your Stress, bad things happen.</p>
-                     </div>
-                </div>
-            </div>
-            
-            <div className="border border-green-800/50 p-4">
-                 <h3 className="text-sm uppercase tracking-wider mb-4">Equipment</h3>
-                <div className="space-y-2 text-sm">
-                    <p><strong className="text-green-500">Loadout:</strong> {char.equipment.loadout || '...'}</p>
-                    <p><strong className="text-green-500">Trinket:</strong> {char.equipment.trinket || '...'}</p>
-                    <p><strong className="text-green-500">Patch:</strong> {char.equipment.patch || '...'}</p>
-                    <div className="flex items-center gap-2">
-                        <strong className="text-green-500">Credits:</strong>
-                        <input
-                            type="number"
-                            className="bg-black/50 border border-green-700 p-1 w-24 focus:ring-green-400 focus:outline-none"
-                            value={char.credits || ''}
-                            onFocus={() => handleInputFocus('credits')}
-                            onChange={e => handleFieldChange('credits', e.target.value)}
-                            placeholder="0"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <div className="border border-green-800/50 p-4">
-                <h3 className="text-sm uppercase tracking-wider mb-4">Skills</h3>
-                {char.class ? (
-                    <SkillSelector 
-                        characterClass={char.class}
-                        allSkills={ALL_SKILLS}
-                        selectedSkills={char.skills}
-                        onSkillsChange={handleSkillsChange}
-                    />
-                ) : (
-                    <p className="text-xs text-green-500">Select a class to see available skills.</p>
                 )}
+
+                {char.class?.name === 'Scientist' && (
+                    <div className="border border-primary/30 p-4">
+                        <h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Scientist Bonus (+5)</h4>
+                        <p className="text-xs text-muted mb-3">Scientists have a particular field of expertise. Choose one stat to improve by 5.</p>
+                        <div className="flex gap-4">
+                            {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => (
+                                <button
+                                    key={stat}
+                                    onClick={() => setScientistBonus(stat)}
+                                    className={`flex-1 p-2 border text-center uppercase tracking-widest transition-colors ${scientistBonus === stat ? 'border-primary bg-primary/20' : 'border-muted hover:bg-muted/20'}`}
+                                >
+                                    {stat}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                
+                <div className="border border-primary/30 p-4">
+                    <h3 className="text-sm uppercase tracking-wider mb-4 text-muted">Select Your Class</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {CLASSES_DATA.map(classData => {
+                            const isScientist = classData.name === 'Scientist';
+                            const isFlexible = classData.name === 'Marine' || classData.name === 'Android';
+                            const statMods = Object.entries(classData.stats_mods);
+                            const saveMods = Object.entries(classData.saves_mods);
+                            const hasStatMods = statMods.length > 0;
+                            const hasSaveMods = saveMods.length > 0;
+                            
+                            const BASE_SKILLS = { trained: 2, expert: 1, master: 0 };
+                            let totalSkillsText;
+                            if (isFlexible) {
+                                totalSkillsText = "4 Trained, 1 Expert OR 2 Trained, 2 Expert";
+                            } else {
+                                const trainedTotal = BASE_SKILLS.trained + classData.bonus_skills.trained;
+                                const expertTotal = BASE_SKILLS.expert + classData.bonus_skills.expert;
+                                const masterTotal = BASE_SKILLS.master + classData.bonus_skills.master;
+                                const parts = [];
+                                if (masterTotal > 0) parts.push(`${masterTotal} Master`);
+                                if (expertTotal > 0) parts.push(`${expertTotal} Expert`);
+                                if (trainedTotal > 0) parts.push(`${trainedTotal} Trained`);
+                                totalSkillsText = parts.join(', ');
+                            }
+
+                            return (
+                                <button 
+                                    key={classData.name} 
+                                    onClick={() => handleSelectClass(classData.name as ClassName)} 
+                                    className={`p-4 border text-left transition-colors ${char.class?.name === classData.name ? 'border-primary bg-primary/20' : 'border-muted hover:bg-muted/20'}`}
+                                    onMouseEnter={(e) => showTooltip(
+                                        <div className="text-left space-y-2">
+                                            <h5 className="font-bold text-lg text-secondary uppercase">{classData.name}</h5>
+                                            <p className="text-sm text-foreground">{classData.description}</p>
+                                            
+                                            {(hasStatMods || hasSaveMods || classData.max_wounds_mod > 0 || classData.name === 'Android' || classData.name === 'Scientist') && (
+                                                <div>
+                                                    <h6 className="text-xs uppercase text-primary tracking-wider">Modifiers</h6>
+                                                    <ul className="list-disc list-inside text-sm text-foreground">
+                                                        {statMods.map(([stat, mod]) => <li key={stat} className="capitalize">{stat}: {mod > 0 ? '+' : ''}{mod}</li>)}
+                                                        {saveMods.map(([save, mod]) => <li key={save} className="capitalize">{save}: {mod > 0 ? '+' : ''}{mod}</li>)}
+                                                        {classData.name === 'Android' && <li>-10 to one Stat of your choice</li>}
+                                                        {classData.name === 'Scientist' && <li>+5 to one Stat of your choice</li>}
+                                                        {classData.max_wounds_mod > 0 && <li>Wounds: +{classData.max_wounds_mod}</li>}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            <div>
+                                                <h6 className="text-xs uppercase text-primary tracking-wider">Total Skills</h6>
+                                                <p className="text-sm text-foreground">{totalSkillsText}</p>
+                                            </div>
+
+                                            {isScientist && (
+                                                <div>
+                                                    <h6 className="text-xs uppercase text-primary tracking-wider">Starting Skills</h6>
+                                                    <p className="text-sm text-foreground">Select 3 skills from: {SCIENTIST_SKILL_CHOICES.join(', ')}.</p>
+                                                </div>
+                                            )}
+
+                                            <p className="text-xs text-muted"><strong className="text-secondary">Trauma:</strong> {classData.trauma_response}</p>
+                                        </div>,
+                                        e
+                                    )}
+                                    onMouseLeave={hideTooltip}
+                                >
+                                    <h4 className="font-bold text-lg uppercase text-secondary">{classData.name}</h4>
+                                    <p className="text-xs text-muted mt-2">Trauma: {classData.trauma_response}</p>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div className="border border-primary/30 p-4">
+                         <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Vitals</h3>
+                         <div className="flex justify-around items-center">
+                            <StatInput id="health.current" label="Health" value={char.health.current} onChange={(e) => handleFieldChange('health.current', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Health']} />
+                            <StatInput id="wounds.current" label="Wounds" value={char.wounds.current} onChange={(e) => handleFieldChange('wounds.current', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Wounds']} />
+                         </div>
+                    </div>
+                    <div className="border border-primary/30 p-4">
+                         <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Condition</h3>
+                         <div className="flex justify-around items-center">
+                            <StatInput id="stress.current" label="Stress" value={char.stress.current} onChange={(e) => handleFieldChange('stress.current', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Stress']} />
+                            <div className="text-center">
+                                <p className="text-xs text-muted max-w-xs">Max Health: {char.health.max}</p>
+                                <p className="text-xs text-muted max-w-xs">Max Wounds: {finalMaxWounds}</p>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+                
+                <div className="border border-primary/30 p-4">
+                     <h3 className="text-sm uppercase tracking-wider mb-4 text-muted">Equipment</h3>
+                    <div className="space-y-2 text-sm">
+                        <p><strong className="text-primary/80">Loadout:</strong> {char.equipment.loadout || '...'}</p>
+                        <p><strong className="text-primary/80">Trinket:</strong> {char.equipment.trinket || '...'}</p>
+                        <p><strong className="text-primary/80">Patch:</strong> {char.equipment.patch || '...'}</p>
+                        <div className="flex items-center gap-2">
+                            <strong className="text-primary/80">Credits:</strong>
+                            <input
+                                type="number"
+                                className="bg-black/50 border border-muted p-1 w-24 focus:ring-0 focus:outline-none focus:border-primary"
+                                value={char.credits || ''}
+                                onChange={e => handleFieldChange('credits', e.target.value)}
+                                placeholder="0"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="border border-primary/30 p-4">
+                    <h3 className="text-sm uppercase tracking-wider mb-4 text-muted">Skills</h3>
+                    {char.class ? (
+                        <SkillSelector 
+                            characterClass={char.class}
+                            allSkills={ALL_SKILLS}
+                            selectedSkills={char.skills}
+                            onSkillsChange={handleSkillsChange}
+                        />
+                    ) : (
+                        <p className="text-xs text-muted">Select a class to see available skills.</p>
+                    )}
+                </div>
             </div>
-            
-            <DiceRoller
-                activeField={activeField}
-                suggestedRoll={suggestedRoll}
-                onApplyResult={handleApplyRoll}
-                isVisible={diceRollerState.isVisible}
-                isMinimized={diceRollerState.isMinimized}
-                initialPosition={diceRollerState.position}
-                onStateChange={handleDiceRollerStateChange}
-            />
+             
+            {finalCharacter && finalCharacter.class ? (
+                <CharacterRoller 
+                    character={finalCharacter} 
+                    onUpdate={handleRollerUpdate}
+                    isVisible={rollerState.isVisible}
+                    isMinimized={rollerState.isMinimized}
+                    initialPosition={rollerState.position}
+                    onStateChange={handleRollerStateChange}
+                    activeCheck={rollerState.activeCheck}
+                />
+            ) : (
+                <div className="fixed bottom-8 right-8 max-w-sm">
+                    <div className="flex items-center justify-center h-full border border-dashed border-primary/30 p-8 text-center bg-black/30">
+                        <p className="text-muted">Create a character and select a class to access the integrated Dice Roller.</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

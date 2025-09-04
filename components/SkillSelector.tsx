@@ -1,3 +1,4 @@
+
 import React, { useMemo, useCallback } from 'react';
 import type { CharacterClass, SkillDefinition, Character, SkillTier } from '../types';
 import { ALL_SKILLS, SCIENTIST_SKILL_CHOICES } from '../constants';
@@ -76,6 +77,35 @@ export const SkillSelector: React.FC<SkillSelectorProps> = ({ characterClass, al
             hasChosenExpertBonus: bonusExpert > 0,
         };
     }, [isFlexibleClass, selectedSkills, characterClass.starting_skills]);
+    
+    const bonusSkillTextNode = useMemo(() => {
+        if (isFlexibleClass) {
+            return (
+                <>
+                    As a {characterClass.name}, you get a bonus choice of an additional <strong className="text-secondary">{`1 Expert`}</strong> OR <strong className="text-secondary">{`2 Trained`}</strong> skills.
+                </>
+            );
+        }
+
+        const { trained, expert, master } = characterClass.bonus_skills;
+        const parts: React.ReactNode[] = [];
+        if (master > 0) parts.push(<strong key="master" className="text-secondary">{master} Master</strong>);
+        if (expert > 0) parts.push(<strong key="expert" className="text-secondary">{expert} Expert</strong>);
+        if (trained > 0) parts.push(<strong key="trained" className="text-secondary">{trained} Trained</strong>);
+
+        if (parts.length === 0) {
+            return `As a ${characterClass.name}, you receive no additional bonus skill points.`;
+        }
+
+        // FIX: Explicitly specify the generic type for `reduce` to fix a type inference issue where `acc` was not being recognized as an array.
+        const joinedParts = parts.reduce<React.ReactNode[]>((acc, part, index) => {
+            if (index === 0) return [part];
+            if (index === parts.length - 1) return [...acc, ' & ', part];
+            return [...acc, ', ', part];
+        }, []);
+        
+        return <>As a {characterClass.name}, you get a bonus of {joinedParts} skill points.</>;
+    }, [characterClass.name, characterClass.bonus_skills, isFlexibleClass]);
 
     const handleSkillToggle = useCallback((skill: SkillDefinition, tier: SkillTier) => {
         const isSelected = selectedSkills[tier].includes(skill.name);
@@ -112,7 +142,7 @@ export const SkillSelector: React.FC<SkillSelectorProps> = ({ characterClass, al
     if (isScientist && scientistChoiceSelections.length < 3) {
         return (
             <div>
-                <h4 className="text-sm uppercase tracking-wider mb-2 text-green-300">
+                <h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">
                     Select 3 Starting Fields ({scientistChoiceSelections.length}/3)
                 </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -127,13 +157,13 @@ export const SkillSelector: React.FC<SkillSelectorProps> = ({ characterClass, al
                                 onClick={() => canSelect && handleSkillToggle(skill, 'trained')}
                                 onMouseEnter={(e) => showTooltip(
                                     <div>
-                                        <h5 className="font-bold text-green-200">{skill.name}</h5>
-                                        <p className="text-green-400">{skill.description}</p>
+                                        <h5 className="font-bold text-secondary">{skill.name}</h5>
+                                        <p className="text-foreground">{skill.description}</p>
                                     </div>,
                                     e
                                 )}
                                 onMouseLeave={hideTooltip}
-                                className={`p-2 border text-left text-xs transition-colors ${isSelected ? 'bg-green-500/30 border-green-400' : 'bg-black/20 border-green-700 hover:bg-green-700/20'}`}
+                                className={`p-2 border text-left text-xs transition-colors ${isSelected ? 'bg-primary/30 border-primary' : 'bg-black/20 border-muted hover:bg-muted/20'}`}
                             >
                                 {skillName}
                             </button>
@@ -146,14 +176,12 @@ export const SkillSelector: React.FC<SkillSelectorProps> = ({ characterClass, al
     
     return (
         <div className="space-y-4">
-             {isFlexibleClass && (
-                <div className="mb-3 p-2 border border-green-700/50 bg-green-900/30 text-center text-sm">
-                    <p className="text-green-300">
-                        <strong className="uppercase tracking-wider">Skill Points:</strong> Every class gets a base of <strong className="text-green-100">2 Trained</strong> & <strong className="text-green-100">1 Expert</strong> skill.
-                    </p>
-                    <p className="text-xs text-green-500">As a {characterClass.name}, you get a bonus choice of an additional <strong className="text-green-100">1 Expert</strong> OR <strong className="text-green-100">2 Trained</strong> skills.</p>
-                </div>
-            )}
+             <div className="mb-3 p-2 border border-primary/30 bg-black/20 text-center text-sm">
+                <p className="text-foreground">
+                    <strong className="uppercase tracking-wider">Skill Points:</strong> Every class gets a base of <strong className="text-secondary">2 Trained</strong> & <strong className="text-secondary">1 Expert</strong> skill.
+                </p>
+                <p className="text-xs text-muted">{bonusSkillTextNode}</p>
+            </div>
             {Object.entries(categorizedSkills).map(([tier, skillsInTier]) => {
                 const tierKey = tier as SkillTier;
                 
@@ -166,9 +194,9 @@ export const SkillSelector: React.FC<SkillSelectorProps> = ({ characterClass, al
 
                 return (
                     <div key={tier}>
-                        <h4 className="text-sm uppercase tracking-wider mb-2 text-green-300">
+                        <h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">
                             {tier} Skills
-                            <span className="ml-4 text-green-500 text-xs">
+                            <span className="ml-4 text-muted text-xs">
                                 {isFlexibleClass ? (
                                     tierKey === 'trained' ? `Base: ${Math.min(totalTrainedSelected, 2)}/2 | Bonus: ${bonusTrainedUsed}/2` :
                                     tierKey === 'expert' ? `Base: ${Math.min(totalExpertSelected, 1)}/1 | Bonus: ${bonusExpertUsed}/1` :
@@ -202,32 +230,32 @@ export const SkillSelector: React.FC<SkillSelectorProps> = ({ characterClass, al
                                 const canSelect = !isSelected && !isLocked && !limitReached;
                                 const canDeselect = isSelected && !isStarting;
 
-                                let buttonClasses = 'bg-black/20 border-green-700 ';
-                                if (isStarting) buttonClasses = 'bg-green-800/40 border-green-600 text-green-300 cursor-default';
-                                else if (isSelected) buttonClasses = 'bg-green-500/30 border-green-400 text-green-200';
-                                else if (isLocked) buttonClasses = 'bg-black/30 border-gray-600 text-gray-500 cursor-not-allowed';
-                                else buttonClasses += 'hover:bg-green-700/20';
+                                let buttonClasses = 'bg-black/20 border-muted ';
+                                if (isStarting) buttonClasses = 'bg-muted/30 border-muted/80 text-foreground cursor-default';
+                                else if (isSelected) buttonClasses = 'bg-primary/20 border-primary text-secondary';
+                                else if (isLocked) buttonClasses = 'bg-black/30 border-muted/50 text-muted cursor-not-allowed';
+                                else buttonClasses += 'hover:bg-muted/20';
 
                                 return (
                                     <div
                                         key={skill.name}
                                         onMouseEnter={(e) => showTooltip(
                                             <div className="text-left">
-                                                <h5 className="font-bold text-lg text-green-200">{skill.name}</h5>
+                                                <h5 className="font-bold text-lg text-secondary">{skill.name}</h5>
                                                 {isStarting && (
-                                                    <p className="text-xs text-yellow-400 italic mb-2">
+                                                    <p className="text-xs text-secondary italic mb-2">
                                                         This is a mandatory starting skill for your class.
                                                     </p>
                                                 )}
-                                                <p className="text-sm text-green-400 mb-2">{skill.description}</p>
+                                                <p className="text-sm text-foreground mb-2">{skill.description}</p>
                                                 {skill.effects && (
-                                                     <p className="text-sm text-green-300 mb-2">
-                                                        <strong className="text-green-100">Effect:</strong> {skill.effects}
+                                                     <p className="text-sm text-foreground mb-2">
+                                                        <strong className="text-secondary">Effect:</strong> {skill.effects}
                                                     </p>
                                                 )}
                                                 {skill.prerequisites && skill.prerequisites.length > 0 && (
-                                                    <p className="text-xs text-green-500 mt-2">
-                                                        <strong className="text-green-300">Requires:</strong> {skill.prerequisites.join(', ')}
+                                                    <p className="text-xs text-muted mt-2">
+                                                        <strong className="text-secondary">Requires:</strong> {skill.prerequisites.join(', ')}
                                                     </p>
                                                 )}
                                             </div>,
@@ -241,7 +269,7 @@ export const SkillSelector: React.FC<SkillSelectorProps> = ({ characterClass, al
                                             className={`w-full p-2 border text-left text-xs transition-colors ${buttonClasses}`}
                                         >
                                             {skill.name}
-                                            {isStarting && <span className="text-green-500 text-xs"> (Class)</span>}
+                                            {isStarting && <span className="text-muted text-xs"> (Class)</span>}
                                         </button>
                                     </div>
                                 );
