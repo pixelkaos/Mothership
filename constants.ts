@@ -1,4 +1,4 @@
-import type { ShipClassStatus, CharacterClass, SkillDefinition, ClassName, ShopItem } from './types';
+import type { ShipClassStatus, CharacterClass, SkillDefinition, ClassName, ShopItem, ArmorItem, WeaponItem } from './types';
 
 export const SHIP_NAME_PART1 = ["IAGO", "HECATE", "OBERON", "WHITEHALL", "DUNCAN", "BANQUO", "WINTER", "MARLOWE", "TEMPEST", "FAUST"];
 export const SHIP_NAME_PART2 = ["VALEFOR", "OPHANIM", "MARAX", "MARINER", "LABOLAS", "ASTAROTH", "CHERUBIM", "TYRANT", "BALAAM", "MURMUR"];
@@ -459,4 +459,37 @@ export const SHOP_ITEMS: ShopItem[] = [
     { name: 'Flashlight', price: 30, description: 'Handheld or shoulder mounted. Illuminates 10m in front of the owner.' },
     { name: 'Glowstick (x5)', price: 5, description: 'Disposable glow sticks that emit light within a radius of one meter.' },
     { name: 'Exoloader', price: 100000, description: 'An open mechanical exoskeleton used for carrying loads (up to 5000 kg). The loader claws inflict 1 wound. The operator can only be in the crew uniform or standard armor suit. A battery is required for operation (it lasts for 48 hours).' },
+];
+
+export const ARMOR_ITEMS: ArmorItem[] = [
+    { name: 'Crew uniform', description: 'Regular clothing.', price: '100 Kr', pb: 1, o2: 'No', speed: 'Normal', peculiarities: '' },
+    { name: 'VALECORE MK2 spacesuit', description: 'Designed for work in open space.', price: '10 kKr', pb: 3, o2: '12 h', speed: '[-]', peculiarities: 'Includes short-range radio, headlamp, radiation shield. Decompresses in 1d5 rounds if damaged.' },
+    { name: 'Protective suit AAVA TECH V-PATH 2', description: 'Protection from the environment when exploring unfamiliar planets.', price: '4 kKr', pb: 5, o2: '1 hour', speed: 'Normal', peculiarities: 'Includes air filter, protection from extreme heat/cold, radiation, water regenerator (1 liter of water for 4 days), short-range radio, headlamp.' },
+    { name: 'CARTER TACTICAL Standard Armor Suit', description: 'Lightweight armor, standard issue for Marines.', price: '2 kKr', pb: 7, o2: 'No', speed: 'Normal', peculiarities: 'Turns on the short-range radio.' },
+    { name: 'ARMADYNE "HEAVY-K" Reinforced Armor Suit', description: 'Heavy suit for combat operations in alien conditions.', price: '12 kKr', pb: 10, o2: '1 hour', speed: '[-]', peculiarities: 'Includes short-range radio, body camera, headlamp, tactical display, integrated exoskeleton (Strength checks [+]), radiation protection. Damage reduction by 3.' },
+];
+
+export const WEAPON_ITEMS: WeaponItem[] = [
+    { name: 'Boarding axe', price: '150 Kr', distance: 'Closely', damage: '2d10', shots: 'N/A', wounds: 'Injuries [+]', peculiarities: '' },
+    { name: 'Unarmed attack', price: 'For free', distance: 'Closely', damage: '1d5', shots: 'N/A', wounds: 'Dumb', peculiarities: '' },
+    { name: 'KANO X9 Combat Shotgun', price: '1400 Kr', distance: 'Nearby', damage: '4d10', shots: '4', wounds: 'Firearms', peculiarities: '1d10 damage at range or more' },
+    { name: 'Ammunition', price: '50 Kr', distance: 'N/A', damage: '', shots: '', wounds: '', peculiarities: 'For the magazine or clip' },
+    { name: 'Vibrating machetes', price: '1 kKr', distance: 'Closely', damage: '3d10 (BB)', shots: 'N/A', wounds: 'Bleeding + Mutilation', peculiarities: 'When you inflict a wound, roll on BOTH columns: bleeding and maiming' },
+    { name: 'Harpoon gun HAN-290', price: '350 Kr', distance: 'Nearby', damage: '1d10 + 2d10 when drawn', shots: '1', wounds: 'Bleeding [+]', peculiarities: '100m microfiber thread. Body test to extract' },
+    { name: 'ROSCO SS6 Nail Gun', price: '150 Kr', distance: 'Nearby', damage: '1d5', shots: '32', wounds: 'Bleeding', peculiarities: '' },
+    { name: 'Pulse rifle F20 "ARBITER"', price: '2.4 kKr', distance: 'Far', damage: '3d10', shots: '5', wounds: 'Firearms', peculiarities: '' },
+    { name: 'Laser cutter MNC MODE A', price: '1.2 kKr', distance: 'Far', damage: '1d100', shots: '6', wounds: 'Bleeding [+] or injury [+]', peculiarities: 'Two-handed. Heavy. 1 round to reload between shots.' },
+    { name: 'Mounting', price: '25 Kr', distance: 'Closely', damage: '1d5', shots: 'N/A', wounds: 'Dumb', peculiarities: '[+] for strength checks to open locked gates, move heavy objects, etc.' },
+    { name: 'Flamethrower RAMHORN 1', price: '4 kKr', distance: 'Nearby', damage: '2d10', shots: '4', wounds: 'By Fire [+]', peculiarities: 'Body Test [-] or engulfed in flames (2d10 damage per round)' },
+    { name: 'Fragmentation grenade', price: '400 Kr/piece', distance: 'Nearby', damage: '3d10', shots: '1', wounds: 'Explosion', peculiarities: 'On hit, deals damage to everyone near the target.' },
+    { name: 'Foam cannon HALLS B', price: '500 Kr', distance: 'Nearby', damage: '1', shots: '3', wounds: 'Dumb', peculiarities: 'Testing the body to avoid sticking. Testing the strength [-] to get out.' },
+    { name: 'ARMA 29 submachine gun', price: '1 kKr', distance: 'Far', damage: '2d10', shots: '5', wounds: 'Firearms', peculiarities: 'You can shoot with one hand' },
+    { name: 'Machine gun', price: '4.5 kKr', distance: 'Far', damage: '4d10', shots: '5', wounds: 'Firearms [+]', peculiarities: 'Two-handed. Heavy. Barrel can be rotated to shoot around corners.' },
+    { name: 'FN SLUG Revolver', price: '750 Kr', distance: 'Nearby', damage: '1d10+1', shots: '6', wounds: 'Firearms', peculiarities: '' },
+    { name: 'Welding machine EVA MK II', price: '250 Kr', distance: 'Closely', damage: '1d10', shots: 'N/A', wounds: 'Bleeding', peculiarities: 'Can open airlock doors' },
+    { name: 'PEABODY signal gun', price: '25 Kr', distance: 'Far', damage: '1d5', shots: '2', wounds: 'Fire [-]', peculiarities: 'A bright flash. Visible both day and night, at a long distance' },
+    { name: 'Scalpel', price: '50 Kr', distance: 'Closely', damage: '1d5', shots: 'N/A', wounds: 'Bleeding [+]', peculiarities: '' },
+    { name: 'Smart Rifle SK 109 SEEKER', price: '5 kKr', distance: 'Maximum', damage: '4d10 (BB)', shots: '3', wounds: 'Firearms [+]', peculiarities: '[-] for close range combat check' },
+    { name: 'Tranquilizer gun D&C 7', price: '250 Kr', distance: 'Nearby', damage: '1d5', shots: '6', wounds: 'Dumb', peculiarities: 'On damage: Body test or 1d10 rounds unconscious' },
+    { name: 'Shock baton', price: '150 Kr', distance: 'Closely', damage: '1d5', shots: 'N/A', wounds: 'Dumb', peculiarities: 'Body Test or Stunned for 1 round' },
 ];

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { STARTING_EQUIPMENT_TABLES, TRINKETS, PATCHES, SHOP_ITEMS } from '../constants';
+import { STARTING_EQUIPMENT_TABLES, TRINKETS, PATCHES, SHOP_ITEMS, ARMOR_ITEMS, WEAPON_ITEMS } from '../constants';
 
 const RuleSection: React.FC<{ id: string; title: string; children: React.ReactNode }> = ({ id, title, children }) => (
     <section id={id} className="mb-12 scroll-mt-24">
@@ -85,6 +85,69 @@ const ItemsTable: React.FC = () => (
                         <td className="p-2 align-top font-bold text-secondary">{item.name}</td>
                         <td className="p-2 align-top font-mono text-right">{item.price.toLocaleString()}</td>
                         <td className="p-2 text-sm">{item.description}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    </div>
+);
+
+const ArmorTable: React.FC = () => (
+    <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+            <thead>
+                <tr>
+                    <th className="border-b-2 border-primary/50 p-2">Armor</th>
+                    <th className="border-b-2 border-primary/50 p-2">Price</th>
+                    <th className="border-b-2 border-primary/50 p-2">PB</th>
+                    <th className="border-b-2 border-primary/50 p-2">O2</th>
+                    <th className="border-b-2 border-primary/50 p-2">Speed</th>
+                    <th className="border-b-2 border-primary/50 p-2">Peculiarities</th>
+                </tr>
+            </thead>
+            <tbody>
+                {ARMOR_ITEMS.map((item) => (
+                    <tr key={item.name} className="border-b border-muted/30">
+                        <td className="p-2 align-top">
+                            <p className="font-bold text-secondary">{item.name}</p>
+                            {item.description && <p className="text-xs text-muted">{item.description}</p>}
+                        </td>
+                        <td className="p-2 align-top font-mono">{item.price}</td>
+                        <td className="p-2 align-top font-mono">{item.pb}</td>
+                        <td className="p-2 align-top font-mono">{item.o2}</td>
+                        <td className="p-2 align-top font-mono">{item.speed}</td>
+                        <td className="p-2 align-top text-sm">{item.peculiarities}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    </div>
+);
+
+const WeaponTable: React.FC = () => (
+    <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+            <thead>
+                <tr>
+                    <th className="border-b-2 border-primary/50 p-2">Weapon</th>
+                    <th className="border-b-2 border-primary/50 p-2">Price</th>
+                    <th className="border-b-2 border-primary/50 p-2">Distance</th>
+                    <th className="border-b-2 border-primary/50 p-2">Damage</th>
+                    <th className="border-b-2 border-primary/50 p-2">Shots fired</th>
+                    <th className="border-b-2 border-primary/50 p-2">Wounds</th>
+                    <th className="border-b-2 border-primary/50 p-2">Peculiarities</th>
+                </tr>
+            </thead>
+            <tbody>
+                {WEAPON_ITEMS.map((item) => (
+                    <tr key={item.name} className="border-b border-muted/30">
+                        <td className="p-2 align-top font-bold text-secondary">{item.name}</td>
+                        <td className="p-2 align-top font-mono">{item.price}</td>
+                        <td className="p-2 align-top">{item.distance}</td>
+                        <td className="p-2 align-top font-mono">{item.damage}</td>
+                        <td className="p-2 align-top font-mono">{item.shots}</td>
+                        <td className="p-2 align-top">{item.wounds}</td>
+                        <td className="p-2 align-top text-sm">{item.peculiarities}</td>
                     </tr>
                 ))}
             </tbody>
@@ -289,10 +352,28 @@ export const RulesView: React.FC = () => {
                     </div>
                 </RuleSection>
                 <RuleSection id="weapon" title="Weapon">
-                    <p>Weapons range from simple <Highlight>Crowbars</Highlight> (<Dice>1d10</Dice> damage) to military-grade <Highlight>Pulse Rifles</Highlight> (<Dice>5d10</Dice> damage). Ammunition is scarce, so every shot counts. Many weapons have special properties, like being fully automatic or dealing extra damage on a critical hit.</p>
+                    <p>Weapons range from simple improvised tools to military-grade firearms. Ammunition is often scarce, and every shot counts. Knowing the capabilities and limitations of your gear can be the difference between a paycheck and a shallow grave.</p>
+                    <div className="mt-6 border-t border-muted/30">
+                        <AccordionSection
+                            title="Firearms, Melee & Explosives"
+                            isOpen={openAccordion === 'Weapon'}
+                            onToggle={() => handleToggleAccordion('Weapon')}
+                        >
+                            <WeaponTable />
+                        </AccordionSection>
+                    </div>
                 </RuleSection>
                 <RuleSection id="armor" title="Armor">
-                    <p>Armor improves your <KeyTerm>Armor Save</KeyTerm>. Standard crew attire offers no bonus (+0%), while a <Highlight>Vaccsuit</Highlight> provides +7% and full <Highlight>Advanced Battle Dress</Highlight> gives +15%. Heavier armor often comes with penalties, like Disadvantage on Speed Checks.</p>
+                    <p>Armor provides crucial protection against environmental hazards and hostile encounters. The Protection Bonus (PB) is a direct modifier to your Armor Save. Heavier suits may offer more protection at the cost of speed or oxygen supply.</p>
+                    <div className="mt-6 border-t border-muted/30">
+                        <AccordionSection
+                            title="Suits & Protective Gear"
+                            isOpen={openAccordion === 'Armor'}
+                            onToggle={() => handleToggleAccordion('Armor')}
+                        >
+                            <ArmorTable />
+                        </AccordionSection>
+                    </div>
                 </RuleSection>
                  <RuleSection id="pets" title="Pets">
                     <p>Pets can be great companions, but failing to protect them from harm can have psychological consequences.</p>
@@ -324,108 +405,94 @@ export const RulesView: React.FC = () => {
                         <li><Highlight>Embrace the Horror:</Highlight> Your characters are vulnerable. Don't be afraid to run, hide, and be terrified. Smart decisions are more important than heroic ones.</li>
                         <li><Highlight>Work With Your Crew:</Highlight> Mothership is a game about teamwork under pressure. Communicate with your fellow players, make plans, and watch each other's backs.</li>
                         <li><Highlight>Think Creatively:</Highlight> Your equipment list isn't just for combat. A crowbar can open a jammed door, a flare gun can be a signal, and a welding torch can seal a corridor. Use your tools to solve problems.</li>
-                        <li><Highlight>Accept Your Fate:</Highlight> Character death is common and expected. Don't get too attached. A new character can always be introduced as a survivor, a mercenary, or a new crew member on the next stop. Your story is about survival, not victory.</li>
+                        <li><Highlight>Accept Your Fate:</Highlight> Character death is common and expected. Don't get too attached. A new character can always be introduced as a survivor, a mercenary, or a new crew member on the next stop. Your story is about the struggle, not necessarily the victory.</li>
                     </ul>
                 </RuleSection>
                 <RuleSection id="basic-rules" title="Basic Rules">
-                     <p>Mothership plays like many other RPGs. One of you, the Warden, creates a scenario, and the rest of you, the players, interact with it. The rules below outline how to resolve the most common situations.</p>
+                    <p>Mothership operates on a simple d100 (or percentile) system. To perform an action where the outcome is uncertain, you'll make a <KeyTerm>Stat Check</KeyTerm> or a <KeyTerm>Save</KeyTerm>. To succeed, you must roll <Highlight>equal to or under</Highlight> the relevant Stat or Save value on a <Dice>d100</Dice> (represented by two 10-sided dice, one for the tens and one for the ones digit).</p>
+                    <p>For example, if your Strength is 35 and you need to make a Strength Check to pry open a door, you must roll 35 or less to succeed.</p>
                 </RuleSection>
-                <RuleSection id="characteristics-and-tests" title="Characteristics and tests">
-                    <p>Whenever you want to do something and the price for failure is high, you must roll under the appropriate <KeyTerm>Stat</KeyTerm> on <Dice>d%</Dice>; otherwise you fail. This is called a <KeyTerm>Stat Check</KeyTerm>. Your four Stats are:</p>
-                    <ul className="list-disc list-inside">
-                        <li><Highlight>Strength:</Highlight> How able-bodied you are. Lifting, pushing, hitting things hard, etc.</li>
-                        <li><Highlight>Speed:</Highlight> How quickly you can act and react under pressure.</li>
-                        <li><Highlight>Intellect:</Highlight> How knowledgeable and experienced you are.</li>
-                        <li><Highlight>Combat:</Highlight> How good you are at fighting.</li>
-                    </ul>
+                <RuleSection id="characteristics-and-tests" title="Characteristics and Tests">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        <div><Highlight>Strength (STR):</Highlight> Used for tasks requiring physical force, like lifting heavy objects or in melee combat.</div>
+                        <div><Highlight>Speed (SPD):</Highlight> Represents agility and reaction time. Used for dodging, piloting, and acting quickly.</div>
+                        <div><Highlight>Intellect (INT):</Highlight> Covers problem-solving, scientific knowledge, and technical skills. Used for hacking, repairing, and first aid.</div>
+                        <div><Highlight>Combat (CBT):</Highlight> Your skill with ranged weapons. Used for shooting accurately.</div>
+                        <div><Highlight>Sanity Save:</Highlight> Used to resist psychological trauma from witnessing indescribable horrors.</div>
+                        <div><Highlight>Fear Save:</Highlight> Used to act rationally and courageously in terrifying situations.</div>
+                        <div><Highlight>Body Save:</Highlight> Used to resist physical harm like poison, disease, or extreme environments.</div>
+                        <div><Highlight>Armor Save:</Highlight> Used to negate damage in combat. Your Armor Save is equal to your Armor's Protection Bonus (PB).</div>
+                    </div>
                 </RuleSection>
-                <RuleSection id="throw-modification" title="Throw modification">
-                     <p>Situational modifiers are handled with <KeyTerm>Advantage</KeyTerm> and <KeyTerm>Disadvantage</KeyTerm>.</p>
-                     <ul className="list-disc list-inside">
-                         <li><Highlight>Advantage:</Highlight> Roll <Dice>two d%</Dice> and take the <Highlight>better (lower)</Highlight> result. You might get this from having help, a good tool, or the element of surprise.</li>
-                         <li><Highlight>Disadvantage:</Highlight> Roll <Dice>two d%</Dice> and take the <Highlight>worse (higher)</Highlight> result. This might come from being injured, working in a hazardous environment, or attempting a very difficult task.</li>
-                     </ul>
+                 <RuleSection id="throw-modification" title="Throw Modification">
+                    <p><Highlight>Advantage:</Highlight> When you have an advantage, you roll your <Dice>d100</Dice> twice and take the <Highlight>better (lower) result</Highlight>. You might get Advantage for having the right tool for the job, a helpful crewmate, or a tactical superiority.</p>
+                    <p><Highlight>Disadvantage:</Highlight> When you have a disadvantage, you roll your <Dice>d100</Dice> twice and take the <Highlight>worse (higher) result</Highlight>. You might have Disadvantage from poor lighting, being injured, or attempting a task without proper skills.</p>
+                    <p><Highlight>Criticals:</Highlight> Rolling doubles (e.g., 11, 22, 33, 88) on a Check or Save results in a <KeyTerm>Critical</KeyTerm>. A <Highlight>Critical Success</Highlight> (a successful roll that's also doubles) means something exceptionally good happens. A <Highlight>Critical Failure</Highlight> (a failed roll that's also doubles) means something exceptionally bad happens.</p>
                 </RuleSection>
                 <RuleSection id="stress" title="Stress">
-                    <p>Stress is a measure of your accumulated fear and anxiety. It starts at 2 and increases when you fail Saves, get critically injured, or face terrifying situations. While Stress doesn't do anything on its own, it makes you more vulnerable to Panic.</p>
-                    <div className="mt-6">
-                        <h3 className="text-xl font-bold text-secondary tracking-wide uppercase mb-2">Relieving Stress</h3>
-                        <p>You can attempt to relieve Stress by resting for at least six hours. After resting, you can make a <KeyTerm>Fear Save</KeyTerm>. If you succeed, you relieve 1 Stress for every 10 points you succeeded by. Other activities like carousing in a safe port can also relieve Stress at the GM's discretion.</p>
-                    </div>
+                    <p>Stress represents your character's accumulated fear and anxiety. You gain <Highlight>1 Stress</Highlight> every time you:</p>
+                    <ul className="list-disc list-inside">
+                        <li>Fail a Save (Sanity, Fear, or Body).</li>
+                        <li>Witness a crewmate's death or Panic.</li>
+                        <li>Go 24 hours without food, water, or sleep.</li>
+                        <li>Are critically injured or take a Wound.</li>
+                    </ul>
+                    <p>Your current Stress level is added to all of your Saves. This means the more Stressed you are, the harder it is to succeed on your Saves, which can lead to a downward spiral of accumulating even more Stress.</p>
                 </RuleSection>
-                <RuleSection id="panic-checks" title="Panic checks">
-                     <p>When things get bad, the GM may call for a <KeyTerm>Panic Check</KeyTerm>. To make one, you roll <Dice>2d10</Dice>.</p>
-                     <ul className="list-disc list-inside">
-                         <li>If the result is <Highlight>GREATER</Highlight> than your current Stress, you keep your cool. You relieve 1 Stress.</li>
-                         <li>If the result is <Highlight>EQUAL TO OR LESS THAN</Highlight> your current Stress, you panic. You gain 1 Stress, and must immediately roll on the Panic Effect Table to see what your character does.</li>
-                     </ul>
+                <RuleSection id="panic-checks" title="Panic Checks">
+                    <p>When a particularly terrifying event occurs, the Warden (GM) may call for a <KeyTerm>Panic Check</KeyTerm>. To make a Panic Check, roll <Dice>2d10</Dice>. If the result is <Highlight>greater than</Highlight> your current Stress, you keep your cool. If the result is <Highlight>equal to or less than</Highlight> your Stress, you Panic.</p>
+                    <p>When you Panic, you must immediately roll <Dice>1d10</Dice> on the Panic Effect Table and act out the result. Your character is not in control during a Panic episode. After the Panic is resolved, your Stress <Highlight>resets to its minimum value</Highlight> (initially 2, but can increase from trauma).</p>
                 </RuleSection>
                 <RuleSection id="skills" title="Skills">
-                    <p>Skills represent specialized training. If you have a relevant skill for a Stat Check, you add its bonus to your Stat, making the check easier. A character can be at one of three ranks in a skill:</p>
-                     <ul className="list-disc list-inside">
-                        <li><KeyTerm>Trained:</KeyTerm> You add <Highlight>+10%</Highlight> to your Stat for the check.</li>
-                        <li><KeyTerm>Expert:</KeyTerm> You add <Highlight>+15%</Highlight> to your Stat for the check.</li>
-                        <li><KeyTerm>Master:</KeyTerm> You add <Highlight>+20%</Highlight> to your Stat for the check.</li>
+                    <p>Skills represent specialized training that makes you better at certain tasks. They are divided into three tiers: Trained, Expert, and Master.</p>
+                    <ul className="list-disc list-inside">
+                        <li><Highlight>Trained:</Highlight> You are proficient. You gain a <Highlight>+10% bonus</Highlight> to any relevant Stat Checks.</li>
+                        <li><Highlight>Expert:</Highlight> You are highly skilled. You gain a <Highlight>+15% bonus</Highlight> to any relevant Stat Checks.</li>
+                        <li><Highlight>Master:</Highlight> You are one of the best. You gain a <Highlight>+20% bonus</Highlight> to any relevant Stat Checks.</li>
                     </ul>
-                    <p>To acquire an Expert or Master skill, you must first have its prerequisite skill(s).</p>
+                    <p>A character cannot have a skill at a higher tier without having its prerequisite skill at a lower tier. For example, to have the Expert skill <KeyTerm>Hacking</KeyTerm>, you must first have the Trained skill <KeyTerm>Computers</KeyTerm>.</p>
                 </RuleSection>
                 <RuleSection id="skills-development" title="Skills development">
-                    <p>Characters gain Experience Points (XP) for surviving sessions and accomplishing goals. With enough XP, you <KeyTerm>Level Up</KeyTerm>. When you level up, you get to make improvements to your character and gain skill points to learn new skills or improve existing ones.</p>
-                    <div className="mt-6">
-                        <h3 className="text-xl font-bold text-secondary tracking-wide uppercase mb-2">Leveling Up</h3>
-                        <ol className="list-decimal list-inside space-y-1">
-                            <li><Highlight>Pick one Major Improvement:</Highlight> Either improve one Stat by 5 and another by 3, OR improve two Saves by 4 each.</li>
-                            <li><Highlight>Pick one Minor Improvement:</Highlight> Either gain 1 Resolve, remove a phobia, or heal all your Stress.</li>
-                            <li><Highlight>Gain 2 Skill Points:</Highlight> Spend these points to acquire new skills. Trained skills cost 1 point, Expert costs 2, and Master costs 3.</li>
-                        </ol>
-                    </div>
+                    <p>Each time you make a successful Stat Check using one of your skills, mark a tick next to it on your character sheet. Once you have <Highlight>three ticks</Highlight> next to a skill, you can <KeyTerm>level it up</KeyTerm> to the next tier (if applicable) and erase the ticks. This is typically done during downtime between jobs.</p>
                 </RuleSection>
                 <RuleSection id="combat-clashes" title="Combat clashes">
-                    <p>At the start of combat, everyone makes a <KeyTerm>Speed Check</KeyTerm>. Those who succeed act before the enemies; those who fail act after. On your turn, you can take <Highlight>two significant actions</Highlight> (e.g., attack, move, use an item, operate a machine). Simple actions like speaking or taking cover are often free.</p>
+                    <p>Combat is chaotic and deadly. There is no initiative order. Instead, the Warden describes the situation, and the players state what they want to do. Actions are then resolved in an order that makes sense narratively. A good rule of thumb is that anyone who hesitates acts last.</p>
                 </RuleSection>
                 <RuleSection id="attack-and-defense" title="Attack and defense">
-                     <p>Attacking is an <KeyTerm>Opposed Check</KeyTerm>. The attacker makes a <KeyTerm>Combat Check</KeyTerm>. The defender makes an <KeyTerm>Armor Save</KeyTerm>. If both succeed, the one who rolled <Highlight>higher</Highlight> (but still under their stat) wins. If one succeeds and one fails, the successful one wins. Criticals beat regular successes.</p>
+                    <p>To attack with a ranged weapon, make a <Highlight>Combat Check</Highlight>. To attack with a melee weapon, make a <Highlight>Strength Check</Highlight>.</p>
+                    <p>If you are attacked, you can make a <Highlight>Body Save</Highlight> to try and dodge or an <Highlight>Armor Save</Highlight> to absorb the damage. A successful Body Save means you avoid the attack completely. A successful Armor Save means you take no damage, but your armor's PB is reduced by 1 until it can be repaired.</p>
+                    <p>If both defense saves fail, you take damage, which is subtracted from your Health.</p>
                 </RuleSection>
                 <RuleSection id="wounds-and-death" title="Wounds and death">
-                    <p>Damage reduces your <KeyTerm>Health</KeyTerm>. When your Health reaches 0, it resets to maximum but you gain 1 <KeyTerm>Wound</KeyTerm>. Wounds are serious, debilitating injuries determined by a roll on a table. If you ever gain more Wounds than your maximum, you die.</p>
-                    <div className="mt-6">
-                        <h3 className="text-xl font-bold text-secondary tracking-wide uppercase mb-2">Death</h3>
-                        <p>When you reach 0 Health (before gaining a wound), you must make a <KeyTerm>Body Save</KeyTerm>. Failure means you die. Success means you fall unconscious. Taking more Wounds than your maximum is also a common way to die. Death is permanent.</p>
-                    </div>
+                    <p>When your Health reaches 0, you don't die immediately. Instead, your Health resets to its maximum, and you take a <KeyTerm>Wound</KeyTerm>. You gain 1 Stress, and must make a <Highlight>Body Save</Highlight> to avoid falling unconscious.</p>
+                    <p>Each time you take a Wound, you roll on the relevant Wound Table (e.g., Gunshot, Bleeding, Gore) to determine the specific, debilitating injury you've sustained.</p>
+                    <p>When the number of Wounds you have taken <Highlight>exceeds your maximum Wounds</Highlight>, your character is dead. There is no coming back.</p>
                 </RuleSection>
                 <RuleSection id="distance-and-range" title="Distance and range">
-                     <p>Ranged weapons have three ranges: Short, Medium, and Long.</p>
-                     <ul className="list-disc list-inside">
-                        <li><Highlight>Short Range:</Highlight> No penalty to your Combat Check.</li>
-                        <li><Highlight>Medium Range:</Highlight> A -10% penalty to your Combat Check.</li>
-                        <li><Highlight>Long Range:</Highlight> You have Disadvantage on your Combat Check.</li>
-                    </ul>
+                    <p>Distances are abstract: <KeyTerm>Closely</KeyTerm> (within arm's reach), <KeyTerm>Nearby</KeyTerm> (in the same room), <KeyTerm>Far</KeyTerm> (in sight but at a distance), and <KeyTerm>Out of Sight</KeyTerm>. Weapons have effective ranges based on these categories.</p>
                 </RuleSection>
                 <RuleSection id="survival" title="Survival">
-                    <p>Basic needs are a constant threat in space.</p>
-                    <ul className="list-disc list-inside">
-                        <li><Highlight>Food:</Highlight> After 24 hours without food, you are at Disadvantage to all rolls.</li>
-                        <li><Highlight>Water:</Highlight> You need 1 liter of water per day. If you're rationing, any strenuous activity forces a Body Save or you pass out.</li>
-                        <li><Highlight>Oxygen:</Highlight> You can last 15 seconds without oxygen before falling unconscious. A standard vaccsuit oxygen tank lasts 12 hours.</li>
-                    </ul>
+                    <p>You must consume 1 Ration of food and 1 liter of water every 24 hours. For each day you go without, you gain <Highlight>1 Stress</Highlight> and have <Highlight>Disadvantage</Highlight> on all Checks and Saves until you eat and drink.</p>
                 </RuleSection>
                 <RuleSection id="medicine" title="Medicine">
-                     <p>You can heal naturally by resting for at least six hours and making a successful <KeyTerm>Body Save</KeyTerm>. The amount of Health healed is equal to the amount you succeeded the save by. Stimpaks, Medbays, and the First Aid skill can also heal Health. Wounds can only be healed by surgery or advanced medical care.</p>
+                    <p>A successful <Highlight>Intellect Check</Highlight> with the <KeyTerm>First Aid</KeyTerm> skill can stabilize a dying character or restore <Dice>1d10</Dice> Health. Using a <KeyTerm>Medscanner</KeyTerm> or <KeyTerm>Surgery Kit</KeyTerm> can provide Advantage on these checks.</p>
                 </RuleSection>
                 <RuleSection id="example-of-the-game" title="Example of the game">
-                    <blockquote className="border-l-4 border-secondary pl-4 italic text-muted">
-                        <p>Lilith showed up late and her Warden was busy ordering pizza, so he handed her a character sheet. First, she rolls for each Stat and writes them down. Next she picks a class. She always loved Kaylee from Firefly, so she decides to pick Teamster. She fills in her starting Saves and then adjusts her Strength and Speed by 5 each (a bonus from being a Teamster).</p>
-                        <p>Next, she picks some skills. As a Teamster, Lilith already gets Zero-G and Mechanical Repair. She picks Astrogation and Vehicle Specialization. Then, she rolls for her starting equipment, a random Trinket, and Patch. Finally, she fills in her Max Health, Stress, and Resolve and rolls <Dice>5d10</Dice> for her starting credits. She's ready to play.</p>
-                    </blockquote>
+                    <p><Highlight>Warden:</Highlight> "The airlock door hisses open onto the bridge of the derelict. It's pitch black, and a foul, coppery smell hangs in the air. A single red light flashes on a console."</p>
+                    <p><Highlight>Player 1 (Cori, a Teamster):</Highlight> "I'll pull out my flashlight and sweep it across the room. I'm telling everyone to stay close."</p>
+                    <p><Highlight>Warden:</Highlight> "Your beam cuts through the darkness, revealing bodies slumped over consoles, their vaccsuits torn open. The walls are covered in strange, pulsating organic matter. As your light hits the far wall, a slick, multi-limbed creature detaches itself and skitters into the shadows. Everyone make a <KeyTerm>Fear Save</KeyTerm>."</p>
+                    <p><Highlight>Player 2 (Zane, an Android):</Highlight> "My Fear is 78. I roll a 45. I'm good."</p>
+                    <p><Highlight>Cori:</Highlight> "My Fear is only 32... I rolled a 68. That's a fail. I gain 1 Stress, so I'm at 3 now."</p>
+                    <p><Highlight>Warden:</Highlight> "Okay, Cori, you feel a cold dread creep up your spine. Zane, you remain impassive. What do you do?"</p>
                 </RuleSection>
                 <RuleSection id="port" title="Port">
-                    <p>Ports are the hubs of civilization in Mothership. They are places to repair your ship, buy and sell goods, hire crew, and find work. They can range from gleaming corporate-run stations to seedy, dangerous asteroid bases.</p>
+                    <p>At a port, you can buy and sell equipment, look for new jobs, hire mercenaries, or take shore leave to reduce Stress.</p>
                 </RuleSection>
                 <RuleSection id="vacation" title="Vacation">
-                    <p>Spending time at a safe, civilized starport is one of the primary ways to relieve <KeyTerm>Stress</KeyTerm>. Carousing, getting a good meal, and sleeping in a real bed can all help your character recover from the horrors of the void. The Warden determines how much Stress is relieved.</p>
+                    <p>For every <Highlight>100 Credits</Highlight> you spend on shore leave (carousing, therapy, etc.), you can make a <KeyTerm>Sanity Save</KeyTerm>. If you succeed, you <Highlight>reduce your Stress by 1d5</Highlight>. If you fail, you gain 1 Stress from a particularly bad hangover or a deal gone wrong.</p>
                 </RuleSection>
                 <RuleSection id="mercenaries" title="Mercenaries">
-                    <p>If your crew is short-handed, you can hire mercenaries at most starports. They are simpler characters with four stats: <KeyTerm>Combat</KeyTerm>, <KeyTerm>Instinct</KeyTerm>, <KeyTerm>Hits</KeyTerm>, and <KeyTerm>Loyalty</KeyTerm>. To hire a mercenary, you make an Intellect Check, modified by factors like how dangerous the job is and how much you're paying. Be careful—mercenaries can be disloyal and may have their own hidden motivations.</p>
+                    <p>You can hire NPCs to fill out your crew. A typical mercenary costs around <Highlight>500 Credits per job</Highlight>, plus a share of any profits. They are seldom trustworthy and will likely abandon you if things get too dangerous.</p>
                 </RuleSection>
             </main>
         </div>

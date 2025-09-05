@@ -36,6 +36,26 @@ export interface ShopItem {
   description: string;
 }
 
+export interface ArmorItem {
+  name: string;
+  description?: string;
+  price: string;
+  pb: number;
+  o2: string;
+  speed: string;
+  peculiarities: string;
+}
+
+export interface WeaponItem {
+  name: string;
+  price: string;
+  distance: string;
+  damage: string;
+  shots: string;
+  wounds: string;
+  peculiarities: string;
+}
+
 
 // Character Creator Types
 export type Stat = 'strength' | 'speed' | 'intellect' | 'combat';
