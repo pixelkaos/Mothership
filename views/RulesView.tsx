@@ -61,7 +61,7 @@ const RulesTable: React.FC<{ data: string[], dice: 'd10' | 'd100' }> = ({ data, 
                 {data.map((items, index) => (
                     <tr key={index} className="border-b border-muted/30">
                         <td className="p-2 align-top font-mono">{index.toString().padStart(2, '0')}</td>
-                        <td className="p-2">{items}</td>
+                        <td className="p-2 align-top">{items}</td>
                     </tr>
                 ))}
             </tbody>
@@ -84,7 +84,7 @@ const ItemsTable: React.FC = () => (
                     <tr key={item.name} className="border-b border-muted/30">
                         <td className="p-2 align-top font-bold text-secondary">{item.name}</td>
                         <td className="p-2 align-top font-mono text-right">{item.price.toLocaleString()}</td>
-                        <td className="p-2 text-sm">{item.description}</td>
+                        <td className="p-2 align-top text-sm">{item.description}</td>
                     </tr>
                 ))}
             </tbody>
@@ -98,10 +98,10 @@ const ArmorTable: React.FC = () => (
             <thead>
                 <tr>
                     <th className="border-b-2 border-primary/50 p-2">Armor</th>
-                    <th className="border-b-2 border-primary/50 p-2">Price</th>
-                    <th className="border-b-2 border-primary/50 p-2">PB</th>
-                    <th className="border-b-2 border-primary/50 p-2">O2</th>
-                    <th className="border-b-2 border-primary/50 p-2">Speed</th>
+                    <th className="border-b-2 border-primary/50 p-2 text-right">Price</th>
+                    <th className="border-b-2 border-primary/50 p-2 text-right">PB</th>
+                    <th className="border-b-2 border-primary/50 p-2 text-right">O2</th>
+                    <th className="border-b-2 border-primary/50 p-2 text-right">Speed</th>
                     <th className="border-b-2 border-primary/50 p-2">Peculiarities</th>
                 </tr>
             </thead>
@@ -109,13 +109,13 @@ const ArmorTable: React.FC = () => (
                 {ARMOR_ITEMS.map((item) => (
                     <tr key={item.name} className="border-b border-muted/30">
                         <td className="p-2 align-top">
-                            <p className="font-bold text-secondary">{item.name}</p>
-                            {item.description && <p className="text-xs text-muted">{item.description}</p>}
+                            <div className="font-bold text-secondary">{item.name}</div>
+                            {item.description && <div className="text-xs text-muted">{item.description}</div>}
                         </td>
-                        <td className="p-2 align-top font-mono">{item.price}</td>
-                        <td className="p-2 align-top font-mono">{item.pb}</td>
-                        <td className="p-2 align-top font-mono">{item.o2}</td>
-                        <td className="p-2 align-top font-mono">{item.speed}</td>
+                        <td className="p-2 align-top font-mono text-right">{item.price}</td>
+                        <td className="p-2 align-top font-mono text-right">{item.pb}</td>
+                        <td className="p-2 align-top font-mono text-right">{item.o2}</td>
+                        <td className="p-2 align-top font-mono text-right">{item.speed}</td>
                         <td className="p-2 align-top text-sm">{item.peculiarities}</td>
                     </tr>
                 ))}
@@ -130,10 +130,10 @@ const WeaponTable: React.FC = () => (
             <thead>
                 <tr>
                     <th className="border-b-2 border-primary/50 p-2">Weapon</th>
-                    <th className="border-b-2 border-primary/50 p-2">Price</th>
+                    <th className="border-b-2 border-primary/50 p-2 text-right">Price</th>
                     <th className="border-b-2 border-primary/50 p-2">Distance</th>
-                    <th className="border-b-2 border-primary/50 p-2">Damage</th>
-                    <th className="border-b-2 border-primary/50 p-2">Shots fired</th>
+                    <th className="border-b-2 border-primary/50 p-2 text-right">Damage</th>
+                    <th className="border-b-2 border-primary/50 p-2 text-right">Shots fired</th>
                     <th className="border-b-2 border-primary/50 p-2">Wounds</th>
                     <th className="border-b-2 border-primary/50 p-2">Peculiarities</th>
                 </tr>
@@ -142,10 +142,10 @@ const WeaponTable: React.FC = () => (
                 {WEAPON_ITEMS.map((item) => (
                     <tr key={item.name} className="border-b border-muted/30">
                         <td className="p-2 align-top font-bold text-secondary">{item.name}</td>
-                        <td className="p-2 align-top font-mono">{item.price}</td>
+                        <td className="p-2 align-top font-mono text-right">{item.price}</td>
                         <td className="p-2 align-top">{item.distance}</td>
-                        <td className="p-2 align-top font-mono">{item.damage}</td>
-                        <td className="p-2 align-top font-mono">{item.shots}</td>
+                        <td className="p-2 align-top font-mono text-right">{item.damage}</td>
+                        <td className="p-2 align-top font-mono text-right">{item.shots}</td>
                         <td className="p-2 align-top">{item.wounds}</td>
                         <td className="p-2 align-top text-sm">{item.peculiarities}</td>
                     </tr>
