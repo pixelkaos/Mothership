@@ -1,9 +1,5 @@
 
 
-
-
-
-
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, SkillTier, Stat } from '../types';
 import { ALL_SKILLS, CLASSES_DATA, LOADOUTS, TRINKETS, PATCHES, SCIENTIST_SKILL_CHOICES, FIRST_NAMES, LAST_NAMES, PRONOUNS } from '../constants';
@@ -49,6 +45,50 @@ interface CharacterCreatorViewProps {
   characterData: CharacterSaveData | null;
   onCharacterUpdate: (character: CharacterSaveData | null) => void;
 }
+
+const FormattedBackstory: React.FC<{ text: string }> = ({ text }) => {
+    const parts = text.split('\n').map((line, index) => {
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('### ')) {
+            return <h3 key={index} className="text-xl font-bold text-secondary tracking-wide uppercase mt-4 mb-2">{trimmedLine.substring(4)}</h3>;
+        }
+        if (trimmedLine.startsWith('* ')) {
+            const content = trimmedLine.substring(2);
+            // Use regex to find and style the bolded label, making it safer than direct HTML injection for the whole line.
+            const styledContent = content.replace(/\*\*(.*?):\*\*/g, '<strong class="text-primary font-bold">$1:</strong>');
+            return <li key={index} className="ml-4 list-disc" dangerouslySetInnerHTML={{ __html: styledContent }} />;
+        }
+        if (trimmedLine) {
+            return <p key={index} className="mt-2">{trimmedLine}</p>;
+        }
+        return null;
+    });
+
+    // Group list items into a <ul> for correct HTML structure
+    const groupedParts: React.ReactNode[] = [];
+    let currentList: React.ReactNode[] = [];
+
+    parts.forEach((part, index) => {
+        if (part && part.type === 'li') {
+            currentList.push(part);
+        } else {
+            if (currentList.length > 0) {
+                groupedParts.push(<ul key={`ul-${index}`} className="space-y-1">{currentList}</ul>);
+                currentList = [];
+            }
+            if (part) {
+                groupedParts.push(part);
+            }
+        }
+    });
+
+    if (currentList.length > 0) {
+        groupedParts.push(<ul key="ul-end" className="space-y-1">{currentList}</ul>);
+    }
+
+    return <div>{groupedParts}</div>;
+};
+
 
 const StatInput: React.FC<{
     label: string;
@@ -296,6 +336,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
     const [isCustomPronoun, setIsCustomPronoun] = useState(false);
     const [isGeneratingPortrait, setIsGeneratingPortrait] = useState(false);
     const [isGeneratingRecruit, setIsGeneratingRecruit] = useState(false);
+    const [isEditingBackstory, setIsEditingBackstory] = useState(false);
 
 
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -457,7 +498,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
 
         setIsGeneratingPortrait(true);
         try {
-            let prompt = `A gritty, retro-futuristic, sci-fi illustrated portrait of a Mothership RPG character. A ${currentCharacter.class.name}.`;
+            let prompt = `A vibrant cyberpunk illustration in a comic book anime style of a Mothership RPG character. A ${currentCharacter.class.name}.`;
             if (currentCharacter.pronouns) {
                 prompt += ` Pronouns: ${currentCharacter.pronouns}.`;
             }
@@ -470,7 +511,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                 prompt += ` They are holding a ${currentCharacter.equipment.trinket}.`;
             }
 
-            prompt += ` Style: dark, atmospheric, blue-collar sci-fi, inspired by Alien and Blade Runner. Minimalist dark background. Bust shot. Photorealistic.`
+            prompt += ` Art Style: Bold colors, defined line art, high contrast, dramatic neon lighting. Bust shot.`;
 
             const imageUrl = await generateCharacterPortrait(prompt);
             setChar(c => ({...c, portrait: imageUrl}));
@@ -514,6 +555,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
 
     const handleFullCharacterRoll = useCallback(async () => {
         setIsGeneratingRecruit(true);
+        setIsEditingBackstory(false);
         try {
             const randomClass = CLASSES_DATA[Math.floor(Math.random() * CLASSES_DATA.length)];
     
@@ -654,6 +696,7 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                 setBaseSaves(data.baseSaves);
                 setAndroidPenalty(data.androidPenalty ?? null);
                 setScientistBonus(data.scientistBonus ?? null);
+                setIsEditingBackstory(false);
 
             } catch (error: any) {
                 alert(`Error loading character file: ${error.message}`);
@@ -783,12 +826,38 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                                 />
                             )}
                         </div>
-                        <textarea 
-                            placeholder="Character Story"
-                            className="flex-grow bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary resize-y min-h-[100px]"
-                            onChange={e => setChar(c => ({...c, backstory: e.target.value}))}
-                            value={char.backstory}
-                         />
+                        <div className="flex-grow bg-black/50 border border-muted p-2 focus-within:border-primary min-h-[100px] resize-y overflow-auto relative transition-colors">
+                            {char.backstory && !isEditingBackstory ? (
+                                <>
+                                    <FormattedBackstory text={char.backstory} />
+                                    <button
+                                        onClick={() => setIsEditingBackstory(true)}
+                                        className="absolute top-1 right-1 px-2 py-1 text-xs uppercase tracking-widest transition-colors duration-200 bg-muted/50 text-foreground hover:bg-secondary hover:text-background"
+                                        aria-label="Edit backstory"
+                                    >
+                                        Edit
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <textarea
+                                        placeholder="Character Story"
+                                        className="w-full h-full bg-transparent border-none focus:ring-0 focus:outline-none resize-none"
+                                        onChange={e => setChar(c => ({...c, backstory: e.target.value}))}
+                                        value={char.backstory}
+                                    />
+                                    {isEditingBackstory && (
+                                        <button
+                                            onClick={() => setIsEditingBackstory(false)}
+                                            className="absolute top-1 right-1 px-2 py-1 text-xs uppercase tracking-widest transition-colors duration-200 bg-primary text-background hover:bg-primary-hover"
+                                            aria-label="Save backstory"
+                                        >
+                                            Save
+                                        </button>
+                                    )}
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
 

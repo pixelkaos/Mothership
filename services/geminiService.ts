@@ -1,4 +1,5 @@
 
+
 import { GoogleGenAI } from "@google/genai";
 import type { DerelictShip, Character } from '../types';
 
@@ -72,7 +73,7 @@ export async function generateCharacterBackstory(character: Character): Promise<
     const prompt = `
 You are a creative writer for the gritty, blue-collar sci-fi horror tabletop RPG "Mothership". Your tone is bleak, tense, and inspired by films like 'Alien', 'Blade Runner', and 'Event Horizon'.
 
-Based on the following character sheet, write a compelling and atmospheric background story of 280-350 words. This backstory should explain who this person was before signing up for this dangerous job. Weave their stats, class, skills, and even their equipment into the narrative.
+Based on the following character sheet, generate a background profile. The profile must consist of two parts: a bulleted list of key facts, and a narrative backstory.
 
 **Character Data:**
 - **Name:** ${character.name}
@@ -87,12 +88,28 @@ Based on the following character sheet, write a compelling and atmospheric backg
 - **Patch:** ${character.equipment.patch}
 
 **Instructions:**
-- The story should feel grounded and realistic for the setting.
-- Hint at why their stats are high or low (e.g., high Strength from manual labor, low Sanity from a past trauma).
-- Connect their skills to their past profession or experiences.
-- Subtly incorporate their trinket or patch into their story as a memento or a piece of their identity.
-- The story should lead up to why they are now taking on dangerous, high-risk work in deep space.
-- Do not just list the stats; create a narrative that reflects them.
+
+1.  **Key Facts:** Create a bulleted list of 7 key facts about the character using the specified labels.
+2.  **Backstory:** Write a compelling and atmospheric narrative background story of 150-200 words. This story should:
+    *   Feel grounded and realistic for the setting.
+    *   Weave together some of the key facts from the list.
+    *   Hint at the circumstances that led them to take on dangerous, high-risk work in deep space.
+    *   Do not just list the stats; create a narrative that reflects them.
+
+**Output Format:**
+Format your response exactly as follows, using markdown. Use Level-3 headers for sections and format list items with a leading asterisk and a bolded label ending with a colon.
+
+### Key Facts
+* **Age:** [Estimated Age]
+* **Homeworld:** [Place of origin, e.g., a specific planet, station, or ship]
+* **Background:** [Brief educational or professional background]
+* **Defining Event:** [A defining life event or trauma]
+* **Motivation:** [Primary motivation, e.g., debt, escape, discovery]
+* **Quirk:** [A personal quirk or belief]
+* **Trinket's Significance:** [How their trinket is significant to them]
+
+### Backstory
+[Your 150-200 word narrative here]
 `;
 
     try {
