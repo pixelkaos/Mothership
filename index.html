@@ -70,8 +70,24 @@
         --muted: #555555;
       }
       body {
-        text-shadow: 0 0 3px var(--primary-hover);
+        --text-shadow-val: 0 0 3px var(--primary-hover);
       }
+      
+      /* Apply text shadow and remove it on hover for better readability */
+      h1, h2, h3, h4, h5, h6, p, li, a, button, label, dt, dd, span, strong, em, code,
+      .whitespace-pre-wrap /* For AI log display */ {
+        text-shadow: var(--text-shadow-val);
+        transition: text-shadow 0.2s ease-in-out;
+      }
+
+      .group:hover,
+      h1:hover, h2:hover, h3:hover, h4:hover, h5:hover, h6:hover,
+      p:hover, li:hover, a:hover, button:hover, label:hover, dt:hover, dd:hover,
+      span:hover, strong:hover, em:hover, code:hover,
+      .whitespace-pre-wrap:hover {
+        --text-shadow-val: none;
+      }
+
       ::selection {
         background-color: var(--primary);
         color: var(--background);
