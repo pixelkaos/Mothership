@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect, useRef } from 'react';
+import { STARTING_EQUIPMENT_TABLES, TRINKETS, PATCHES } from '../constants';
 
 const RuleSection: React.FC<{ id: string; title: string; children: React.ReactNode }> = ({ id, title, children }) => (
     <section id={id} className="mb-12 scroll-mt-24">
@@ -10,16 +10,64 @@ const RuleSection: React.FC<{ id: string; title: string; children: React.ReactNo
     </section>
 );
 
-const RuleSubSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-    <div className="mt-6">
-        <h3 className="text-xl font-bold text-secondary tracking-wide uppercase mb-2">{title}</h3>
-        {children}
-    </div>
-);
+const AccordionSection: React.FC<{
+    title: string;
+    children: React.ReactNode;
+    isOpen: boolean;
+    onToggle: () => void;
+}> = ({ title, children, isOpen, onToggle }) => {
+    return (
+        <div className="border-b last:border-b-0 border-muted/30">
+            <button
+                onClick={onToggle}
+                className="w-full flex justify-between items-center text-left py-4 px-2 text-xl font-bold text-secondary tracking-wide uppercase hover:bg-secondary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-focus"
+                aria-expanded={isOpen}
+            >
+                <span>{title}</span>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-6 w-6 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            {isOpen && (
+                <div className="p-2 pb-4 animate-fadeIn">
+                    {children}
+                </div>
+            )}
+        </div>
+    );
+};
+
 
 const Highlight: React.FC<{ children: React.ReactNode }> = ({ children }) => <strong className="text-primary font-bold">{children}</strong>;
 const KeyTerm: React.FC<{ children: React.ReactNode }> = ({ children }) => <em className="text-secondary not-italic font-semibold">{children}</em>;
 const Dice: React.FC<{ children: React.ReactNode }> = ({ children }) => <code className="bg-black/50 text-secondary px-1.5 py-0.5 rounded-sm text-sm">{children}</code>;
+
+const RulesTable: React.FC<{ data: string[], dice: 'd10' | 'd100' }> = ({ data, dice }) => (
+    <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+            <thead>
+                <tr>
+                    <th className="border-b-2 border-primary/50 p-2 w-20"><Dice>{dice}</Dice></th>
+                    <th className="border-b-2 border-primary/50 p-2">Items</th>
+                </tr>
+            </thead>
+            <tbody>
+                {data.map((items, index) => (
+                    <tr key={index} className="border-b border-muted/30">
+                        <td className="p-2 align-top font-mono">{index.toString().padStart(2, '0')}</td>
+                        <td className="p-2">{items}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    </div>
+);
 
 const rulesSections = [
     { id: 'how-to-create-a-character', title: 'How to create a character' },
@@ -52,8 +100,13 @@ const rulesSections = [
 
 export const RulesView: React.FC = () => {
     const [activeSection, setActiveSection] = useState<string>(rulesSections[0].id);
+    const [openAccordion, setOpenAccordion] = useState<string | null>(null);
     const observer = useRef<IntersectionObserver | null>(null);
     const sectionsRef = useRef<Map<string, HTMLElement | null>>(new Map());
+
+    const handleToggleAccordion = (accordionName: string) => {
+        setOpenAccordion(prev => (prev === accordionName ? null : accordionName));
+    };
 
     useEffect(() => {
         const handleIntersect = (entries: IntersectionObserverEntry[]) => {
@@ -135,27 +188,69 @@ export const RulesView: React.FC = () => {
                         <li><Highlight>Pick a Class:</Highlight> Choose one of four classes: Marine, Scientist, Android, or Teamster. Your class provides bonuses to certain stats and saves, grants starting skills, and determines how you react to trauma.</li>
                         <li><Highlight>Determine Health & Wounds:</Highlight> Your maximum Health is <Dice>1d10+10</Dice>. All characters start with a maximum of <Highlight>2 Wounds</Highlight>, plus any bonus from their class.</li>
                         <li><Highlight>Spend Skill Points:</Highlight> Every class gets a base of 2 Trained and 1 Expert skill point, plus any bonuses from their class. Spend these to customize your character's abilities.</li>
-                        <li><Highlight>Finishing Touches:</Highlight> Choose a starting equipment loadout, roll for a random trinket and patch, determine your starting credits (<Dice>5d10x10</Dice>), and give your character a name. You start with <Highlight>2 Stress</Highlight> and <Highlight>0 Resolve</Highlight>.</li>
+                        <li><Highlight>Finishing Touches:</Highlight> Roll for your starting equipment from your class's table, roll for a random trinket and patch, determine your starting credits (<Dice>5d10x10</Dice>), and give your character a name. You start with <Highlight>2 Stress</Highlight> and <Highlight>0 Resolve</Highlight>.</li>
                     </ol>
                 </RuleSection>
 
                  <RuleSection id="starting-equipment" title="Starting Equipment">
-                    <p>Instead of buying gear piece by piece, new characters choose one of four <KeyTerm>Starting Loadouts</KeyTerm> for convenience. Each is tailored to a specific role:</p>
-                    <ul className="list-disc list-inside">
-                        <li><Highlight>Excavation:</Highlight> For breaking into derelicts. Includes a Crowbar, Hand Welder, Laser Cutter, and a Vaccsuit.</li>
-                        <li><Highlight>Exploration:</Highlight> For surviving on alien worlds. Includes a Vibechete, Rigging Gun, First Aid Kit, Vaccsuit, and MREs.</li>
-                        <li><Highlight>Extermination:</Highlight> For dealing with hostiles. Includes an SMG, Frag Grenades, and Standard Battle Dress.</li>
-                        <li><Highlight>Examination:</Highlight> For scientific analysis. Includes a Scalpel, Tranq Pistol, Hazard Suit, and Medscanner.</li>
-                    </ul>
+                    <p>Starting equipment includes weapons, armor, and other gear. Roll <Dice>1d10</Dice> on the appropriate table to find your starting equipment, and record it on your character sheet. Some options are better than others, but all are useful in desperate hands. Equipment underlined in a dotted line is not covered in the Items section — use common sense to determine its purpose.</p>
+                    <div className="mt-6 border-t border-muted/30">
+                        <AccordionSection
+                            title="Marines' Basic Equipment"
+                            isOpen={openAccordion === 'Marine'}
+                            onToggle={() => handleToggleAccordion('Marine')}
+                        >
+                            <RulesTable data={STARTING_EQUIPMENT_TABLES.Marine} dice="d10" />
+                        </AccordionSection>
+                        <AccordionSection
+                            title="Androids' Starting Equipment"
+                            isOpen={openAccordion === 'Android'}
+                            onToggle={() => handleToggleAccordion('Android')}
+                        >
+                            <RulesTable data={STARTING_EQUIPMENT_TABLES.Android} dice="d10" />
+                        </AccordionSection>
+                        <AccordionSection
+                            title="Scientists' Starting Equipment"
+                            isOpen={openAccordion === 'Scientist'}
+                            onToggle={() => handleToggleAccordion('Scientist')}
+                        >
+                            <RulesTable data={STARTING_EQUIPMENT_TABLES.Scientist} dice="d10" />
+                        </AccordionSection>
+                        <AccordionSection
+                            title="Teamsters' Initial Equipment"
+                            isOpen={openAccordion === 'Teamster'}
+                            onToggle={() => handleToggleAccordion('Teamster')}
+                        >
+                            <RulesTable data={STARTING_EQUIPMENT_TABLES.Teamster} dice="d10" />
+                        </AccordionSection>
+                    </div>
                 </RuleSection>
                 <RuleSection id="credits" title="Credits">
-                    <p>If you pick a starting loadout, you begin with <Dice>5d10</Dice> Credits. If you choose to forgo the loadouts and buy equipment individually, you start with <Dice>5d10*10</Dice> Credits.</p>
+                    <p>If you roll for a starting equipment package, you begin with <Dice>5d10</Dice> Credits. If you choose to forgo this and buy equipment individually, you start with <Dice>5d10*10</Dice> Credits.</p>
                 </RuleSection>
                 <RuleSection id="trinkets" title="Trinkets">
-                    <p>Every character starts with a random <KeyTerm>Trinket</KeyTerm>, a small personal item that helps flesh out your character but has no mechanical benefit. Examples include a faded photograph, a bent wrench, or a deck of tarot cards.</p>
+                    <p>Roll a <Dice>d100</Dice> on this table at character creation to gain a random trinket. Perhaps it will bring you good luck in the void of space, or at least provide something to talk about on your next station vacation.</p>
+                     <div className="mt-6 border-t border-muted/30">
+                        <AccordionSection
+                            title="D100 Trinkets"
+                            isOpen={openAccordion === 'Trinkets'}
+                            onToggle={() => handleToggleAccordion('Trinkets')}
+                        >
+                            <RulesTable data={TRINKETS} dice="d100" />
+                        </AccordionSection>
+                    </div>
                 </RuleSection>
                 <RuleSection id="patches" title="Patches">
-                    <p>You also start with a random <KeyTerm>Patch</KeyTerm> sewn onto your clothing or gear. Like trinkets, these are for flavor and help define your character's personality. Examples include a "#1 Worker" patch, a biohazard symbol, or one that says "I'm Not A Rocket Scientist / But You're An Idiot".</p>
+                    <p>Roll a <Dice>d100</Dice> on this table at character creation to gain a random patch placed on your clothing or equipment. Whether it has any special significance is up to you.</p>
+                     <div className="mt-6 border-t border-muted/30">
+                        <AccordionSection
+                            title="D100 Patches"
+                            isOpen={openAccordion === 'Patches'}
+                            onToggle={() => handleToggleAccordion('Patches')}
+                        >
+                            <RulesTable data={PATCHES} dice="d100" />
+                        </AccordionSection>
+                    </div>
                 </RuleSection>
                 <RuleSection id="items" title="Items">
                     <p>Gear is crucial for survival. Key items include <Highlight>Vaccsuits</Highlight> for surviving in space, <Highlight>First Aid Kits</Highlight> for healing, <Highlight>Flashlights</Highlight> for exploring dark corners, and <Highlight>MREs</Highlight> (Meal, Ready-to-Eat) for sustenance.</p>
@@ -195,9 +290,10 @@ export const RulesView: React.FC = () => {
                 </RuleSection>
                 <RuleSection id="stress" title="Stress">
                     <p>Stress is a measure of your accumulated fear and anxiety. It starts at 2 and increases when you fail Saves, get critically injured, or face terrifying situations. While Stress doesn't do anything on its own, it makes you more vulnerable to Panic.</p>
-                    <RuleSubSection title="Relieving Stress">
-                         <p>You can attempt to relieve Stress by resting for at least six hours. After resting, you can make a <KeyTerm>Fear Save</KeyTerm>. If you succeed, you relieve 1 Stress for every 10 points you succeeded by. Other activities like carousing in a safe port can also relieve Stress at the GM's discretion.</p>
-                    </RuleSubSection>
+                    <div className="mt-6">
+                        <h3 className="text-xl font-bold text-secondary tracking-wide uppercase mb-2">Relieving Stress</h3>
+                        <p>You can attempt to relieve Stress by resting for at least six hours. After resting, you can make a <KeyTerm>Fear Save</KeyTerm>. If you succeed, you relieve 1 Stress for every 10 points you succeeded by. Other activities like carousing in a safe port can also relieve Stress at the GM's discretion.</p>
+                    </div>
                 </RuleSection>
                 <RuleSection id="panic-checks" title="Panic checks">
                      <p>When things get bad, the GM may call for a <KeyTerm>Panic Check</KeyTerm>. To make one, you roll <Dice>2d10</Dice>.</p>
@@ -217,13 +313,14 @@ export const RulesView: React.FC = () => {
                 </RuleSection>
                 <RuleSection id="skills-development" title="Skills development">
                     <p>Characters gain Experience Points (XP) for surviving sessions and accomplishing goals. With enough XP, you <KeyTerm>Level Up</KeyTerm>. When you level up, you get to make improvements to your character and gain skill points to learn new skills or improve existing ones.</p>
-                    <RuleSubSection title="Leveling Up">
-                         <ol className="list-decimal list-inside space-y-1">
+                    <div className="mt-6">
+                        <h3 className="text-xl font-bold text-secondary tracking-wide uppercase mb-2">Leveling Up</h3>
+                        <ol className="list-decimal list-inside space-y-1">
                             <li><Highlight>Pick one Major Improvement:</Highlight> Either improve one Stat by 5 and another by 3, OR improve two Saves by 4 each.</li>
                             <li><Highlight>Pick one Minor Improvement:</Highlight> Either gain 1 Resolve, remove a phobia, or heal all your Stress.</li>
                             <li><Highlight>Gain 2 Skill Points:</Highlight> Spend these points to acquire new skills. Trained skills cost 1 point, Expert costs 2, and Master costs 3.</li>
                         </ol>
-                    </RuleSubSection>
+                    </div>
                 </RuleSection>
                 <RuleSection id="combat-clashes" title="Combat clashes">
                     <p>At the start of combat, everyone makes a <KeyTerm>Speed Check</KeyTerm>. Those who succeed act before the enemies; those who fail act after. On your turn, you can take <Highlight>two significant actions</Highlight> (e.g., attack, move, use an item, operate a machine). Simple actions like speaking or taking cover are often free.</p>
@@ -233,9 +330,10 @@ export const RulesView: React.FC = () => {
                 </RuleSection>
                 <RuleSection id="wounds-and-death" title="Wounds and death">
                     <p>Damage reduces your <KeyTerm>Health</KeyTerm>. When your Health reaches 0, it resets to maximum but you gain 1 <KeyTerm>Wound</KeyTerm>. Wounds are serious, debilitating injuries determined by a roll on a table. If you ever gain more Wounds than your maximum, you die.</p>
-                    <RuleSubSection title="Death">
+                    <div className="mt-6">
+                        <h3 className="text-xl font-bold text-secondary tracking-wide uppercase mb-2">Death</h3>
                         <p>When you reach 0 Health (before gaining a wound), you must make a <KeyTerm>Body Save</KeyTerm>. Failure means you die. Success means you fall unconscious. Taking more Wounds than your maximum is also a common way to die. Death is permanent.</p>
-                    </RuleSubSection>
+                    </div>
                 </RuleSection>
                 <RuleSection id="distance-and-range" title="Distance and range">
                      <p>Ranged weapons have three ranges: Short, Medium, and Long.</p>
@@ -259,7 +357,7 @@ export const RulesView: React.FC = () => {
                 <RuleSection id="example-of-the-game" title="Example of the game">
                     <blockquote className="border-l-4 border-secondary pl-4 italic text-muted">
                         <p>Lilith showed up late and her Warden was busy ordering pizza, so he handed her a character sheet. First, she rolls for each Stat and writes them down. Next she picks a class. She always loved Kaylee from Firefly, so she decides to pick Teamster. She fills in her starting Saves and then adjusts her Strength and Speed by 5 each (a bonus from being a Teamster).</p>
-                        <p>Next, she picks some skills. As a Teamster, Lilith already gets Zero-G and Mechanical Repair. She picks Astrogation and Vehicle Specialization. Then, she picks the Excavation loadout and rolls for a random Trinket and Patch. Finally, she fills in her Max Health, Stress, and Resolve and rolls <Dice>5d10</Dice> for her starting credits. She's ready to play.</p>
+                        <p>Next, she picks some skills. As a Teamster, Lilith already gets Zero-G and Mechanical Repair. She picks Astrogation and Vehicle Specialization. Then, she rolls for her starting equipment, a random Trinket, and Patch. Finally, she fills in her Max Health, Stress, and Resolve and rolls <Dice>5d10</Dice> for her starting credits. She's ready to play.</p>
                     </blockquote>
                 </RuleSection>
                 <RuleSection id="port" title="Port">

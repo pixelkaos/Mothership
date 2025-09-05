@@ -1,10 +1,9 @@
-
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import type { Character, CharacterSaveData, ClassName, Stat, CharacterClass } from '../../types';
 import { initialSaveData } from '../../utils/character';
 import { set } from '../../utils/helpers';
 import { rollDice } from '../../utils/dice';
-import { ALL_SKILLS, CLASSES_DATA, LOADOUTS, PATCHES, PRONOUNS, SCIENTIST_SKILL_CHOICES, TRINKETS } from '../../constants';
+import { ALL_SKILLS, CLASSES_DATA, STARTING_EQUIPMENT_TABLES, PATCHES, PRONOUNS, SCIENTIST_SKILL_CHOICES, TRINKETS } from '../../constants';
 import { SplitStatInput, StatInput } from './CharacterManifest';
 import { SkillSelector } from '../SkillSelector';
 import { generateCharacterBackstory, generateCharacterPortrait } from '../../services/geminiService';
@@ -144,7 +143,7 @@ export const CharacterWizard: React.FC<{
     
     // Auto-roll equipment for selected loadout
     useEffect(() => {
-        if(saveData.character.equipment.loadout) {
+        if(saveData.character.equipment.loadout && !saveData.character.equipment.trinket) {
             updateData('character.equipment.trinket', TRINKETS[Math.floor(Math.random() * TRINKETS.length)]);
             updateData('character.equipment.patch', PATCHES[Math.floor(Math.random() * PATCHES.length)]);
             updateData('character.credits', rollDice('5d10') * 10);
@@ -270,24 +269,43 @@ const Step4Skills: React.FC<StepProps> = ({ saveData, onUpdate }) => {
 };
 
 const Step5Equipment: React.FC<StepProps> = ({ saveData, onUpdate }) => {
-    const { equipment, credits } = saveData.character;
+    const { equipment, credits, class: charClass } = saveData.character;
+    
+    const handleRollEquipment = () => {
+        if (!charClass) return;
+        const equipmentTable = STARTING_EQUIPMENT_TABLES[charClass.name];
+        const rolledEquipment = equipmentTable[Math.floor(Math.random() * equipmentTable.length)];
+        onUpdate('character.equipment.loadout', rolledEquipment);
+    };
+
+    if (!charClass) {
+        return <p className="text-muted text-center">Go back and select a class to see equipment options.</p>;
+    }
+
     return (
         <div className="space-y-6">
-            <div className="text-center"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Equipment</h2><p className="text-muted mt-2">Choose a starting loadout. Your trinket, patch, and credits will be assigned.</p></div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {LOADOUTS.map(loadout => {
-                    const name = loadout.split(':')[0];
-                    return <button key={name} onClick={() => onUpdate('character.equipment.loadout', loadout)} className={`p-4 border text-left transition-colors ${equipment.loadout === loadout ? 'bg-primary text-background border-primary' : 'bg-transparent border-tertiary text-tertiary hover:bg-tertiary hover:text-background'}`}>
-                        <h4 className="font-bold text-lg uppercase text-secondary">{name}</h4>
-                        <p className="text-xs text-muted mt-2">{loadout.split(': ')[1]}</p>
-                    </button>
-                })}
+            <div className="text-center">
+                <h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Equipment</h2>
+                <p className="text-muted mt-2">Roll on your class's table to determine your starting gear. Your trinket, patch, and credits will also be assigned.</p>
             </div>
-            {equipment.loadout && <div className="text-center border-t border-primary/50 pt-6 mt-6 space-y-2 text-sm">
-                <p><strong className="text-primary/80">Trinket:</strong> {equipment.trinket}</p>
-                <p><strong className="text-primary/80">Patch:</strong> {equipment.patch}</p>
-                <p><strong className="text-primary/80">Credits:</strong> {credits}</p>
-            </div>}
+            <div className="text-center">
+                <button 
+                    onClick={handleRollEquipment}
+                    className="px-6 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed"
+                >
+                    Roll for Equipment
+                </button>
+            </div>
+            {equipment.loadout && (
+                <div className="text-center border-t border-primary/50 pt-6 mt-6 space-y-2 text-sm bg-black/30 p-4">
+                    <p className="text-lg text-foreground">{equipment.loadout}</p>
+                    <div className="pt-4 mt-4 border-t border-muted/50 flex justify-around">
+                        <p><strong className="text-primary/80">Trinket:</strong> {equipment.trinket}</p>
+                        <p><strong className="text-primary/80">Patch:</strong> {equipment.patch}</p>
+                        <p><strong className="text-primary/80">Credits:</strong> {credits}</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -346,7 +364,7 @@ const Step7Manifest: React.FC<{saveData: CharacterSaveData, onGoToStep: (step: n
                 <p><strong>Saves:</strong> Sanity {character.saves.sanity}, Fear {character.saves.fear}, Body {character.saves.body} <EditButton step={1} /></p>
                 <p><strong>Health:</strong> {character.health.current}/{character.health.max} | <strong>Wounds:</strong> {character.wounds.current}/{character.wounds.max} | <strong>Stress:</strong> {character.stress.current} <EditButton step={3} /></p>
                 <p><strong>Skills ({character.skills.trained.length + character.skills.expert.length + character.skills.master.length}):</strong> {[...character.skills.trained, ...character.skills.expert, ...character.skills.master].join(', ')} <EditButton step={4} /></p>
-                <p><strong>Equipment:</strong> {character.equipment.loadout.split(':')[0]} Loadout, {character.equipment.trinket}, {character.equipment.patch}, {character.credits}c <EditButton step={5} /></p>
+                <p><strong>Equipment:</strong> {character.equipment.loadout}, {character.equipment.trinket}, {character.equipment.patch}, {character.credits}c <EditButton step={5} /></p>
             </div>
         </div>
     );

@@ -1,5 +1,4 @@
-
-import { ALL_SKILLS, CLASSES_DATA, FIRST_NAMES, LAST_NAMES, LOADOUTS, PATCHES, PRONOUNS, SCIENTIST_SKILL_CHOICES, TRINKETS } from "../constants";
+import { ALL_SKILLS, CLASSES_DATA, FIRST_NAMES, LAST_NAMES, STARTING_EQUIPMENT_TABLES, PATCHES, PRONOUNS, SCIENTIST_SKILL_CHOICES, TRINKETS } from "../constants";
 import { generateCharacterBackstory, generateCharacterPortrait } from "../services/geminiService";
 import type { Character, CharacterClass, CharacterSaveData, SkillDefinition, SkillTier, Stat } from "../types";
 import { rollDice } from "./dice";
@@ -164,8 +163,12 @@ export const generateRandomRecruit = async (): Promise<CharacterSaveData> => {
     
     const skills = autoSelectSkills(randomClass, ALL_SKILLS);
     const maxHealth = rollDice('1d10+10');
+
+    const equipmentTable = STARTING_EQUIPMENT_TABLES[randomClass.name];
+    const rolledEquipment = equipmentTable[Math.floor(Math.random() * equipmentTable.length)];
+
     const equipment = {
-        loadout: LOADOUTS[Math.floor(Math.random() * LOADOUTS.length)],
+        loadout: rolledEquipment,
         trinket: TRINKETS[Math.floor(Math.random() * TRINKETS.length)],
         patch: PATCHES[Math.floor(Math.random() * PATCHES.length)],
     };

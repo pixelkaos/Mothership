@@ -1,12 +1,11 @@
 
-
 import React from 'react';
-import type { NavigationView } from '../App';
+import type { NavigationView, View } from '../App';
 
 interface HeaderProps {
     onShowTutorial: () => void;
     activeView: NavigationView;
-    onSetView: (view: NavigationView) => void;
+    onSetView: (view: View) => void;
 }
 
 const NavButton: React.FC<{
@@ -30,12 +29,18 @@ const NavButton: React.FC<{
 
 export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSetView }) => (
     <header className="relative text-center pb-4">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-widest uppercase text-primary">
-            MOTHERSHIP
-        </h1>
-        <h2 className="text-lg sm:text-xl text-foreground/80 tracking-[0.2em] mb-4">
-            RPG COMPANION
-        </h2>
+        <button
+            onClick={() => onSetView('home')}
+            className="bg-transparent border-0 p-0 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus rounded-sm"
+            aria-label="Go to home page"
+        >
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-widest uppercase text-primary transition-colors group-hover:text-primary-hover">
+                MOTHERSHIP
+            </h1>
+            <h2 className="text-lg sm:text-xl text-foreground/80 tracking-[0.2em] mb-4 transition-colors group-hover:text-foreground">
+                RPG COMPANION
+            </h2>
+        </button>
         
         <div className="flex justify-center border-y border-secondary/50">
             <NavButton label="Derelict Generator" isActive={activeView === 'derelict'} onClick={() => onSetView('derelict')} />

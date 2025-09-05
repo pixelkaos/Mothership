@@ -1,7 +1,8 @@
 
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, Stat } from '../../types';
-import { ALL_SKILLS, CLASSES_DATA, LOADOUTS, TRINKETS, PATCHES, SCIENTIST_SKILL_CHOICES, PRONOUNS } from '../../constants';
+// Fix: Removed unused 'LOADOUTS' import which is not exported from constants.ts
+import { ALL_SKILLS, CLASSES_DATA, TRINKETS, PATCHES, SCIENTIST_SKILL_CHOICES, PRONOUNS } from '../../constants';
 import { set } from '../../utils/helpers';
 import { SkillSelector } from '../SkillSelector';
 import { useTooltip } from '../Tooltip';
