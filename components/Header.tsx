@@ -1,12 +1,12 @@
 
 
 import React from 'react';
-import type { View } from '../App';
+import type { NavigationView } from '../App';
 
 interface HeaderProps {
     onShowTutorial: () => void;
-    activeView: View;
-    onSetView: (view: View) => void;
+    activeView: NavigationView;
+    onSetView: (view: NavigationView) => void;
 }
 
 const NavButton: React.FC<{
