@@ -1,7 +1,7 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import type { CharacterSaveData } from '../../types';
 import { generateRandomRecruit } from '../../utils/character';
+import { PREGENERATED_CHARACTERS } from './pregeneratedCharacters';
 
 interface CharacterHangarProps {
     onStartNew: () => void;
@@ -32,6 +32,33 @@ const HangarButton: React.FC<{
         {children}
     </div>
 );
+
+const PregeneratedCharacterCard: React.FC<{
+    character: CharacterSaveData['character'];
+    description: string;
+    onSelect: () => void;
+}> = ({ character, description, onSelect }) => (
+    <div className="border border-primary/50 flex flex-col bg-black/30 h-full group overflow-hidden">
+        <div className="aspect-square w-full bg-black/50 relative">
+            <img src={character.portrait} alt={`${character.name} portrait`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            <div className="absolute bottom-0 left-0 p-4">
+                <h3 className="text-xl font-bold text-primary uppercase tracking-wider">{character.name}</h3>
+                <p className="text-sm text-secondary">{character.class?.name}</p>
+            </div>
+        </div>
+        <div className="p-4 flex flex-col flex-grow">
+            <p className="text-muted text-sm my-2 flex-grow">{description}</p>
+            <button
+                onClick={onSelect}
+                className="w-full mt-auto px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed"
+            >
+                Select {character.class?.name}
+            </button>
+        </div>
+    </div>
+);
+
 
 export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, onCharacterReady }) => {
     const [isGenerating, setIsGenerating] = useState(false);
@@ -76,10 +103,30 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
     }, [onCharacterReady]);
 
     return (
-        <div className="max-w-5xl mx-auto text-center">
+        <div className="max-w-7xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-primary uppercase tracking-wider mb-2">Character Hangar</h2>
-            <p className="text-muted mb-8">Create, load, or randomly generate a new recruit for your next mission.</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <p className="text-muted mb-8">Select a pre-generated recruit or create your own for the next mission.</p>
+            
+            <h3 className="text-2xl font-bold text-secondary uppercase tracking-wider mb-6">Choose a Pre-Generated Recruit</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                {PREGENERATED_CHARACTERS.map((charInfo) => (
+                    <PregeneratedCharacterCard
+                        key={charInfo.data.character.name}
+                        character={charInfo.data.character}
+                        description={charInfo.shortDescription}
+                        onSelect={() => onCharacterReady(charInfo.data)}
+                    />
+                ))}
+            </div>
+
+            <div className="flex items-center my-8">
+                <div className="flex-grow h-px bg-primary/30"></div>
+                <span className="px-4 text-muted uppercase">Or</span>
+                <div className="flex-grow h-px bg-primary/30"></div>
+            </div>
+
+            <h3 className="text-2xl font-bold text-secondary uppercase tracking-wider mb-6">Build Your Own</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                 <HangarButton
                     title="Start Character"
                     description="Build your character from scratch in a guided step-by-step process."
