@@ -199,25 +199,26 @@ export const SplitStatInput: React.FC<{
 };
 
 const ShopAndInventory: React.FC<{
-    character: Character;
-    onCharacterUpdate: (newCharacter: Character) => void;
-}> = ({ character, onCharacterUpdate }) => {
+    characterData: CharacterSaveData;
+    onCharacterUpdate: (newSaveData: CharacterSaveData) => void;
+}> = ({ characterData, onCharacterUpdate }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { showTooltip, hideTooltip } = useTooltip();
+    const { character } = characterData;
 
     const handleBuyItem = (item: ShopItem) => {
         if (character.credits >= item.price) {
-            const newCharacter = JSON.parse(JSON.stringify(character));
-            newCharacter.credits -= item.price;
-            newCharacter.equipment.inventory.push(item.name);
-            onCharacterUpdate(newCharacter);
+            const newSaveData = JSON.parse(JSON.stringify(characterData));
+            newSaveData.character.credits -= item.price;
+            newSaveData.character.equipment.inventory.push(item.name);
+            onCharacterUpdate(newSaveData);
         }
     };
 
     const handleDropItem = (itemIndex: number) => {
-        const newCharacter = JSON.parse(JSON.stringify(character));
-        newCharacter.equipment.inventory.splice(itemIndex, 1);
-        onCharacterUpdate(newCharacter);
+        const newSaveData = JSON.parse(JSON.stringify(characterData));
+        newSaveData.character.equipment.inventory.splice(itemIndex, 1);
+        onCharacterUpdate(newSaveData);
     };
 
     if (!isOpen) {
@@ -296,14 +297,11 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
         // This should not happen if used correctly within CharacterCreatorView, but it's a good fallback.
         return <div>Error: No character data provided to manifest.</div>;
     }
-
-    // Deconstruct saveData to manage state locally for edits.
-    const [char, setChar] = useState<Character>(characterData.character);
-    const [baseStats, setBaseStats] = useState(characterData.baseStats);
-    const [baseSaves, setBaseSaves] = useState(characterData.baseSaves);
-    const [androidPenalty, setAndroidPenalty] = useState<Stat | null>(characterData.androidPenalty);
-    const [scientistBonus, setScientistBonus] = useState<Stat | null>(characterData.scientistBonus);
     
+    // Deconstruct saveData to use directly from props. No more local state for character data.
+    const { character: char, baseStats, baseSaves, androidPenalty, scientistBonus } = characterData;
+
+    // UI-only state remains local.
     const [isCustomPronoun, setIsCustomPronoun] = useState(false);
     const [isGeneratingPortrait, setIsGeneratingPortrait] = useState(false);
     const [isEditingBackstory, setIsEditingBackstory] = useState(false);
@@ -340,6 +338,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
         }));
     }, []);
 
+    // This is the core recalculation logic. It will now be based on props.
     const { finalStats, finalSaves, finalMaxWounds } = useMemo(() => {
         const classData = char.class;
         let stats = { ...baseStats };
@@ -361,34 +360,13 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
         return { finalStats: stats, finalSaves: saves, finalMaxWounds: maxWounds };
     }, [char.class, baseStats, baseSaves, androidPenalty, scientistBonus]);
 
+    // This derived character object is what the UI should render.
     const finalCharacter = useMemo<Character>(() => ({
         ...char,
         stats: finalStats,
         saves: finalSaves,
         wounds: { ...char.wounds, max: finalMaxWounds },
     }), [char, finalStats, finalSaves, finalMaxWounds]);
-
-    // Update parent state whenever local state changes
-    useEffect(() => {
-        onCharacterUpdate({
-            character: finalCharacter,
-            baseStats,
-            baseSaves,
-            androidPenalty,
-            scientistBonus,
-        });
-    }, [finalCharacter, baseStats, baseSaves, androidPenalty, scientistBonus, onCharacterUpdate]);
-    
-    // Sync local state if props change from outside (e.g., loading a new character)
-    useEffect(() => {
-        if (characterData) {
-            setChar(characterData.character);
-            setBaseStats(characterData.baseStats);
-            setBaseSaves(characterData.baseSaves);
-            setAndroidPenalty(characterData.androidPenalty);
-            setScientistBonus(characterData.scientistBonus);
-        }
-    }, [characterData]);
 
 
     useEffect(() => {
@@ -401,28 +379,29 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
 
 
     const handleRollerUpdate = useCallback((updatedCharacter: Character) => {
-        setChar(updatedCharacter);
-    }, []);
+        onCharacterUpdate({
+            ...characterData,
+            character: updatedCharacter,
+        });
+    }, [characterData, onCharacterUpdate]);
 
     const handleFieldChange = useCallback((path: string, value: string) => {
         const numValue = parseInt(value, 10) || 0;
+        const newSaveData = JSON.parse(JSON.stringify(characterData));
         const [statType, statName] = path.split('.');
 
-        if (statType === 'stats') setBaseStats(prev => ({...prev, [statName]: numValue}));
-        else if (statType === 'saves') setBaseSaves(prev => ({...prev, [statName]: numValue}));
+        if (statType === 'stats') newSaveData.baseStats[statName] = numValue;
+        else if (statType === 'saves') newSaveData.baseSaves[statName] = numValue;
         else {
-            setChar(prevChar => {
-                const newChar = JSON.parse(JSON.stringify(prevChar));
-                set(newChar, path, numValue);
-                if (path === 'health.max') {
-                    if (newChar.health.current > numValue || newChar.health.current === 0) {
-                        set(newChar, 'health.current', numValue);
-                    }
+            set(newSaveData.character, path, numValue);
+            if (path === 'health.max') {
+                if (newSaveData.character.health.current > numValue || newSaveData.character.health.current === 0) {
+                    set(newSaveData.character, 'health.current', numValue);
                 }
-                return newChar;
-            });
+            }
         }
-    }, []);
+        onCharacterUpdate(newSaveData);
+    }, [characterData, onCharacterUpdate]);
     
     const handleApplyRoll = useCallback((path: string, value: number) => {
         handleFieldChange(path, String(value));
@@ -430,19 +409,35 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
     }, [handleFieldChange]);
 
     const handleSkillsChange = useCallback((newSkills: Character['skills']) => {
-        setChar(prev => ({ ...prev, skills: newSkills }));
-    }, []);
+        onCharacterUpdate({
+            ...characterData,
+            character: { ...characterData.character, skills: newSkills },
+        });
+    }, [characterData, onCharacterUpdate]);
 
     const handleSelectClass = useCallback((className: ClassName) => {
         const classData = CLASSES_DATA.find(c => c.name === className)!;
-        setAndroidPenalty(null);
-        setScientistBonus(null);
-        setChar(c => ({
-            ...c,
-            class: c.class?.name === className ? null : classData,
-            skills: classData.starting_skills ? { trained: classData.starting_skills, expert: [], master: [] } : { trained: [], expert: [], master: [] }
-        }));
-    }, []);
+        const isSameClass = characterData.character.class?.name === className;
+
+        const newSaveData: CharacterSaveData = {
+            ...characterData,
+            androidPenalty: isSameClass ? characterData.androidPenalty : null,
+            scientistBonus: isSameClass ? characterData.scientistBonus : null,
+            character: {
+                ...characterData.character,
+                class: isSameClass ? null : classData,
+                skills: classData.starting_skills ? { trained: classData.starting_skills, expert: [], master: [] } : { trained: [], expert: [], master: [] }
+            }
+        };
+
+        if (isSameClass) {
+            newSaveData.character.class = null;
+            newSaveData.androidPenalty = null;
+            newSaveData.scientistBonus = null;
+        }
+
+        onCharacterUpdate(newSaveData);
+    }, [characterData, onCharacterUpdate]);
 
     const handleGeneratePortrait = useCallback(async () => {
         if (!finalCharacter.class) {
@@ -458,14 +453,17 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
             if (finalCharacter.equipment.trinket) prompt += ` They are holding a ${finalCharacter.equipment.trinket}.`;
             prompt += ` Art Style: Bold colors, defined line art, high contrast, dramatic neon lighting. Bust shot.`;
             const imageUrl = await generateCharacterPortrait(prompt);
-            setChar(c => ({...c, portrait: imageUrl}));
+            onCharacterUpdate({
+                ...characterData,
+                character: { ...char, portrait: imageUrl },
+            });
         } catch (error) {
             console.error(error);
             alert("Failed to generate portrait. Please try again.");
         } finally {
             setIsGeneratingPortrait(false);
         }
-    }, [finalCharacter]);
+    }, [finalCharacter, characterData, onCharacterUpdate, char]);
 
     const handleUploadPortrait = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -477,13 +475,19 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
         const reader = new FileReader();
         reader.onload = (e) => {
             const result = e.target?.result;
-            if (typeof result === 'string') setChar(c => ({ ...c, portrait: result }));
-            else alert('Failed to read the image file.');
+            if (typeof result === 'string') {
+                 onCharacterUpdate({
+                    ...characterData,
+                    character: { ...char, portrait: result },
+                });
+            } else {
+                alert('Failed to read the image file.');
+            }
         };
         reader.onerror = () => alert('Error reading file.');
         reader.readAsDataURL(file);
         if (event.target) event.target.value = '';
-    }, []);
+    }, [characterData, onCharacterUpdate, char]);
 
     const handleSaveCharacter = useCallback(() => {
         const saveData: CharacterSaveData = { character: finalCharacter, baseStats, baseSaves, androidPenalty, scientistBonus };
@@ -555,14 +559,14 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                         </label>
                     </div>
                     <div className="md:col-span-2 flex flex-col gap-4">
-                         <input type="text" placeholder="Name" className="bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" onChange={e => setChar(c => ({...c, name: e.target.value}))} value={char.name} />
+                         <input type="text" placeholder="Name" className="bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" onChange={e => onCharacterUpdate({...characterData, character: {...char, name: e.target.value}})} value={char.name} />
                          <div className="flex gap-2">
-                            <select className={`bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary transition-all duration-200 ${isCustomPronoun ? 'w-1/2' : 'w-full'}`} value={isCustomPronoun ? 'custom' : char.pronouns} onChange={(e) => { e.target.value === 'custom' ? (setIsCustomPronoun(true), setChar(c => ({ ...c, pronouns: '' }))) : (setIsCustomPronoun(false), setChar(c => ({ ...c, pronouns: e.target.value }))) }}>
+                            <select className={`bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary transition-all duration-200 ${isCustomPronoun ? 'w-1/2' : 'w-full'}`} value={isCustomPronoun ? 'custom' : char.pronouns} onChange={(e) => { e.target.value === 'custom' ? (setIsCustomPronoun(true), onCharacterUpdate({...characterData, character: {...char, pronouns: ''}})) : (setIsCustomPronoun(false), onCharacterUpdate({...characterData, character: {...char, pronouns: e.target.value}})) }}>
                                 <option value="" disabled>Select Pronouns</option>
                                 {PRONOUNS.map(p => <option key={p} value={p}>{p}</option>)}
                                 <option value="custom">Custom...</option>
                             </select>
-                            {isCustomPronoun && <input type="text" placeholder="Enter pronouns" className="w-1/2 bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" value={char.pronouns} onChange={e => setChar(c => ({ ...c, pronouns: e.target.value }))} aria-label="Custom pronouns" />}
+                            {isCustomPronoun && <input type="text" placeholder="Enter pronouns" className="w-1/2 bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" value={char.pronouns} onChange={e => onCharacterUpdate({...characterData, character: {...char, pronouns: e.target.value}})} aria-label="Custom pronouns" />}
                         </div>
                         <div className="flex-grow bg-black/50 border border-muted p-2 focus-within:border-primary min-h-[100px] resize-y overflow-auto relative transition-colors">
                             {char.backstory && !isEditingBackstory ? (
@@ -572,7 +576,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                                 </>
                             ) : (
                                 <>
-                                    <textarea placeholder="Character Story" className="w-full h-full bg-transparent border-none focus:ring-0 focus:outline-none resize-none" onChange={e => setChar(c => ({...c, backstory: e.target.value}))} value={char.backstory} />
+                                    <textarea placeholder="Character Story" className="w-full h-full bg-transparent border-none focus:ring-0 focus:outline-none resize-none" onChange={e => onCharacterUpdate({...characterData, character: {...char, backstory: e.target.value}})} value={char.backstory} />
                                     {isEditingBackstory && <button onClick={() => setIsEditingBackstory(false)} className="absolute top-1 right-1 px-2 py-1 text-xs uppercase tracking-widest transition-colors duration-200 bg-primary text-background hover:bg-primary-hover" aria-label="Save backstory">Save</button>}
                                 </>
                             )}
@@ -605,7 +609,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                         <h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Android Penalty (-10)</h4>
                         <p className="text-xs text-muted mb-3">Androids have a specific operational flaw. Choose one stat to reduce by 10.</p>
                         <div className="flex gap-4">
-                            {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => <button key={stat} onClick={() => setAndroidPenalty(stat)} className={tertiarySelectionClasses(androidPenalty === stat)}>{stat}</button>)}
+                            {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => <button key={stat} onClick={() => onCharacterUpdate({...characterData, androidPenalty: stat})} className={tertiarySelectionClasses(androidPenalty === stat)}>{stat}</button>)}
                         </div>
                     </div>
                 )}
@@ -615,7 +619,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                         <h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Scientist Bonus (+5)</h4>
                         <p className="text-xs text-muted mb-3">Scientists have a particular field of expertise. Choose one stat to improve by 5.</p>
                         <div className="flex gap-4">
-                            {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => <button key={stat} onClick={() => setScientistBonus(stat)} className={tertiarySelectionClasses(scientistBonus === stat)}>{stat}</button>)}
+                            {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => <button key={stat} onClick={() => onCharacterUpdate({...characterData, scientistBonus: stat})} className={tertiarySelectionClasses(scientistBonus === stat)}>{stat}</button>)}
                         </div>
                     </div>
                 )}
@@ -664,7 +668,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                         </div>
                     </div>
                 </div>
-                <ShopAndInventory character={finalCharacter} onCharacterUpdate={setChar} />
+                <ShopAndInventory characterData={characterData} onCharacterUpdate={onCharacterUpdate} />
             </div>
              
             <CharacterRoller character={finalCharacter} onUpdate={handleRollerUpdate} isVisible={rollerState.isVisible} isMinimized={rollerState.isMinimized} initialPosition={rollerState.position} onStateChange={handleRollerStateChange} activeCheck={rollerState.activeCheck} onApplyRoll={handleApplyRoll} />
