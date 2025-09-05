@@ -30,6 +30,12 @@ export interface QuizQuestion {
   correctAnswerIndex: number;
 }
 
+export interface ShopItem {
+  name: string;
+  price: number;
+  description: string;
+}
+
 
 // Character Creator Types
 export type Stat = 'strength' | 'speed' | 'intellect' | 'combat';
@@ -95,6 +101,7 @@ export interface Character {
     loadout: string;
     trinket: string;
     patch: string;
+    inventory: string[];
   };
   credits: number;
 }

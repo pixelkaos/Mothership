@@ -16,7 +16,7 @@ export const initialCharacter: Character = {
     wounds: { current: 0, max: 2 },
     stress: { current: 2, minimum: 2 },
     skills: { trained: [], expert: [], master: [] },
-    equipment: { loadout: '', trinket: '', patch: '' },
+    equipment: { loadout: '', trinket: '', patch: '', inventory: [] },
     credits: 0,
 };
 
@@ -171,6 +171,7 @@ export const generateRandomRecruit = async (): Promise<CharacterSaveData> => {
         loadout: rolledEquipment,
         trinket: TRINKETS[Math.floor(Math.random() * TRINKETS.length)],
         patch: PATCHES[Math.floor(Math.random() * PATCHES.length)],
+        inventory: [],
     };
     const credits = rollDice('2d10') * 10;
     const name = `${FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)]} ${LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)]}`;

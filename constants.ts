@@ -1,4 +1,4 @@
-import type { ShipClassStatus, CharacterClass, SkillDefinition, ClassName } from './types';
+import type { ShipClassStatus, CharacterClass, SkillDefinition, ClassName, ShopItem } from './types';
 
 export const SHIP_NAME_PART1 = ["IAGO", "HECATE", "OBERON", "WHITEHALL", "DUNCAN", "BANQUO", "WINTER", "MARLOWE", "TEMPEST", "FAUST"];
 export const SHIP_NAME_PART2 = ["VALEFOR", "OPHANIM", "MARAX", "MARINER", "LABOLAS", "ASTAROTH", "CHERUBIM", "TYRANT", "BALAAM", "MURMUR"];
@@ -412,4 +412,51 @@ export const PATCHES = [
     "Two cherries",
     "\"Volunteer\"",
     "Dead Man's Hand Cards (Black Aces and Eights)"
+];
+
+export const SHOP_ITEMS: ShopItem[] = [
+    { name: 'Emergency beacon', price: 2000, description: 'A small device that produces a signal light and then a loud sound every few seconds. Additionally, it sends a distress signal by radio, but this can be jammed by a jammer.' },
+    { name: 'Automed (x5)', price: 1500, description: 'Nanotech pills that help the body recover from damage. Gives an advantage in testing the body against diseases and poisons, as well as in attempts to restore health during rest.' },
+    { name: 'First Aid Kit', price: 75, description: 'A set of bandages and medicines for stopping bleeding, dressing wounds and treating minor injuries.' },
+    { name: 'Battery (high power)', price: 500, description: 'A reliable battery used to power laser cutters, rescue drones and other devices. Can be recharged in an hour from the mains or in 6 hours from the sun. Water protection is optional (+500 Kr).' },
+    { name: 'Binoculars', price: 150, description: '20x magnification. Night vision (+300 Kr) or thermal vision (+1 kKr) can be added.' },
+    { name: 'Bioscanner', price: 3000, description: "Long Range. Allows the user to search for signs of life. Can show the position of living organisms, but not their species. Blocked by materials of the caretaker's choice." },
+    { name: 'Explosives and detonator', price: 500, description: 'An explosive charge powerful enough to destroy an airlock door. Any creature within range must make a Body saving throw or take damage (explosion) on a failed save. The detonator will work at long range, but can be blocked by a jammer.' },
+    { name: 'Water filter', price: 50, description: 'Produces up to 4 liters of clean water per hour even from the dirtiest swamp.' },
+    { name: 'Interference generator', price: 4000, description: 'The device is the size of a backpack. When turned on, it jams all radio signals within a radius of 100 km.' },
+    { name: 'Tools for electronics', price: 100, description: 'A set of tools for assembling and repairing electronic devices.' },
+    { name: 'Infrared glasses', price: 1500, description: 'Allows the wearer to see heat traces, sometimes even left several hours ago. Night vision can be added (+300 Cr).' },
+    { name: 'Oxygen cylinder', price: 50, description: 'When installed on a spacesuit, it allows breathing for up to 12 hours under normal conditions or 4 hours under load. Explosive.' },
+    { name: 'Sample collection kit', price: 50, description: 'Used to study xenoflora and xenofauna in the field. Can measure vital signs, take DNA samples, and gather other data on alien organisms. Results may not be immediate and may require a lab for full analysis.' },
+    { name: 'Magnetic boots', price: 350, description: 'Provides the user with magnetic grip, allowing movement around the fuselage of a ship (in space, when docked, or in free flight), as well as metallic asteroids or other magnetic surfaces.' },
+    { name: 'Mylar blanket', price: 10, description: 'A lightweight blanket made of heat-reflecting material. Often used to regulate the temperature of patients suffering from cold or other injuries.' },
+    { name: 'Medscanner', price: 8000, description: 'Allows you to scan a living patient or a dead body for diseases and abnormalities without performing a biopsy or autopsy. Results may not be immediate and may require a lab for full analysis.' },
+    { name: 'Mounting gear', price: 25, description: 'Grants advantage on Strength checks to open jammed gates, move heavy objects, etc.' },
+    { name: 'Set of patches (x3)', price: 200, description: 'Repairs a punctured or torn spacesuit. Patched spacesuits have a PB of 1.' },
+    { name: 'Toolkit', price: 20, description: 'Wrenches, adjustable wrenches, screwdrivers, etc. In extreme cases, they can be used as weapons (1d5 damage).' },
+    { name: 'Set of lock picks', price: 40, description: 'An advanced set of tools for opening standard gateways and electronic locks.' },
+    { name: 'Body camera', price: 50, description: 'A camera on your clothes that can transmit video to the control center so that others can see what you see. You can add night vision (+300 Kr) or thermal vision (+1 kKr).' },
+    { name: 'Paracord (50 m)', price: 10, description: 'Lightweight general purpose nylon rope.' },
+    { name: 'Personal beacon', price: 200, description: "Allows the crew to track the owner's position in the control center (or on the ship's bridge)." },
+    { name: 'Pet (Organic)', price: 200000, description: 'A small or medium-sized organic animal. Large or rare pets are worth 2d10 times as much.' },
+    { name: 'Pet (Synthetic)', price: 15000, description: 'A small or medium-sized synthetic animal. Large or rare pets cost 2d10 times as much.' },
+    { name: 'Portable terminal', price: 1500, description: 'A flat panel display, keyboard and connector that allows you to hack computers and networks, as well as perform common work tasks.' },
+    { name: 'Hiking kit', price: 1000, description: 'Tent, flask, primus stove, backpack, compass and sleeping bag.' },
+    { name: 'Short range radio', price: 100, description: 'Provides communication in space (within reasonable limits) and on the surface within a few kilometers, but can be jammed by a jammer.' },
+    { name: 'Long range radio', price: 1000, description: 'A backpack-sized communication device for communication between the ship and the surface.' },
+    { name: 'Jetpack', price: 75000, description: 'Allows the wearer to fly to a height of 100 m and maintain a speed of up to 100 km/h for two hours when fully fueled. Deals 1d100 [+] damage upon destruction. Can be refueled for 200 Cr.' },
+    { name: 'Rebreather', price: 500, description: 'Filters toxic air and allows you to breathe underwater for up to 20 minutes without surfacing. You can connect an oxygen tank.' },
+    { name: 'Backpack', price: 50, description: 'Large, durable, waterproof backpack.' },
+    { name: 'Cybernetics scanner', price: 2000, description: 'Allows androids and other cybernetic life forms to be scanned for physical or mental problems. Often mistrusted by androids.' },
+    { name: 'Folding stretcher', price: 150, description: 'A portable stretcher that fits into a backpack. Allows the patient to be securely fastened for transportation to the treatment site. The size when unfolded is about 2 m.' },
+    { name: 'Smart extension', price: 10000, description: 'Allows remote viewing, recording and control of ranged weapons, as well as +5 damage.' },
+    { name: 'Rescue drone', price: 10000, description: "A radio-controlled drone. It requires a battery to operate. Both hands are required to control it. It can fly at an altitude of up to 450 meters and at a distance of up to 3 km from the operator. It works for up to two hours. It can record and transmit video. You can purchase and equip it with two of the following devices: binoculars, interference generator, Geiger counter, laser cutter, medical scanner, personal beacon, infrared glasses, emergency beacon, cybernetic scanner, bioscanner. It can carry up to 20-30 kg." },
+    { name: 'Stimulant (per piece)', price: 1000, description: 'Cures cryosickness, reduces stress by 1, restores 1d10 hit points, and grants [+] to all rolls for 1d10 minutes. Roll 1d10. If the result is less than the number of doses taken in the last 24 hours, make a death saving throw.' },
+    { name: 'Dry rations (x7)', price: 70, description: 'Individual food rations in lightweight packaging. Each contains enough food for one person for a day (does not include water).' },
+    { name: 'Geiger counter', price: 20, description: 'Detects radiation and displays its level.' },
+    { name: 'Radiation Pills (x5)', price: 200, description: 'Take 1d5 damage and reduce radiation levels by 1 for 2d10 minutes.' },
+    { name: 'Tactical Head-Up Display (HUD)', price: 100, description: 'Often used by Marines, it allows the user to see through the body cameras of other squad members. Connects to the weapon via a smart extension.' },
+    { name: 'Flashlight', price: 30, description: 'Handheld or shoulder mounted. Illuminates 10m in front of the owner.' },
+    { name: 'Glowstick (x5)', price: 5, description: 'Disposable glow sticks that emit light within a radius of one meter.' },
+    { name: 'Exoloader', price: 100000, description: 'An open mechanical exoskeleton used for carrying loads (up to 5000 kg). The loader claws inflict 1 wound. The operator can only be in the crew uniform or standard armor suit. A battery is required for operation (it lasts for 48 hours).' },
 ];

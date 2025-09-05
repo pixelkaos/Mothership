@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { STARTING_EQUIPMENT_TABLES, TRINKETS, PATCHES } from '../constants';
+import { STARTING_EQUIPMENT_TABLES, TRINKETS, PATCHES, SHOP_ITEMS } from '../constants';
 
 const RuleSection: React.FC<{ id: string; title: string; children: React.ReactNode }> = ({ id, title, children }) => (
     <section id={id} className="mb-12 scroll-mt-24">
@@ -69,6 +69,29 @@ const RulesTable: React.FC<{ data: string[], dice: 'd10' | 'd100' }> = ({ data, 
     </div>
 );
 
+const ItemsTable: React.FC = () => (
+    <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+            <thead>
+                <tr>
+                    <th className="border-b-2 border-primary/50 p-2">Item</th>
+                    <th className="border-b-2 border-primary/50 p-2 w-28 text-right">Price (Kr)</th>
+                    <th className="border-b-2 border-primary/50 p-2">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {SHOP_ITEMS.map((item) => (
+                    <tr key={item.name} className="border-b border-muted/30">
+                        <td className="p-2 align-top font-bold text-secondary">{item.name}</td>
+                        <td className="p-2 align-top font-mono text-right">{item.price.toLocaleString()}</td>
+                        <td className="p-2 text-sm">{item.description}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    </div>
+);
+
 const rulesSections = [
     { id: 'how-to-create-a-character', title: 'How to create a character' },
     { id: 'starting-equipment', title: 'Starting equipment' },
@@ -78,6 +101,7 @@ const rulesSections = [
     { id: 'items', title: 'Items' },
     { id: 'weapon', title: 'Weapon' },
     { id: 'armor', title: 'Armor' },
+    { id: 'pets', title: 'Pets' },
     { id: 'how-to-be-a-good-player', title: 'How to be a good player' },
     { id: 'basic-rules', title: 'Basic rules' },
     { id: 'characteristics-and-tests', title: 'Characteristics and tests' },
@@ -253,13 +277,47 @@ export const RulesView: React.FC = () => {
                     </div>
                 </RuleSection>
                 <RuleSection id="items" title="Items">
-                    <p>Gear is crucial for survival. Key items include <Highlight>Vaccsuits</Highlight> for surviving in space, <Highlight>First Aid Kits</Highlight> for healing, <Highlight>Flashlights</Highlight> for exploring dark corners, and <Highlight>MREs</Highlight> (Meal, Ready-to-Eat) for sustenance.</p>
+                    <p>Often the only thing that separates characters from certain death is the right tool at hand. Below is a partial list of the various equipment available for purchase at starports and trading posts.</p>
+                    <div className="mt-6 border-t border-muted/30">
+                        <AccordionSection
+                            title="General Equipment & Gear"
+                            isOpen={openAccordion === 'Items'}
+                            onToggle={() => handleToggleAccordion('Items')}
+                        >
+                            <ItemsTable />
+                        </AccordionSection>
+                    </div>
                 </RuleSection>
                 <RuleSection id="weapon" title="Weapon">
                     <p>Weapons range from simple <Highlight>Crowbars</Highlight> (<Dice>1d10</Dice> damage) to military-grade <Highlight>Pulse Rifles</Highlight> (<Dice>5d10</Dice> damage). Ammunition is scarce, so every shot counts. Many weapons have special properties, like being fully automatic or dealing extra damage on a critical hit.</p>
                 </RuleSection>
                 <RuleSection id="armor" title="Armor">
                     <p>Armor improves your <KeyTerm>Armor Save</KeyTerm>. Standard crew attire offers no bonus (+0%), while a <Highlight>Vaccsuit</Highlight> provides +7% and full <Highlight>Advanced Battle Dress</Highlight> gives +15%. Heavier armor often comes with penalties, like Disadvantage on Speed Checks.</p>
+                </RuleSection>
+                 <RuleSection id="pets" title="Pets">
+                    <p>Pets can be great companions, but failing to protect them from harm can have psychological consequences.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                        <div className="border border-secondary/50 p-4">
+                            <h3 className="text-xl font-bold text-secondary">Organic</h3>
+                            <ul className="list-disc list-inside mt-2 space-y-1">
+                                <li>Wounds: 1(10)</li>
+                                <li>Instincts: 2d10+40</li>
+                                <li>[+] for rest tests.</li>
+                                <li>1 stress each time the pet takes damage.</li>
+                                <li>Panic roll if pet is killed. +1 to minimum stress.</li>
+                            </ul>
+                        </div>
+                        <div className="border border-secondary/50 p-4">
+                            <h3 className="text-xl font-bold text-secondary">Synthetic</h3>
+                            <ul className="list-disc list-inside mt-2 space-y-1">
+                                <li>Wounds: 2(15)</li>
+                                <li>Instincts: 2d10+30</li>
+                                <li>+5 to rest tests.</li>
+                                <li>Trial of Sanity or 1 stress each time the pet takes damage.</li>
+                                <li>1 stress if the pet is destroyed.</li>
+                            </ul>
+                        </div>
+                    </div>
                 </RuleSection>
                 <RuleSection id="how-to-be-a-good-player" title="How to be a good player">
                     <ul className="list-disc list-inside space-y-2">

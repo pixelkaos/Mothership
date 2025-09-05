@@ -1,8 +1,6 @@
-
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, Stat } from '../../types';
-// Fix: Removed unused 'LOADOUTS' import which is not exported from constants.ts
-import { ALL_SKILLS, CLASSES_DATA, TRINKETS, PATCHES, SCIENTIST_SKILL_CHOICES, PRONOUNS } from '../../constants';
+import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, Stat, ShopItem } from '../../types';
+import { ALL_SKILLS, CLASSES_DATA, TRINKETS, PATCHES, SCIENTIST_SKILL_CHOICES, PRONOUNS, SHOP_ITEMS } from '../../constants';
 import { set } from '../../utils/helpers';
 import { SkillSelector } from '../SkillSelector';
 import { useTooltip } from '../Tooltip';
@@ -195,6 +193,98 @@ export const SplitStatInput: React.FC<{
              <div className="flex justify-between w-48 mt-1 px-4">
                 <span className="text-xs text-muted">Current</span>
                 <span className="text-xs text-muted">Maximum</span>
+            </div>
+        </div>
+    );
+};
+
+const ShopAndInventory: React.FC<{
+    character: Character;
+    onCharacterUpdate: (newCharacter: Character) => void;
+}> = ({ character, onCharacterUpdate }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const { showTooltip, hideTooltip } = useTooltip();
+
+    const handleBuyItem = (item: ShopItem) => {
+        if (character.credits >= item.price) {
+            const newCharacter = JSON.parse(JSON.stringify(character));
+            newCharacter.credits -= item.price;
+            newCharacter.equipment.inventory.push(item.name);
+            onCharacterUpdate(newCharacter);
+        }
+    };
+
+    const handleDropItem = (itemIndex: number) => {
+        const newCharacter = JSON.parse(JSON.stringify(character));
+        newCharacter.equipment.inventory.splice(itemIndex, 1);
+        onCharacterUpdate(newCharacter);
+    };
+
+    if (!isOpen) {
+        return (
+            <div className="border border-primary/30 p-4">
+                <button onClick={() => setIsOpen(true)} className="w-full text-left text-sm uppercase tracking-wider text-muted hover:text-primary">
+                    <h3 className="inline">Shop & Inventory</h3> <span className="text-xs">[Click to Open]</span>
+                </button>
+            </div>
+        );
+    }
+    
+    return (
+        <div className="border border-primary/30 p-4">
+            <button onClick={() => setIsOpen(false)} className="w-full text-left text-sm uppercase tracking-wider text-muted hover:text-primary mb-4">
+                <h3 className="inline">Shop & Inventory</h3> <span className="text-xs">[Click to Close]</span>
+            </button>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Inventory */}
+                <div>
+                    <h4 className="text-lg font-bold text-secondary mb-2">Inventory</h4>
+                    <div className="bg-black/30 p-2 min-h-[200px] max-h-96 overflow-y-auto">
+                        {character.equipment.inventory.length > 0 ? (
+                            <ul className="space-y-1">
+                                {character.equipment.inventory.map((itemName, index) => (
+                                    <li key={`${itemName}-${index}`} className="flex justify-between items-center bg-black/50 p-2 text-sm">
+                                        <span>{itemName}</span>
+                                        <button onClick={() => handleDropItem(index)} className="text-negative/80 hover:text-negative text-xs">[Drop]</button>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-muted text-center italic p-4">Inventory is empty.</p>
+                        )}
+                    </div>
+                </div>
+
+                {/* Shop */}
+                <div>
+                    <h4 className="text-lg font-bold text-secondary mb-2">Purchase Gear</h4>
+                     <div className="bg-black/30 p-2 min-h-[200px] max-h-96 overflow-y-auto">
+                        <ul className="space-y-1">
+                            {SHOP_ITEMS.map(item => {
+                                const canAfford = character.credits >= item.price;
+                                return (
+                                <li key={item.name} className="flex justify-between items-center bg-black/50 p-2 text-sm"
+                                     onMouseEnter={(e) => showTooltip(
+                                        <div>
+                                            <h5 className="font-bold text-secondary">{item.name}</h5>
+                                            <p className="text-foreground">{item.description}</p>
+                                        </div>, e
+                                    )}
+                                    onMouseLeave={hideTooltip}
+                                >
+                                    <span className="flex-1">{item.name}</span>
+                                    <span className="text-primary/80 font-mono w-20 text-right">{item.price.toLocaleString()}cr</span>
+                                    <button 
+                                        onClick={() => handleBuyItem(item)}
+                                        disabled={!canAfford}
+                                        className="ml-4 px-2 py-1 text-xs uppercase transition-colors border border-primary text-primary hover:bg-primary hover:text-background disabled:border-muted/50 disabled:text-muted/50 disabled:cursor-not-allowed"
+                                    >Buy</button>
+                                </li>
+                            )})}
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -574,6 +664,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                         </div>
                     </div>
                 </div>
+                <ShopAndInventory character={finalCharacter} onCharacterUpdate={setChar} />
             </div>
              
             <CharacterRoller character={finalCharacter} onUpdate={handleRollerUpdate} isVisible={rollerState.isVisible} isMinimized={rollerState.isMinimized} initialPosition={rollerState.position} onStateChange={handleRollerStateChange} activeCheck={rollerState.activeCheck} onApplyRoll={handleApplyRoll} />
