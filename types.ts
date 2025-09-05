@@ -69,6 +69,8 @@ export interface Character {
   name: string;
   pronouns: string;
   notes: string;
+  backstory: string;
+  portrait: string; // base64 data URL
   stats: CharacterStats;
   saves: CharacterSaves;
   class: CharacterClass | null;

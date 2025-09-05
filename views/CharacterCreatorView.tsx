@@ -1,5 +1,9 @@
 
 
+
+
+
+
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, SkillTier, Stat } from '../types';
 import { ALL_SKILLS, CLASSES_DATA, LOADOUTS, TRINKETS, PATCHES, SCIENTIST_SKILL_CHOICES, FIRST_NAMES, LAST_NAMES, PRONOUNS } from '../constants';
@@ -8,12 +12,15 @@ import { set } from '../utils/helpers';
 import { SkillSelector } from '../components/SkillSelector';
 import { useTooltip } from '../components/Tooltip';
 import { CharacterRoller } from '../components/CharacterRoller';
+import { generateCharacterPortrait, generateCharacterBackstory } from '../services/geminiService';
 
 
 const initialCharacter: Character = {
     name: '',
     pronouns: '',
     notes: '',
+    backstory: '',
+    portrait: '',
     stats: { strength: 0, speed: 0, intellect: 0, combat: 0 },
     saves: { sanity: 0, fear: 0, body: 0 },
     class: null,
@@ -287,6 +294,9 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
     const [androidPenalty, setAndroidPenalty] = useState<Stat | null>(characterData?.androidPenalty || null);
     const [scientistBonus, setScientistBonus] = useState<Stat | null>(characterData?.scientistBonus || null);
     const [isCustomPronoun, setIsCustomPronoun] = useState(false);
+    const [isGeneratingPortrait, setIsGeneratingPortrait] = useState(false);
+    const [isGeneratingRecruit, setIsGeneratingRecruit] = useState(false);
+
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { showTooltip, hideTooltip } = useTooltip();
@@ -438,63 +448,167 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
         }));
     }, []);
 
-
-    const handleFullCharacterRoll = useCallback(() => {
-        const randomClass = CLASSES_DATA[Math.floor(Math.random() * CLASSES_DATA.length)];
-
-        const newBaseStats = {
-            strength: rollDice('2d10+25'),
-            speed: rollDice('2d10+25'),
-            intellect: rollDice('2d10+25'),
-            combat: rollDice('2d10+25'),
-        };
-        const newBaseSaves = {
-            sanity: rollDice('2d10+10'),
-            fear: rollDice('2d10+10'),
-            body: rollDice('2d10+10'),
-        };
-        
-        let chosenAndroidPenalty: Stat | null = null;
-        if (randomClass.name === 'Android') {
-            const penaltyOptions: Stat[] = ['strength', 'speed', 'intellect', 'combat'];
-            chosenAndroidPenalty = penaltyOptions[Math.floor(Math.random() * penaltyOptions.length)];
+    const handleGeneratePortrait = useCallback(async (characterToUse?: Character) => {
+        const currentCharacter = characterToUse || finalCharacter;
+        if (!currentCharacter.class) {
+            alert("Please select a class before generating a portrait.");
+            return;
         }
-        
-        let chosenScientistBonus: Stat | null = null;
-        if (randomClass.name === 'Scientist') {
-            const bonusOptions: Stat[] = ['strength', 'speed', 'intellect', 'combat'];
-            chosenScientistBonus = bonusOptions[Math.floor(Math.random() * bonusOptions.length)];
-        }
-        
-        const newSkills = autoSelectSkills(randomClass, ALL_SKILLS);
-        const maxHealth = rollDice('1d10+10');
-        const newEquipment = {
-            loadout: LOADOUTS[Math.floor(Math.random() * LOADOUTS.length)],
-            trinket: TRINKETS[Math.floor(Math.random() * TRINKETS.length)],
-            patch: PATCHES[Math.floor(Math.random() * PATCHES.length)],
-        };
-        const newCredits = rollDice('2d10') * 10;
-        const newName = `${FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)]} ${LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)]}`;
-        const newPronouns = PRONOUNS[Math.floor(Math.random() * PRONOUNS.length)];
-        
-        const newChar = {
-            ...initialCharacter,
-            name: newName,
-            pronouns: newPronouns,
-            class: randomClass,
-            health: { current: maxHealth, max: maxHealth },
-            equipment: newEquipment,
-            credits: newCredits,
-            skills: newSkills,
-        };
-        
-        setBaseStats(newBaseStats);
-        setBaseSaves(newBaseSaves);
-        setAndroidPenalty(chosenAndroidPenalty);
-        setScientistBonus(chosenScientistBonus);
-        setChar(newChar);
 
+        setIsGeneratingPortrait(true);
+        try {
+            let prompt = `A gritty, retro-futuristic, sci-fi illustrated portrait of a Mothership RPG character. A ${currentCharacter.class.name}.`;
+            if (currentCharacter.pronouns) {
+                prompt += ` Pronouns: ${currentCharacter.pronouns}.`;
+            }
+
+            const topSkills = [...currentCharacter.skills.master, ...currentCharacter.skills.expert, ...currentCharacter.skills.trained].slice(0, 3);
+            if (topSkills.length > 0) {
+                prompt += ` Key Skills: ${topSkills.join(', ')}.`;
+            }
+            if (currentCharacter.equipment.trinket) {
+                prompt += ` They are holding a ${currentCharacter.equipment.trinket}.`;
+            }
+
+            prompt += ` Style: dark, atmospheric, blue-collar sci-fi, inspired by Alien and Blade Runner. Minimalist dark background. Bust shot. Photorealistic.`
+
+            const imageUrl = await generateCharacterPortrait(prompt);
+            setChar(c => ({...c, portrait: imageUrl}));
+
+        } catch (error) {
+            console.error(error);
+            alert("Failed to generate portrait. Please try again.");
+        } finally {
+            setIsGeneratingPortrait(false);
+        }
+    }, [finalCharacter]);
+
+    const handleUploadPortrait = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) { // 2MB limit
+            alert('File is too large. Please upload an image under 2MB.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const result = e.target?.result;
+            if (typeof result === 'string') {
+                setChar(c => ({ ...c, portrait: result }));
+            } else {
+                alert('Failed to read the image file.');
+            }
+        };
+        reader.onerror = () => {
+            alert('Error reading file.');
+        };
+        reader.readAsDataURL(file);
+
+        if (event.target) {
+            event.target.value = '';
+        }
     }, []);
+
+
+    const handleFullCharacterRoll = useCallback(async () => {
+        setIsGeneratingRecruit(true);
+        try {
+            const randomClass = CLASSES_DATA[Math.floor(Math.random() * CLASSES_DATA.length)];
+    
+            const newBaseStats = {
+                strength: rollDice('2d10+25'),
+                speed: rollDice('2d10+25'),
+                intellect: rollDice('2d10+25'),
+                combat: rollDice('2d10+25'),
+            };
+            const newBaseSaves = {
+                sanity: rollDice('2d10+10'),
+                fear: rollDice('2d10+10'),
+                body: rollDice('2d10+10'),
+            };
+            
+            let chosenAndroidPenalty: Stat | null = null;
+            if (randomClass.name === 'Android') {
+                const penaltyOptions: Stat[] = ['strength', 'speed', 'intellect', 'combat'];
+                chosenAndroidPenalty = penaltyOptions[Math.floor(Math.random() * penaltyOptions.length)];
+            }
+            
+            let chosenScientistBonus: Stat | null = null;
+            if (randomClass.name === 'Scientist') {
+                const bonusOptions: Stat[] = ['strength', 'speed', 'intellect', 'combat'];
+                chosenScientistBonus = bonusOptions[Math.floor(Math.random() * bonusOptions.length)];
+            }
+            
+            const newSkills = autoSelectSkills(randomClass, ALL_SKILLS);
+            const maxHealth = rollDice('1d10+10');
+            const newEquipment = {
+                loadout: LOADOUTS[Math.floor(Math.random() * LOADOUTS.length)],
+                trinket: TRINKETS[Math.floor(Math.random() * TRINKETS.length)],
+                patch: PATCHES[Math.floor(Math.random() * PATCHES.length)],
+            };
+            const newCredits = rollDice('2d10') * 10;
+            const newName = `${FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)]} ${LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)]}`;
+            const newPronouns = PRONOUNS[Math.floor(Math.random() * PRONOUNS.length)];
+            
+            // This is a temporary character object needed to calculate final stats for the prompt
+            // It doesn't have backstory or portrait yet
+            const tempCharForPrompt: Character = {
+                 ...initialCharacter,
+                name: newName,
+                pronouns: newPronouns,
+                class: randomClass,
+                health: { current: maxHealth, max: maxHealth },
+                equipment: newEquipment,
+                credits: newCredits,
+                skills: newSkills,
+            };
+
+            // Calculate final stats based on base rolls and class mods to send to the AI
+            const tempFinalStats = { ...newBaseStats };
+            const tempFinalSaves = { ...newBaseSaves };
+            if (randomClass) {
+                 for (const [stat, mod] of Object.entries(randomClass.stats_mods)) {
+                    tempFinalStats[stat as keyof typeof tempFinalStats] += mod;
+                }
+                for (const [save, mod] of Object.entries(randomClass.saves_mods)) {
+                    tempFinalSaves[save as keyof typeof tempFinalSaves] += mod;
+                }
+                if (randomClass.name === 'Android' && chosenAndroidPenalty) {
+                    tempFinalStats[chosenAndroidPenalty] -= 10;
+                }
+                if (randomClass.name === 'Scientist' && chosenScientistBonus) {
+                    tempFinalStats[chosenScientistBonus] += 5;
+                }
+            }
+            tempCharForPrompt.stats = tempFinalStats;
+            tempCharForPrompt.saves = tempFinalSaves;
+    
+            const backstory = await generateCharacterBackstory(tempCharForPrompt);
+    
+            const newChar: Character = {
+                ...tempCharForPrompt,
+                backstory, // add the generated backstory
+                portrait: '', // portrait will be generated next
+                stats: tempFinalStats, 
+                saves: tempFinalSaves,
+            };
+            
+            setBaseStats(newBaseStats);
+            setBaseSaves(newBaseSaves);
+            setAndroidPenalty(chosenAndroidPenalty);
+            setScientistBonus(chosenScientistBonus);
+            setChar(newChar);
+    
+            await handleGeneratePortrait(newChar);
+        } catch (error) {
+            console.error("Failed to generate random recruit:", error);
+            alert("An error occurred while generating the character. Please check the console and try again.");
+        } finally {
+            setIsGeneratingRecruit(false);
+        }
+    }, [handleGeneratePortrait]);
 
     const handleSaveCharacter = useCallback(() => {
         const saveData: CharacterSaveData = {
@@ -563,65 +677,118 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
     return (
         <div>
             <div className="border border-primary/50 p-6 bg-black/30 space-y-6 max-w-4xl mx-auto">
-                <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-                    <h2 className="text-3xl font-bold text-primary uppercase tracking-wider">Character Manifest</h2>
-                    <div className="flex flex-wrap gap-2">
-                        <button 
-                            onClick={handleSaveCharacter}
-                            className="px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed disabled:border-secondary-hover disabled:text-secondary-hover/70 disabled:cursor-not-allowed"
-                        >
-                            Save Character
-                        </button>
-                        <label className="px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed disabled:border-secondary-hover disabled:text-secondary-hover/70 disabled:cursor-not-allowed cursor-pointer">
-                            Load Character
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept=".json"
-                                className="hidden"
-                                onChange={handleLoadCharacter}
-                            />
-                        </label>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <h2 className="text-3xl font-bold text-primary uppercase tracking-wider">
+                        <span className="block">Character</span>
+                        <span className="block">Manifest</span>
+                    </h2>
+                    <div className="flex flex-col items-stretch gap-2 w-full sm:w-auto sm:min-w-[280px]">
                         <button 
                             onClick={handleFullCharacterRoll}
-                            className="px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary-hover disabled:text-background/70 disabled:cursor-not-allowed"
+                            disabled={isGeneratingRecruit}
+                            className="px-4 py-3 text-sm uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary-hover disabled:text-background/70 disabled:cursor-not-allowed"
                         >
-                            Generate Random Recruit
+                            {isGeneratingRecruit ? 'Generating...' : 'Generate Random Recruit'}
                         </button>
+                        <div className="flex gap-2">
+                             <button 
+                                onClick={handleSaveCharacter}
+                                className="flex-1 px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed disabled:border-secondary-hover disabled:text-secondary-hover/70 disabled:cursor-not-allowed"
+                            >
+                                Export Character
+                            </button>
+                            <label className="flex-1 text-center px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed disabled:border-secondary-hover disabled:text-secondary-hover/70 disabled:cursor-not-allowed cursor-pointer">
+                                Load Character
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept=".json"
+                                    className="hidden"
+                                    onChange={handleLoadCharacter}
+                                />
+                            </label>
+                        </div>
                     </div>
                 </div>
                 
-                <div className="border border-primary/30 p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                     <input type="text" placeholder="Character Name" className="bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" onChange={e => setChar(c => ({...c, name: e.target.value}))} value={char.name} />
-                     <div className="flex gap-2">
-                        <select
-                            className={`bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary transition-all duration-200 ${isCustomPronoun ? 'w-1/2' : 'w-full'}`}
-                            value={isCustomPronoun ? 'custom' : char.pronouns}
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                if (value === 'custom') {
-                                    setIsCustomPronoun(true);
-                                    setChar(c => ({ ...c, pronouns: '' }));
-                                } else {
-                                    setIsCustomPronoun(false);
-                                    setChar(c => ({ ...c, pronouns: value }));
-                                }
-                            }}
-                        >
-                            <option value="" disabled>Select Pronouns...</option>
-                            {PRONOUNS.map(p => <option key={p} value={p}>{p}</option>)}
-                            <option value="custom">Custom...</option>
-                        </select>
-                        {isCustomPronoun && (
+                <div className="border border-primary/30 p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="md:col-span-1 space-y-2">
+                        <div className="aspect-square w-full bg-black/50 border border-muted flex items-center justify-center relative overflow-hidden">
+                            {char.portrait ? (
+                                <img src={char.portrait} alt="Character Portrait" className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="text-center text-muted p-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                    </svg>
+                                    <p className="text-xs mt-2">Profile Picture</p>
+                                </div>
+                            )}
+                             {isGeneratingPortrait && (
+                                <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center text-center p-4">
+                                    <svg className="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <p className="mt-2 text-primary/80 animate-pulse text-xs">RENDERING PORTRAIT...</p>
+                                </div>
+                            )}
+                        </div>
+                         <button 
+                            onClick={() => handleGeneratePortrait()}
+                            disabled={isGeneratingPortrait || !char.class}
+                            className="w-full px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed disabled:border-secondary/50 disabled:text-secondary/50 disabled:cursor-not-allowed"
+                         >
+                            {isGeneratingPortrait ? 'Generating...' : 'Generate Picture'}
+                         </button>
+                         <label className="block w-full text-center px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed active:border-tertiary-pressed cursor-pointer">
+                            Upload Picture
                             <input
-                                type="text"
-                                placeholder="Enter pronouns"
-                                className="w-1/2 bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary"
-                                value={char.pronouns}
-                                onChange={e => setChar(c => ({ ...c, pronouns: e.target.value }))}
-                                aria-label="Custom pronouns"
+                                type="file"
+                                accept="image/png, image/jpeg, image/webp"
+                                className="hidden"
+                                onChange={handleUploadPortrait}
                             />
-                        )}
+                        </label>
+                    </div>
+                    <div className="md:col-span-2 flex flex-col gap-4">
+                         <input type="text" placeholder="Name" className="bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" onChange={e => setChar(c => ({...c, name: e.target.value}))} value={char.name} />
+                         <div className="flex gap-2">
+                            <select
+                                className={`bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary transition-all duration-200 ${isCustomPronoun ? 'w-1/2' : 'w-full'}`}
+                                value={isCustomPronoun ? 'custom' : char.pronouns}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === 'custom') {
+                                        setIsCustomPronoun(true);
+                                        setChar(c => ({ ...c, pronouns: '' }));
+                                    } else {
+                                        setIsCustomPronoun(false);
+                                        setChar(c => ({ ...c, pronouns: value }));
+                                    }
+                                }}
+                            >
+                                <option value="" disabled>Select Pronouns</option>
+                                {PRONOUNS.map(p => <option key={p} value={p}>{p}</option>)}
+                                <option value="custom">Custom...</option>
+                            </select>
+                            {isCustomPronoun && (
+                                <input
+                                    type="text"
+                                    placeholder="Enter pronouns"
+                                    className="w-1/2 bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary"
+                                    value={char.pronouns}
+                                    onChange={e => setChar(c => ({ ...c, pronouns: e.target.value }))}
+                                    aria-label="Custom pronouns"
+                                />
+                            )}
+                        </div>
+                        <textarea 
+                            placeholder="Character Story"
+                            className="flex-grow bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary resize-y min-h-[100px]"
+                            onChange={e => setChar(c => ({...c, backstory: e.target.value}))}
+                            value={char.backstory}
+                         />
                     </div>
                 </div>
 
@@ -797,6 +964,20 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                 </div>
                 
                 <div className="border border-primary/30 p-4">
+                    <h3 className="text-sm uppercase tracking-wider mb-4 text-muted">Skills</h3>
+                    {char.class ? (
+                        <SkillSelector 
+                            characterClass={char.class}
+                            allSkills={ALL_SKILLS}
+                            selectedSkills={char.skills}
+                            onSkillsChange={handleSkillsChange}
+                        />
+                    ) : (
+                        <p className="text-xs text-muted">Select a class to see available skills.</p>
+                    )}
+                </div>
+
+                <div className="border border-primary/30 p-4">
                      <h3 className="text-sm uppercase tracking-wider mb-4 text-muted">Equipment</h3>
                     <div className="space-y-2 text-sm">
                         <p><strong className="text-primary/80">Loadout:</strong> {char.equipment.loadout || '...'}</p>
@@ -813,20 +994,6 @@ export const CharacterCreatorView: React.FC<CharacterCreatorViewProps> = ({ char
                             />
                         </div>
                     </div>
-                </div>
-
-                <div className="border border-primary/30 p-4">
-                    <h3 className="text-sm uppercase tracking-wider mb-4 text-muted">Skills</h3>
-                    {char.class ? (
-                        <SkillSelector 
-                            characterClass={char.class}
-                            allSkills={ALL_SKILLS}
-                            selectedSkills={char.skills}
-                            onSkillsChange={handleSkillsChange}
-                        />
-                    ) : (
-                        <p className="text-xs text-muted">Select a class to see available skills.</p>
-                    )}
                 </div>
             </div>
              
