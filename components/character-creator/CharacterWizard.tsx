@@ -1,12 +1,13 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import type { Character, CharacterSaveData, ClassName, Stat, CharacterClass } from '../../types';
 import { initialSaveData } from '../../utils/character';
 import { set } from '../../utils/helpers';
 import { rollDice } from '../../utils/dice';
-import { ALL_SKILLS, CLASSES_DATA, STARTING_EQUIPMENT_TABLES, PATCHES, PRONOUNS, SCIENTIST_SKILL_CHOICES, TRINKETS } from '../../constants';
+import { ALL_SKILLS, CLASSES_DATA, STARTING_EQUIPMENT_TABLES, PATCHES, PRONOUNS, SCIENTIST_SKILL_CHOICES, TRINKETS, FIRST_NAMES, LAST_NAMES } from '../../constants';
 import { SplitStatInput, StatInput } from './CharacterManifest';
 import { SkillSelector } from '../SkillSelector';
 import { generateCharacterBackstory, generateCharacterPortrait } from '../../services/geminiService';
+import { CharacterRoller } from '../CharacterRoller';
 
 const STEPS = [
     { id: 1, name: 'Stats & Saves' },
@@ -83,6 +84,37 @@ export const CharacterWizard: React.FC<{
 }> = ({ onComplete, onExit }) => {
     const [currentStep, setCurrentStep] = useState(1);
     const [saveData, setSaveData] = useState<CharacterSaveData>(JSON.parse(JSON.stringify(initialSaveData)));
+    
+    const [rollerState, setRollerState] = useState({
+        isVisible: false,
+        isMinimized: false,
+        position: { x: window.innerWidth - 420, y: 100 },
+        activeCheck: null as { type: 'stat' | 'save' | 'wound' | 'panic' | 'creation', name: string } | null,
+    });
+    const lastPositionRef = useRef(rollerState.position);
+
+    const handleRollerStateChange = useCallback((newState: Partial<typeof rollerState>) => {
+        setRollerState(prev => {
+            const updatedState = { ...prev, ...newState };
+            if (newState.position) lastPositionRef.current = newState.position;
+            if (newState.isVisible === false) {
+                lastPositionRef.current = prev.position;
+                updatedState.activeCheck = null;
+            }
+            return updatedState;
+        });
+    }, []);
+
+    const handleRollRequest = useCallback((type: 'creation', name: string) => {
+        setRollerState(prev => ({
+            ...prev,
+            isVisible: true,
+            isMinimized: false,
+            position: lastPositionRef.current,
+            activeCheck: { type, name },
+        }));
+    }, []);
+
 
     const updateData = useCallback((path: string, value: any) => {
         setSaveData(prev => {
@@ -91,6 +123,12 @@ export const CharacterWizard: React.FC<{
             return newSaveData;
         });
     }, []);
+
+     const handleApplyRoll = useCallback((path: string, value: number) => {
+        const newPath = path.replace('stats.', 'baseStats.').replace('saves.', 'baseSaves.');
+        updateData(newPath, value);
+        setRollerState(prev => ({ ...prev, activeCheck: null, isVisible: false }));
+    }, [updateData]);
     
     // --- Validation Logic ---
     const isStepComplete = useMemo(() => {
@@ -148,14 +186,14 @@ export const CharacterWizard: React.FC<{
             updateData('character.equipment.patch', PATCHES[Math.floor(Math.random() * PATCHES.length)]);
             updateData('character.credits', rollDice('5d10') * 10);
         }
-    }, [saveData.character.equipment.loadout]);
+    }, [saveData.character.equipment.loadout, updateData]);
 
     return (
         <div className="max-w-4xl mx-auto border border-primary/50 p-6 sm:p-8 bg-black/30">
             <Stepper currentStep={currentStep} steps={STEPS} onGoToStep={handleGoToStep} />
             <div className="min-h-[400px]">
                 {/* Render current step's component */}
-                {currentStep === 1 && <Step1Stats saveData={saveData} onUpdate={updateData} />}
+                {currentStep === 1 && <Step1Stats saveData={saveData} onUpdate={updateData} onRollRequest={handleRollRequest} />}
                 {currentStep === 2 && <Step2Class saveData={saveData} onUpdate={updateData} />}
                 {currentStep === 3 && <Step3Vitals saveData={saveData} onUpdate={updateData} />}
                 {currentStep === 4 && <Step4Skills saveData={saveData} onUpdate={updateData} />}
@@ -171,15 +209,29 @@ export const CharacterWizard: React.FC<{
                 isNextDisabled={!isStepComplete}
                 isLastStep={currentStep === STEPS.length}
             />
+            <CharacterRoller
+                character={saveData.character}
+                onUpdate={() => {}} // Not needed for creation
+                isVisible={rollerState.isVisible}
+                isMinimized={rollerState.isMinimized}
+                initialPosition={rollerState.position}
+                onStateChange={handleRollerStateChange}
+                activeCheck={rollerState.activeCheck}
+                onApplyRoll={handleApplyRoll}
+            />
         </div>
     );
 };
 
 
 // --- STEP COMPONENTS ---
-type StepProps = { saveData: CharacterSaveData; onUpdate: (path: string, value: any) => void; };
+type StepProps = { 
+    saveData: CharacterSaveData; 
+    onUpdate: (path: string, value: any) => void; 
+    onRollRequest?: (type: 'creation', name: string) => void;
+};
 
-const Step1Stats: React.FC<StepProps> = ({ saveData, onUpdate }) => {
+const Step1Stats: React.FC<StepProps> = ({ saveData, onUpdate, onRollRequest }) => {
     const handleRollAll = () => {
         onUpdate('baseStats.strength', rollDice('2d10+25'));
         onUpdate('baseStats.speed', rollDice('2d10+25'));
@@ -198,15 +250,15 @@ const Step1Stats: React.FC<StepProps> = ({ saveData, onUpdate }) => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="border border-primary/30 p-4"><h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Stats (2d10+25)</h3><div className="flex justify-around">
-                    <StatInput id="bs.str" label="Strength" value={saveData.baseStats.strength} onChange={e => onUpdate('baseStats.strength', parseInt(e.target.value))} tooltipContent="" />
-                    <StatInput id="bs.spd" label="Speed" value={saveData.baseStats.speed} onChange={e => onUpdate('baseStats.speed', parseInt(e.target.value))} tooltipContent="" />
-                    <StatInput id="bs.int" label="Intellect" value={saveData.baseStats.intellect} onChange={e => onUpdate('baseStats.intellect', parseInt(e.target.value))} tooltipContent="" />
-                    <StatInput id="bs.com" label="Combat" value={saveData.baseStats.combat} onChange={e => onUpdate('baseStats.combat', parseInt(e.target.value))} tooltipContent="" />
+                    <StatInput id="bs.str" label="Strength" value={saveData.baseStats.strength} onChange={e => onUpdate('baseStats.strength', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.strength') : undefined} />
+                    <StatInput id="bs.spd" label="Speed" value={saveData.baseStats.speed} onChange={e => onUpdate('baseStats.speed', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.speed') : undefined} />
+                    <StatInput id="bs.int" label="Intellect" value={saveData.baseStats.intellect} onChange={e => onUpdate('baseStats.intellect', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.intellect') : undefined} />
+                    <StatInput id="bs.com" label="Combat" value={saveData.baseStats.combat} onChange={e => onUpdate('baseStats.combat', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.combat') : undefined} />
                 </div></div>
                 <div className="border border-primary/30 p-4"><h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Saves (2d10+10)</h3><div className="flex justify-around">
-                    <StatInput id="sv.san" label="Sanity" value={saveData.baseSaves.sanity} onChange={e => onUpdate('baseSaves.sanity', parseInt(e.target.value))} tooltipContent="" />
-                    <StatInput id="sv.fer" label="Fear" value={saveData.baseSaves.fear} onChange={e => onUpdate('baseSaves.fear', parseInt(e.target.value))} tooltipContent="" />
-                    <StatInput id="sv.bdy" label="Body" value={saveData.baseSaves.body} onChange={e => onUpdate('baseSaves.body', parseInt(e.target.value))} tooltipContent="" />
+                    <StatInput id="sv.san" label="Sanity" value={saveData.baseSaves.sanity} onChange={e => onUpdate('baseSaves.sanity', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'saves.sanity') : undefined} />
+                    <StatInput id="sv.fer" label="Fear" value={saveData.baseSaves.fear} onChange={e => onUpdate('baseSaves.fear', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'saves.fear') : undefined} />
+                    <StatInput id="sv.bdy" label="Body" value={saveData.baseSaves.body} onChange={e => onUpdate('baseSaves.body', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'saves.body') : undefined} />
                 </div></div>
             </div>
         </div>
@@ -227,10 +279,28 @@ const Step2Class: React.FC<StepProps> = ({ saveData, onUpdate }) => {
                 {CLASSES_DATA.map(classData => <button key={classData.name} onClick={() => handleSelectClass(classData)} className={`p-4 text-left transition-colors ${saveData.character.class?.name === classData.name ? tertiarySelectionClasses(true) : tertiarySelectionClasses(false)}`}><h4 className="font-bold text-lg uppercase text-secondary">{classData.name}</h4><p className="text-xs text-muted mt-2">Trauma: {classData.trauma_response}</p></button>)}
             </div>
             {saveData.character.class?.name === 'Android' && (<div className="border border-primary/30 p-4"><h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Android Penalty (-10)</h4><p className="text-xs text-muted mb-3">Choose one stat to reduce by 10.</p><div className="flex gap-4">
-                {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => <button key={stat} onClick={() => onUpdate('androidPenalty', stat)} className={`flex-1 p-2 uppercase ${tertiarySelectionClasses(saveData.androidPenalty === stat)}`}>{stat}</button>)}
+                {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => 
+                    <button 
+                        key={stat} 
+                        onClick={() => onUpdate('androidPenalty', stat)} 
+                        className={`flex-1 p-3 flex flex-col items-center justify-center transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus ${tertiarySelectionClasses(saveData.androidPenalty === stat)}`}
+                    >
+                        <span className="uppercase text-sm tracking-wider">{stat}</span>
+                        <span className="font-bold text-2xl mt-1">{saveData.baseStats[stat]}</span>
+                    </button>
+                )}
             </div></div>)}
             {saveData.character.class?.name === 'Scientist' && (<div className="border border-primary/30 p-4"><h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Scientist Bonus (+5)</h4><p className="text-xs text-muted mb-3">Choose one stat to improve by 5.</p><div className="flex gap-4">
-                {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => <button key={stat} onClick={() => onUpdate('scientistBonus', stat)} className={`flex-1 p-2 uppercase ${tertiarySelectionClasses(saveData.scientistBonus === stat)}`}>{stat}</button>)}
+                 {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => 
+                    <button 
+                        key={stat} 
+                        onClick={() => onUpdate('scientistBonus', stat)} 
+                        className={`flex-1 p-3 flex flex-col items-center justify-center transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus ${tertiarySelectionClasses(saveData.scientistBonus === stat)}`}
+                    >
+                        <span className="uppercase text-sm tracking-wider">{stat}</span>
+                        <span className="font-bold text-2xl mt-1">{saveData.baseStats[stat]}</span>
+                    </button>
+                )}
             </div></div>)}
         </div>
     );
@@ -312,26 +382,65 @@ const Step5Equipment: React.FC<StepProps> = ({ saveData, onUpdate }) => {
 
 const Step6Style: React.FC<StepProps> = ({ saveData, onUpdate }) => {
     const { character } = saveData;
-    const [isGenerating, setIsGenerating] = useState(false);
-    const handleGenerate = async () => {
-        setIsGenerating(true);
+    const [isGeneratingIdentity, setIsGeneratingIdentity] = useState(false);
+    const [isGeneratingPortrait, setIsGeneratingPortrait] = useState(false);
+
+    const handleRandomizeIdentity = async () => {
+        setIsGeneratingIdentity(true);
         try {
-            const backstory = await generateCharacterBackstory(character);
+            const randomFirstName = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
+            const randomLastName = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
+            const randomName = `${randomFirstName} ${randomLastName}`;
+            const randomPronouns = PRONOUNS[Math.floor(Math.random() * PRONOUNS.length)];
+            
+            onUpdate('character.name', randomName);
+            onUpdate('character.pronouns', randomPronouns);
+            
+            const tempCharacterForBackstory = { ...character, name: randomName, pronouns: randomPronouns };
+            const backstory = await generateCharacterBackstory(tempCharacterForBackstory);
             onUpdate('character.backstory', backstory);
-            let prompt = `A vibrant cyberpunk illustration of a Mothership RPG character. A ${character.class?.name}. Pronouns: ${character.pronouns}.`;
+        } catch(e) {
+            alert("AI identity generation failed. Please try again.");
+        } finally {
+            setIsGeneratingIdentity(false);
+        }
+    };
+    
+    const handleGeneratePortrait = async () => {
+        setIsGeneratingPortrait(true);
+        try {
+            let prompt = `A vibrant cyberpunk illustration in a comic book anime style of a Mothership RPG character. A ${character.class?.name}. Pronouns: ${character.pronouns}.`;
             const imageUrl = await generateCharacterPortrait(prompt);
             onUpdate('character.portrait', imageUrl);
         } catch(e) {
-            alert("AI generation failed. Please try again.");
+            alert("AI portrait generation failed. Please try again.");
         } finally {
-            setIsGenerating(false);
+            setIsGeneratingPortrait(false);
         }
     };
+    
+    const handleUploadPortrait = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if (typeof e.target?.result === 'string') {
+                onUpdate('character.portrait', e.target.result);
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
     return (
         <div className="space-y-6">
             <div className="text-center"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Character Style</h2><p className="text-muted mt-2">Define your character's identity. Use the AI to generate a portrait and backstory based on your choices.</p></div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                 <div className="space-y-4">
+                    <div className="text-right -mb-2">
+                        <button onClick={handleRandomizeIdentity} disabled={isGeneratingIdentity} className="px-3 py-1 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background disabled:opacity-50">
+                            {isGeneratingIdentity ? 'Generating...' : 'Randomize Identity'}
+                        </button>
+                    </div>
                     <input type="text" placeholder="Name" className="w-full bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" value={character.name} onChange={e => onUpdate('character.name', e.target.value)} />
                     <select className="w-full bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" value={character.pronouns} onChange={e => onUpdate('character.pronouns', e.target.value)}>
                         <option value="" disabled>Select Pronouns</option>
@@ -342,9 +451,15 @@ const Step6Style: React.FC<StepProps> = ({ saveData, onUpdate }) => {
                 <div className="flex flex-col items-center gap-4">
                     <div className="aspect-square w-48 bg-black/50 border border-muted flex items-center justify-center relative overflow-hidden">
                         {character.portrait ? <img src={character.portrait} alt="Portrait" className="w-full h-full object-cover"/> : <span className="text-muted text-xs">No Portrait</span>}
-                        {isGenerating && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-primary animate-pulse">Generating...</div>}
+                        {(isGeneratingIdentity || isGeneratingPortrait) && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-primary animate-pulse">{isGeneratingPortrait ? 'Rendering...' : 'Writing...'}</div>}
                     </div>
-                    <button onClick={handleGenerate} disabled={isGenerating} className="w-48 px-4 py-2 text-sm uppercase border border-secondary text-secondary hover:bg-secondary hover:text-background disabled:opacity-50">AI Generate</button>
+                     <button onClick={handleGeneratePortrait} disabled={isGeneratingPortrait} className="w-48 px-4 py-2 text-sm uppercase border border-secondary text-secondary hover:bg-secondary hover:text-background disabled:opacity-50">
+                        {isGeneratingPortrait ? 'Generating...' : 'Generate Portrait'}
+                    </button>
+                    <label className="block w-48 text-center px-4 py-2 text-sm uppercase border border-tertiary text-tertiary hover:bg-tertiary hover:text-background cursor-pointer transition-colors duration-200">
+                        Upload Portrait
+                        <input type="file" accept="image/*" className="hidden" onChange={handleUploadPortrait} />
+                    </label>
                 </div>
             </div>
         </div>
