@@ -1,11 +1,14 @@
 
+
+
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import type { CharacterSaveData } from '../types';
+import type { Character, CharacterSaveData } from '../types';
 
 interface FloatingCharacterSheetProps {
     isVisible: boolean;
     onClose: () => void;
     characterData: CharacterSaveData | null;
+    onCharacterUpdate: (character: Character) => void;
 }
 
 const SheetSection: React.FC<{ title: string; children: React.ReactNode; className?: string; titleAddon?: React.ReactNode }> = ({ title, children, className = '', titleAddon }) => (
@@ -55,7 +58,7 @@ const StatDisplay: React.FC<{ label: string; value: number }> = ({ label, value 
 );
 
 
-export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ isVisible, onClose, characterData }) => {
+export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ isVisible, onClose, characterData, onCharacterUpdate }) => {
     const character = characterData?.character ?? null;
     const allSkills = character ? [...character.skills.trained, ...character.skills.expert, ...character.skills.master] : [];
 
@@ -66,7 +69,7 @@ export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ 
     const rollerRef = useRef<HTMLDivElement>(null);
 
     const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-        if (!rollerRef.current || (e.target as HTMLElement).closest('button')) return;
+        if (!rollerRef.current || (e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('textarea')) return;
         setIsDragging(true);
         const rect = rollerRef.current.getBoundingClientRect();
         dragOffset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
@@ -101,6 +104,12 @@ export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ 
         };
     }, [isDragging, handleMouseMove, handleMouseUp]);
     
+    const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        if (character) {
+            onCharacterUpdate({ ...character, notes: e.target.value });
+        }
+    };
+
     if (!isVisible) {
         return null;
     }
@@ -199,7 +208,12 @@ export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ 
                             </div>
 
                              <SheetSection title="Notes">
-                                <textarea readOnly className="w-full h-24 bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary text-foreground resize-none" defaultValue={character.notes}></textarea>
+                                <textarea 
+                                    className="w-full h-24 bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary text-foreground resize-y" 
+                                    value={character.notes}
+                                    onChange={handleNotesChange}
+                                    placeholder="Session notes, character thoughts, etc."
+                                ></textarea>
                             </SheetSection>
                         </>
                     )}

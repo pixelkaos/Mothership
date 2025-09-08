@@ -1,4 +1,6 @@
 
+
+
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import type { Character, CharacterSaveData, ClassName, Stat, CharacterClass, CharacterStats, CharacterSaves } from '../../types';
 import { initialSaveData, getSkillAndPrerequisites } from '../../utils/character';
@@ -283,7 +285,15 @@ const Step2Class: React.FC<StepProps> = ({ saveData, onUpdate }) => {
         onUpdate('character.class', c);
         if (c.name !== 'Android') onUpdate('androidPenalty', null);
         if (c.name !== 'Scientist') onUpdate('scientistBonus', null);
+
+        const traumaNote = `Trauma Response: ${c.trauma_response}`;
+        const existingNotes = saveData.character.notes || '';
+        const traumaRegex = /^Trauma Response: .*\n*(\r\n)*/;
+        const userNotes = existingNotes.replace(traumaRegex, '').trim();
+        const newNotes = userNotes ? `${traumaNote}\n\n${userNotes}` : traumaNote;
+        onUpdate('character.notes', newNotes);
     };
+
     const tertiarySelectionClasses = (isSelected: boolean) => isSelected ? 'bg-tertiary text-background border border-tertiary' : 'bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background';
 
     const StatRow: React.FC<{ label: string; base: number; modifier: number }> = ({ label, base, modifier }) => (

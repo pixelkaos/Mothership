@@ -1,5 +1,6 @@
 
 
+
 import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { DerelictGeneratorView } from './views/DerelictGeneratorView';
@@ -9,7 +10,7 @@ import { HomeView } from './views/HomeView';
 import { FloatingDiceRoller } from './components/FloatingDiceRoller';
 import { TutorialModal } from './components/TutorialModal';
 import { TooltipProvider } from './components/Tooltip';
-import type { CharacterSaveData } from './types';
+import type { Character, CharacterSaveData } from './types';
 import { FloatingCharacterSheet } from './components/FloatingCharacterSheet';
 
 export type NavigationView = 'derelict' | 'character' | 'rules' | 'tools' | 'home';
@@ -47,6 +48,15 @@ const App: React.FC = () => {
         setView(targetView as View);
     };
 
+    const handleCharacterUpdate = (updatedCharacter: Character) => {
+        if (activeCharacterData) {
+            setActiveCharacterData(prevData => ({
+                ...(prevData as CharacterSaveData),
+                character: updatedCharacter,
+            }));
+        }
+    };
+
 
     return (
         <TooltipProvider>
@@ -70,6 +80,7 @@ const App: React.FC = () => {
                     isVisible={isCharacterSheetOpen}
                     onClose={() => setIsCharacterSheetOpen(false)}
                     characterData={activeCharacterData}
+                    onCharacterUpdate={handleCharacterUpdate}
                 />
                 
                 <main className={`flex-grow ${view === 'home' ? '' : 'p-4 sm:p-6 md:p-8 mt-6'}`}>

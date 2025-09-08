@@ -1,5 +1,4 @@
 
-
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, Stat, ShopItem } from '../../types';
 import { ALL_SKILLS, CLASSES_DATA, TRINKETS, PATCHES, PRONOUNS, SHOP_ITEMS } from '../../constants';
@@ -368,6 +367,26 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
         wounds: { ...char.wounds, max: finalMaxWounds },
     }), [char, finalStats, finalSaves, finalMaxWounds]);
 
+    useEffect(() => {
+        // This effect synchronizes the calculated character stats back to the main app state.
+        // It's crucial for ensuring components like the FloatingCharacterSheet get the correct,
+        // fully calculated values. A simple check prevents unnecessary re-renders/loops.
+        if (
+            characterData.character.stats.strength !== finalStats.strength ||
+            characterData.character.saves.sanity !== finalSaves.sanity ||
+            characterData.character.wounds.max !== finalMaxWounds
+        ) {
+            onCharacterUpdate({
+                ...characterData,
+                character: {
+                    ...characterData.character,
+                    stats: finalStats,
+                    saves: finalSaves,
+                    wounds: { ...characterData.character.wounds, max: finalMaxWounds },
+                }
+            });
+        }
+    }, [finalStats, finalSaves, finalMaxWounds, characterData, onCharacterUpdate]);
 
     useEffect(() => {
         if (char.pronouns && !PRONOUNS.includes(char.pronouns)) {
@@ -424,26 +443,33 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
 
     const handleSelectClass = useCallback((className: ClassName) => {
         const classData = CLASSES_DATA.find(c => c.name === className)!;
-        const isSameClass = characterData.character.class?.name === className;
+        const isDeselecting = characterData.character.class?.name === className;
+
+        const currentNotes = characterData.character.notes || '';
+        const traumaRegex = /^Trauma Response: .*\n*(\r\n)*/;
+        const userNotes = currentNotes.replace(traumaRegex, '').trim();
+
+        let newNotes = userNotes;
+        if (!isDeselecting) {
+            const traumaNote = `Trauma Response: ${classData.trauma_response}`;
+            newNotes = userNotes ? `${traumaNote}\n\n${userNotes}` : traumaNote;
+        }
+
+        const newSkills = isDeselecting ? { trained: [], expert: [], master: [] }
+            : (classData.starting_skills ? { trained: [...classData.starting_skills], expert: [], master: [] } : { trained: [], expert: [], master: [] });
 
         const newSaveData: CharacterSaveData = {
             ...characterData,
-            androidPenalty: isSameClass ? characterData.androidPenalty : null,
-            scientistBonus: isSameClass ? characterData.scientistBonus : null,
-            scientistMasterSkill: isSameClass ? characterData.scientistMasterSkill : null,
+            androidPenalty: isDeselecting ? null : (className === 'Android' ? characterData.androidPenalty : null),
+            scientistBonus: isDeselecting ? null : (className === 'Scientist' ? characterData.scientistBonus : null),
+            scientistMasterSkill: isDeselecting ? null : (className === 'Scientist' ? characterData.scientistMasterSkill : null),
             character: {
                 ...characterData.character,
-                class: isSameClass ? null : classData,
-                skills: classData.starting_skills ? { trained: classData.starting_skills, expert: [], master: [] } : { trained: [], expert: [], master: [] }
+                class: isDeselecting ? null : classData,
+                skills: newSkills,
+                notes: newNotes,
             }
         };
-
-        if (isSameClass) {
-            newSaveData.character.class = null;
-            newSaveData.androidPenalty = null;
-            newSaveData.scientistBonus = null;
-            newSaveData.scientistMasterSkill = null;
-        }
 
         onCharacterUpdate(newSaveData);
     }, [characterData, onCharacterUpdate]);
