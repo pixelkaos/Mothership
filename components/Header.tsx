@@ -1,18 +1,21 @@
 
-import React from 'react';
-import type { NavigationView, View } from '../App';
+
+import React, { useState } from 'react';
+import type { NavigationView } from '../App';
 
 interface HeaderProps {
     onShowTutorial: () => void;
-    activeView: NavigationView;
-    onSetView: (view: View) => void;
+    activeView: NavigationView | null;
+    onSetView: (view: NavigationView | 'dice-roller' | 'character-sheet') => void;
+    isCharacterLoaded: boolean;
 }
 
 const NavButton: React.FC<{
     label: string;
     isActive: boolean;
     onClick: () => void;
-}> = ({ label, isActive, onClick }) => {
+    children?: React.ReactNode;
+}> = ({ label, isActive, onClick, children }) => {
     const baseClasses = 'px-4 py-2 uppercase text-sm tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus';
     const activeClasses = 'bg-secondary text-background';
     const inactiveClasses = 'bg-transparent text-secondary hover:bg-secondary hover:text-background';
@@ -23,12 +26,16 @@ const NavButton: React.FC<{
             className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
         >
             {label}
+            {children}
         </button>
     );
 };
 
-export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSetView }) => (
-    <header className="relative text-center pb-4">
+export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSetView, isCharacterLoaded }) => {
+    const [isToolsOpen, setIsToolsOpen] = useState(false);
+
+    return (
+    <header className="relative text-center pb-4 pt-4 sm:pt-6 md:pt-8 px-4 sm:px-6 md:px-8">
         <button
             onClick={() => onSetView('home')}
             className="bg-transparent border-0 p-0 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus rounded-sm"
@@ -46,6 +53,30 @@ export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSe
             <NavButton label="Derelict Generator" isActive={activeView === 'derelict'} onClick={() => onSetView('derelict')} />
             <NavButton label="Character Hangar" isActive={activeView === 'character'} onClick={() => onSetView('character')} />
             <NavButton label="Rules" isActive={activeView === 'rules'} onClick={() => onSetView('rules')} />
+            <div 
+                className="relative"
+                onMouseEnter={() => setIsToolsOpen(true)}
+                onMouseLeave={() => setIsToolsOpen(false)}
+            >
+                <NavButton label="Tools" isActive={activeView === 'tools'} onClick={() => {}} />
+                {isToolsOpen && (
+                    <div className="absolute top-full left-0 w-full bg-background border border-t-0 border-secondary/50 shadow-lg z-20 animate-fadeIn">
+                        <button 
+                            onClick={() => onSetView('dice-roller')}
+                            className="block w-full text-left px-4 py-2 uppercase text-sm tracking-widest transition-colors duration-200 text-secondary hover:bg-secondary hover:text-background"
+                        >
+                            Dice Roller
+                        </button>
+                        <button
+                            onClick={() => onSetView('character-sheet')}
+                            disabled={!isCharacterLoaded}
+                            className="block w-full text-left px-4 py-2 uppercase text-sm tracking-widest transition-colors duration-200 text-secondary hover:bg-secondary hover:text-background disabled:text-muted disabled:bg-black/20 disabled:cursor-not-allowed"
+                        >
+                            Character Sheet
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
 
         <button
@@ -55,4 +86,4 @@ export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSe
             How to Play
         </button>
     </header>
-);
+)};

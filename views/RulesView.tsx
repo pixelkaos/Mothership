@@ -99,12 +99,11 @@ const ArmorTable: React.FC = () => (
             <thead>
                 <tr>
                     <th className="border-b-2 border-primary/50 p-2">Armor</th>
-                    <th className="border-b-2 border-primary/50 p-2 text-right">Price</th>
-                    {/* FIX: Header 'PB' changed to 'AP' for consistency with ArmorItem type */}
+                    {/* FIX: Header 'Price' changed to 'Cost' to match the 'cost' property in ArmorItem type. */}
+                    <th className="border-b-2 border-primary/50 p-2 text-right">Cost</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">AP</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">O2</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">Speed</th>
-                    {/* FIX: Header 'Peculiarities' changed to 'Special' for consistency with ArmorItem type */}
                     <th className="border-b-2 border-primary/50 p-2">Special</th>
                 </tr>
             </thead>
@@ -115,13 +114,10 @@ const ArmorTable: React.FC = () => (
                             <div className="font-bold text-secondary">{item.name}</div>
                             {item.description && <div className="text-xs text-muted">{item.description}</div>}
                         </td>
-                        {/* FIX: Property 'price' does not exist on type 'ArmorItem'. Correct property is 'cost'. */}
                         <td className="p-2 align-top font-mono text-right">{item.cost}</td>
-                        {/* FIX: Property 'pb' does not exist on type 'ArmorItem'. Correct property is 'ap'. */}
                         <td className="p-2 align-top font-mono text-right">{item.ap}</td>
                         <td className="p-2 align-top font-mono text-right">{item.o2}</td>
                         <td className="p-2 align-top font-mono text-right">{item.speed}</td>
-                        {/* FIX: Property 'peculiarities' does not exist on type 'ArmorItem'. Correct property is 'special'. */}
                         <td className="p-2 align-top text-sm">{item.special}</td>
                     </tr>
                 ))}
@@ -136,15 +132,12 @@ const WeaponTable: React.FC = () => (
             <thead>
                 <tr>
                     <th className="border-b-2 border-primary/50 p-2">Weapon</th>
-                    <th className="border-b-2 border-primary/50 p-2 text-right">Price</th>
-                    {/* FIX: Header 'Distance' changed to 'Range' for consistency with WeaponItem type */}
+                    {/* FIX: Header 'Price' changed to 'Cost' to match the 'cost' property in WeaponItem type. */}
+                    <th className="border-b-2 border-primary/50 p-2 text-right">Cost</th>
                     <th className="border-b-2 border-primary/50 p-2">Range</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">Damage</th>
-                    {/* FIX: Header 'Shots fired' changed to 'Shots' for consistency with WeaponItem type */}
                     <th className="border-b-2 border-primary/50 p-2 text-right">Shots</th>
-                    {/* FIX: Header 'Wounds' changed to 'Wound' for consistency with WeaponItem type */}
                     <th className="border-b-2 border-primary/50 p-2">Wound</th>
-                    {/* FIX: Header 'Peculiarities' changed to 'Special' for consistency with WeaponItem type */}
                     <th className="border-b-2 border-primary/50 p-2">Special</th>
                 </tr>
             </thead>
@@ -152,15 +145,11 @@ const WeaponTable: React.FC = () => (
                 {WEAPON_ITEMS.map((item) => (
                     <tr key={item.name} className="border-b border-muted/30">
                         <td className="p-2 align-top font-bold text-secondary">{item.name}</td>
-                        {/* FIX: Property 'price' does not exist on type 'WeaponItem'. Correct property is 'cost'. */}
                         <td className="p-2 align-top font-mono text-right">{item.cost}</td>
-                        {/* FIX: Property 'distance' does not exist on type 'WeaponItem'. Correct property is 'range'. */}
                         <td className="p-2 align-top">{item.range}</td>
                         <td className="p-2 align-top font-mono text-right">{item.damage}</td>
                         <td className="p-2 align-top font-mono text-right">{item.shots}</td>
-                        {/* FIX: Property 'wounds' does not exist on type 'WeaponItem'. Correct property is 'wound'. */}
                         <td className="p-2 align-top">{item.wound}</td>
-                        {/* FIX: Property 'peculiarities' does not exist on type 'WeaponItem'. Correct property is 'special'. */}
                         <td className="p-2 align-top text-sm">{item.special}</td>
                     </tr>
                 ))}

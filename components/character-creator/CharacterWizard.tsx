@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import type { Character, CharacterSaveData, ClassName, Stat, CharacterClass, CharacterStats, CharacterSaves } from '../../types';
 import { initialSaveData, getSkillAndPrerequisites } from '../../utils/character';
@@ -125,8 +126,11 @@ export const CharacterWizard: React.FC<{
     }, []);
 
      const handleApplyRoll = useCallback((path: string, value: number) => {
-        const newPath = path.replace('stats.', 'baseStats.').replace('saves.', 'baseSaves.');
+        const newPath = path.replace('stats.', 'baseStats.').replace('saves.', 'baseSaves.').replace('health.max', 'character.health.max');
         updateData(newPath, value);
+        if (path === 'health.max') {
+            updateData('character.health.current', value);
+        }
         setRollerState(prev => ({ ...prev, activeCheck: null, isVisible: false }));
     }, [updateData]);
     
@@ -202,7 +206,7 @@ export const CharacterWizard: React.FC<{
                 {/* Render current step's component */}
                 {currentStep === 1 && <Step1Stats saveData={saveData} onUpdate={updateData} onRollRequest={handleRollRequest} />}
                 {currentStep === 2 && <Step2Class saveData={saveData} onUpdate={updateData} />}
-                {currentStep === 3 && <Step3Vitals saveData={saveData} onUpdate={updateData} />}
+                {currentStep === 3 && <Step3Vitals saveData={saveData} onUpdate={updateData} onRollRequest={handleRollRequest} />}
                 {currentStep === 4 && <Step4Skills saveData={saveData} onUpdate={updateData} />}
                 {currentStep === 5 && <Step5Equipment saveData={saveData} onUpdate={updateData} />}
                 {currentStep === 6 && <Step6Style saveData={saveData} onUpdate={updateData} />}
@@ -377,7 +381,7 @@ const Step2Class: React.FC<StepProps> = ({ saveData, onUpdate }) => {
     );
 };
 
-const Step3Vitals: React.FC<StepProps> = ({ saveData, onUpdate }) => {
+const Step3Vitals: React.FC<StepProps> = ({ saveData, onUpdate, onRollRequest }) => {
     const char = saveData.character;
     const maxWounds = 2 + (char.class?.max_wounds_mod || 0);
     
@@ -385,12 +389,18 @@ const Step3Vitals: React.FC<StepProps> = ({ saveData, onUpdate }) => {
         <div className="space-y-6">
             <div className="text-center"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Vitals & Condition</h2><p className="text-muted mt-2">Determine your starting health and condition. You can roll for max health or enter a value.</p></div>
             <div className="flex flex-col md:flex-row justify-around items-center gap-8">
-                <div className="flex flex-col items-center"><h3 className="text-sm uppercase tracking-wider mb-2 text-muted">Max Health (1d10+10)</h3>
-                    <div className="flex items-center gap-2">
-                        <input type="number" className="w-24 bg-transparent border border-muted p-2 text-center text-2xl focus:border-primary focus:ring-0" value={char.health.max || ''} onChange={e => onUpdate('character.health.max', parseInt(e.target.value))} />
-                        <button onClick={() => { const val = rollDice('1d10+10'); onUpdate('character.health.max', val); onUpdate('character.health.current', val); }} className="px-3 py-2 text-xs uppercase tracking-widest border border-secondary text-secondary hover:bg-secondary hover:text-background">Roll</button>
-                    </div>
-                </div>
+                 <StatInput
+                    id="health.max"
+                    label="Max Health (1d10+10)"
+                    value={char.health.max}
+                    onChange={(e) => {
+                        const val = parseInt(e.target.value);
+                        onUpdate('character.health.max', val);
+                        onUpdate('character.health.current', val);
+                    }}
+                    tooltipContent="Your maximum health. Current health will be set to this value."
+                    onRollRequest={onRollRequest ? () => onRollRequest('creation', 'health.max') : undefined}
+                />
                 <div className="flex gap-8">
                     <SplitStatInput
                         label="Wounds"

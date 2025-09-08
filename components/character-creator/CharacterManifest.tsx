@@ -1,3 +1,5 @@
+
+
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, Stat, ShopItem } from '../../types';
 import { ALL_SKILLS, CLASSES_DATA, TRINKETS, PATCHES, PRONOUNS, SHOP_ITEMS } from '../../constants';
@@ -24,6 +26,7 @@ const STAT_DESCRIPTIONS: { [key: string]: React.ReactNode } = {
 interface CharacterManifestProps {
   characterData: CharacterSaveData | null;
   onCharacterUpdate: (character: CharacterSaveData | null) => void;
+  onOpenSheet: () => void;
 }
 
 const FormattedBackstory: React.FC<{ text: string }> = ({ text }) => {
@@ -114,7 +117,7 @@ export const StatInput: React.FC<{
                     value={value || ''}
                     onChange={onChange}
                     placeholder=" "
-                    onClick={onRollRequest}
+                    onClick={(e) => { e.stopPropagation(); onRollRequest?.(); }}
                 />
                  {(!value || value === 0) && onRollRequest && (
                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="absolute inset-0 m-auto h-6 w-6 text-primary/50 pointer-events-none group-hover:text-primary transition-colors">
@@ -170,7 +173,7 @@ export const SplitStatInput: React.FC<{
                     className={`w-1/2 bg-transparent text-center text-2xl font-bold text-foreground focus:ring-0 focus:outline-none appearance-none z-10 ${onRollRequestCurrent ? 'cursor-pointer' : ''}`}
                     value={currentValue || ''}
                     onChange={onCurrentChange}
-                    onClick={onRollRequestCurrent}
+                    onClick={(e) => { e.stopPropagation(); onRollRequestCurrent?.(); }}
                     placeholder="0"
                 />
                 
@@ -185,7 +188,7 @@ export const SplitStatInput: React.FC<{
                     className={`w-1/2 bg-transparent text-center text-2xl font-bold text-foreground focus:ring-0 focus:outline-none appearance-none z-10 ${onRollRequestMax ? 'cursor-pointer' : ''} ${isMaxReadOnly ? 'cursor-default' : ''}`}
                     value={maxValue || ''}
                     onChange={onMaxChange}
-                    onClick={onRollRequestMax}
+                    onClick={(e) => { e.stopPropagation(); onRollRequestMax?.(); }}
                     placeholder="0"
                     readOnly={isMaxReadOnly}
                 />
@@ -294,16 +297,13 @@ const ShopAndInventory: React.FC<{
 };
 
 
-export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterData, onCharacterUpdate }) => {
+export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterData, onCharacterUpdate, onOpenSheet }) => {
     if (!characterData) {
-        // This should not happen if used correctly within CharacterCreatorView, but it's a good fallback.
         return <div>Error: No character data provided to manifest.</div>;
     }
     
-    // Deconstruct saveData to use directly from props. No more local state for character data.
     const { character: char, baseStats, baseSaves, androidPenalty, scientistBonus, scientistMasterSkill } = characterData;
 
-    // UI-only state remains local.
     const [isCustomPronoun, setIsCustomPronoun] = useState(false);
     const [isGeneratingPortrait, setIsGeneratingPortrait] = useState(false);
     const [isEditingBackstory, setIsEditingBackstory] = useState(false);
@@ -340,7 +340,6 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
         }));
     }, []);
 
-    // This is the core recalculation logic. It will now be based on props.
     const { finalStats, finalSaves, finalMaxWounds } = useMemo(() => {
         const classData = char.class;
         let stats = { ...baseStats };
@@ -362,7 +361,6 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
         return { finalStats: stats, finalSaves: saves, finalMaxWounds: maxWounds };
     }, [char.class, baseStats, baseSaves, androidPenalty, scientistBonus]);
 
-    // This derived character object is what the UI should render.
     const finalCharacter = useMemo<Character>(() => ({
         ...char,
         stats: finalStats,
@@ -537,6 +535,12 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                             Back to Hangar
                         </button>
                         <button 
+                            onClick={onOpenSheet}
+                            className="px-4 py-3 text-sm uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-primary text-primary hover:bg-primary hover:text-background"
+                        >
+                            Open In-Game Sheet
+                        </button>
+                        <button 
                             onClick={handleSaveCharacter}
                             className="flex-1 px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed"
                         >
@@ -599,18 +603,18 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                     <div className="border border-primary/30 p-4">
                         <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Stats</h3>
                         <div className="flex justify-around">
-                            <StatInput id="stats.strength" label="Strength" value={finalCharacter.stats.strength} baseValue={baseStats.strength} onChange={(e) => handleFieldChange('stats.strength', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Strength']} onRollRequest={char.class ? () => handleRollRequest('stat', 'strength') : () => handleRollRequest('creation', 'stats.strength')} />
-                            <StatInput id="stats.speed" label="Speed" value={finalCharacter.stats.speed} baseValue={baseStats.speed} onChange={(e) => handleFieldChange('stats.speed', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Speed']} onRollRequest={char.class ? () => handleRollRequest('stat', 'speed') : () => handleRollRequest('creation', 'stats.speed')} />
-                            <StatInput id="stats.intellect" label="Intellect" value={finalCharacter.stats.intellect} baseValue={baseStats.intellect} onChange={(e) => handleFieldChange('stats.intellect', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Intellect']} onRollRequest={char.class ? () => handleRollRequest('stat', 'intellect') : () => handleRollRequest('creation', 'stats.intellect')} />
-                            <StatInput id="stats.combat" label="Combat" value={finalCharacter.stats.combat} baseValue={baseStats.combat} onChange={(e) => handleFieldChange('stats.combat', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Combat']} onRollRequest={char.class ? () => handleRollRequest('stat', 'combat') : () => handleRollRequest('creation', 'stats.combat')} />
+                            <StatInput id="stats.strength" label="Strength" value={finalCharacter.stats.strength} baseValue={baseStats.strength} onChange={(e) => handleFieldChange('stats.strength', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Strength']} onRollRequest={() => handleRollRequest('stat', 'strength')} />
+                            <StatInput id="stats.speed" label="Speed" value={finalCharacter.stats.speed} baseValue={baseStats.speed} onChange={(e) => handleFieldChange('stats.speed', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Speed']} onRollRequest={() => handleRollRequest('stat', 'speed')} />
+                            <StatInput id="stats.intellect" label="Intellect" value={finalCharacter.stats.intellect} baseValue={baseStats.intellect} onChange={(e) => handleFieldChange('stats.intellect', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Intellect']} onRollRequest={() => handleRollRequest('stat', 'intellect')} />
+                            <StatInput id="stats.combat" label="Combat" value={finalCharacter.stats.combat} baseValue={baseStats.combat} onChange={(e) => handleFieldChange('stats.combat', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Combat']} onRollRequest={() => handleRollRequest('stat', 'combat')} />
                         </div>
                     </div>
                      <div className="border border-primary/30 p-4">
                         <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Saves</h3>
                         <div className="flex justify-around">
-                            <StatInput id="saves.sanity" label="Sanity" value={finalCharacter.saves.sanity} baseValue={baseSaves.sanity} onChange={(e) => handleFieldChange('saves.sanity', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Sanity']} onRollRequest={char.class ? () => handleRollRequest('save', 'sanity') : () => handleRollRequest('creation', 'saves.sanity')} />
-                            <StatInput id="saves.fear" label="Fear" value={finalCharacter.saves.fear} baseValue={baseSaves.fear} onChange={(e) => handleFieldChange('saves.fear', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Fear']} onRollRequest={char.class ? () => handleRollRequest('save', 'fear') : () => handleRollRequest('creation', 'saves.fear')} />
-                            <StatInput id="saves.body" label="Body" value={finalCharacter.saves.body} baseValue={baseSaves.body} onChange={(e) => handleFieldChange('saves.body', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Body']} onRollRequest={char.class ? () => handleRollRequest('save', 'body') : () => handleRollRequest('creation', 'saves.body')} />
+                            <StatInput id="saves.sanity" label="Sanity" value={finalCharacter.saves.sanity} baseValue={baseSaves.sanity} onChange={(e) => handleFieldChange('saves.sanity', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Sanity']} onRollRequest={() => handleRollRequest('save', 'sanity')} />
+                            <StatInput id="saves.fear" label="Fear" value={finalCharacter.saves.fear} baseValue={baseSaves.fear} onChange={(e) => handleFieldChange('saves.fear', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Fear']} onRollRequest={() => handleRollRequest('save', 'fear')} />
+                            <StatInput id="saves.body" label="Body" value={finalCharacter.saves.body} baseValue={baseSaves.body} onChange={(e) => handleFieldChange('saves.body', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Body']} onRollRequest={() => handleRollRequest('save', 'body')} />
                         </div>
                     </div>
                 </div>
@@ -660,7 +664,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                      <div className="border border-primary/30 p-4">
                          <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Vitals</h3>
                          <div className="flex justify-around items-center">
-                            <SplitStatInput label="Health" id="health" currentValue={char.health.current} maxValue={char.health.max} onCurrentChange={(e) => handleFieldChange('health.current', e.target.value)} onMaxChange={(e) => handleFieldChange('health.max', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Health']} onRollRequestCurrent={char.class ? () => handleRollRequest('save', 'body') : undefined} onRollRequestMax={() => handleRollRequest('creation', 'health.max')} />
+                            <SplitStatInput label="Health" id="health" currentValue={char.health.current} maxValue={char.health.max} onCurrentChange={(e) => handleFieldChange('health.current', e.target.value)} onMaxChange={(e) => handleFieldChange('health.max', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Health']} onRollRequestCurrent={() => handleRollRequest('save', 'body')} onRollRequestMax={() => handleRollRequest('creation', 'health.max')} />
                          </div>
                     </div>
                     <div className="border border-primary/30 p-4">

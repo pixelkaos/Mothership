@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import type { CharacterSaveData } from '../types';
 import { CharacterHangar } from '../components/character-creator/CharacterHangar';
@@ -8,13 +9,14 @@ import { CharacterManifest } from '../components/character-creator/CharacterMani
 export const CharacterCreatorView: React.FC<{
   characterData: CharacterSaveData | null;
   onCharacterUpdate: (data: CharacterSaveData | null) => void;
-}> = ({ characterData, onCharacterUpdate }) => {
+  onOpenSheet: () => void;
+}> = ({ characterData, onCharacterUpdate, onOpenSheet }) => {
   const [mode, setMode] = useState<'hangar' | 'wizard'>('hangar');
 
   // If a character is already loaded (e.g., from a previous random generation or file load),
   // display the full manifest immediately.
   if (characterData) {
-    return <CharacterManifest characterData={characterData} onCharacterUpdate={onCharacterUpdate} />;
+    return <CharacterManifest characterData={characterData} onCharacterUpdate={onCharacterUpdate} onOpenSheet={onOpenSheet} />;
   }
 
   // If the user has started the creation process, show the wizard.

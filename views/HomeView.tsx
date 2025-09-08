@@ -1,3 +1,4 @@
+
 import React from 'react';
 import type { NavigationView } from '../App';
 
@@ -30,17 +31,11 @@ const NavCard: React.FC<{
 export const HomeView: React.FC<HomeViewProps> = ({ onSetView }) => {
     return (
         <div className="flex flex-col items-center justify-center min-h-full py-10 px-4 sm:px-6 md:px-8">
-            <header className="text-center mb-12 animate-fadeIn">
-                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-widest uppercase text-primary">
-                    MOTHERSHIP
-                </h1>
-                <h2 className="text-xl sm:text-2xl text-foreground/80 tracking-[0.3em] mb-4">
-                    RPG COMPANION
-                </h2>
-                <p className="text-secondary tracking-widest animate-pulse">
+            <div className="text-center mb-12 animate-fadeIn">
+                 <p className="text-secondary tracking-widest animate-pulse">
                     // SURVIVAL IS NOT GUARANTEED //
                 </p>
-            </header>
+            </div>
 
             <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="animate-slideInUp" style={{ animationDelay: '200ms' }}>

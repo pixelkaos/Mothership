@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { RollResult, Character, Stat, Save } from '../types';
 import { parseAndRoll } from '../utils/dice';
@@ -382,7 +383,7 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
                         </button>
                     </div>
                 )}
-                 <button onClick={() => { setScreen('main'); onStateChange({ activeCheck: null }); }} className="mt-4 text-muted uppercase tracking-widest text-sm font-semibold hover:text-primary">Back</button>
+                 <button onClick={() => { onStateChange({ isVisible: false, activeCheck: null }); }} className="mt-4 text-muted uppercase tracking-widest text-sm font-semibold hover:text-primary">Close</button>
             </div>
         )
     }
@@ -501,7 +502,9 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
                 className="flex justify-between items-center p-2 bg-black/30 cursor-move border-b border-primary/50"
                 onMouseDown={handleMouseDown}
             >
-                <h4 className="font-bold text-primary uppercase tracking-wider">Dice Roller</h4>
+                <h4 className="font-bold text-primary uppercase tracking-wider">
+                    {screen === 'creation' ? 'Creation Roll' : 'Dice Roller'}
+                </h4>
                 <div className="flex items-center space-x-2">
                     <button onClick={() => onStateChange({ isMinimized: !isMinimized })} className="text-primary/70 hover:text-primary" aria-label={isMinimized ? "Expand" : "Minimize"}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
