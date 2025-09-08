@@ -1,4 +1,3 @@
-
 /**
  * Sets a value on a nested object using a string path.
  *

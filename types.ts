@@ -32,28 +32,30 @@ export interface QuizQuestion {
 
 export interface ShopItem {
   name: string;
-  price: number;
+  price: string;
   description: string;
 }
 
 export interface ArmorItem {
   name: string;
   description?: string;
-  price: string;
-  pb: number;
+  cost: string;
+  ap: number;
   o2: string;
   speed: string;
-  peculiarities: string;
+  special: string;
+  dr?: number;
 }
 
 export interface WeaponItem {
   name: string;
-  price: string;
-  distance: string;
+  cost: string;
+  range: string;
   damage: string;
   shots: string;
-  wounds: string;
-  peculiarities: string;
+  wound: string;
+  special: string;
+  aa?: boolean;
 }
 
 
@@ -81,12 +83,22 @@ export interface CharacterClass {
   description: string;
   stats_mods: Partial<CharacterStats>;
   saves_mods: Partial<CharacterSaves>;
+  flexible_stats_mod?: {
+    amount: number;
+    description: string;
+  };
   max_wounds_mod: number;
   starting_skills: string[];
-  bonus_skills: {
-    trained: number;
-    expert: number;
-    master: number;
+  bonus_skills: { // Can be a choice or fixed
+    choice?: {
+      expert: number;
+      trained: number;
+    };
+    fixed?: {
+      trained: number;
+      expert: number;
+      master: number;
+    }
   };
   trauma_response: string;
 }
@@ -132,14 +144,15 @@ export interface CharacterSaveData {
   baseSaves: CharacterSaves;
   androidPenalty: Stat | null;
   scientistBonus: Stat | null;
+  scientistMasterSkill: string | null; // For tracking the chosen skill branch
 }
 
 
 export interface SkillDefinition {
   name: string;
+  tier: SkillTier;
   description: string;
   prerequisites?: string[];
-  effects?: string;
 }
 
 // Dice Roller
@@ -148,4 +161,13 @@ export interface RollResult {
     rolls: number[];
     modifier: number;
     formula: string;
+}
+
+export interface WoundEntry {
+    severity: string;
+    bluntForce: string;
+    bleeding: string;
+    gunshot: string;
+    fireExplosives: string;
+    goreMassive: string;
 }

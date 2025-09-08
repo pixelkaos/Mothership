@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import type { QuizQuestion } from '../types';
 
@@ -11,7 +10,7 @@ const TUTORIAL_PAGES = 3;
 const QUIZ_QUESTIONS: QuizQuestion[] = [
     {
         question: "To succeed at a Strength Check with a Strength of 35, you need to roll...",
-        options: ["Over 35 on a d%", "35 or under on a d%", "A 3 or a 5 on a d10"],
+        options: ["Over 35 on a d100", "Under 35 on a d100", "Exactly 35 on a d100"],
         correctAnswerIndex: 1
     },
     {
@@ -20,7 +19,7 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
         correctAnswerIndex: 1
     },
     {
-        question: "You have 5 Stress. To pass a Panic Check, what do you need to roll on 2d10?",
+        question: "You have 5 Stress. To pass a Panic Check, what do you need to roll on a 1d20?",
         options: ["5 or less", "Exactly 5", "6 or more"],
         correctAnswerIndex: 2
     }
@@ -57,10 +56,10 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                         <h4 className="text-xl font-bold text-primary mb-2 uppercase">Character Creation Basics</h4>
                         <ol className="list-decimal list-inside text-foreground space-y-2">
                             <li><strong className="text-primary">Stats:</strong> Roll 2d10+25 for your four Stats: Strength, Speed, Intellect, and Combat.</li>
-                            <li><strong className="text-primary">Saves:</strong> Roll 2d10+10 for your Saves: Sanity, Fear, and Body. Armor is determined by gear.</li>
+                            <li><strong className="text-primary">Saves:</strong> Roll 2d10+10 for your Saves: Sanity, Fear, and Body.</li>
                             <li><strong className="text-primary">Class:</strong> Pick from Teamster, Android, Scientist, or Marine. Each class adjusts stats/saves and provides unique skills.</li>
                             <li><strong className="text-primary">Health:</strong> Your Maximum Health is equal to 1d10+10.</li>
-                            <li><strong className="text-primary">Final Touches:</strong> Spend skill points, pick your starting equipment, and give your character a name. You're ready to play!</li>
+                            <li><strong className="text-primary">Final Touches:</strong> Select your bonus skills, roll for your starting equipment, trinket, and patch. You start with 2d10x10 Credits and 2 Stress. You're ready to play!</li>
                         </ol>
                     </div>
                 );
@@ -71,19 +70,19 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                         <div className="space-y-4 text-foreground leading-relaxed">
                             <div>
                                 <h4 className="text-xl font-bold text-primary mb-1 uppercase">Checks & Saves</h4>
-                                <p>When the outcome of an action is uncertain, you make a **Stat Check**. To succeed, roll a d% (two d10s, for a result of 00-99) and get a result **equal to or under** your Stat. **Saves** work the same way to resist danger.</p>
+                                <p>When the outcome of an action is uncertain, you make a **Stat Check**. To succeed, roll a d100 (two d10s, for a result of 00-99) and get a result **less than** your Stat. **Saves** work the same way to resist danger. A roll of 90-99 is always a failure.</p>
                             </div>
                             <div>
                                 <h4 className="text-xl font-bold text-primary mb-1 uppercase">Advantage & Disadvantage</h4>
-                                <p>**Advantage:** Roll d% twice and take the better (usually lower) result. **Disadvantage:** Roll d% twice and take the worse (usually higher) result.</p>
+                                <p>**Advantage (+):** Roll d100 twice and take the better (lower) result. **Disadvantage (-):** Roll d100 twice and take the worse (higher) result.</p>
                             </div>
                              <div>
                                 <h4 className="text-xl font-bold text-primary mb-1 uppercase">Criticals</h4>
-                                <p>Rolling doubles (11, 22, 33, etc.) on a d% is a **Critical**. A successful Critical means extra good things happen. A failed Critical means extra bad things happen.</p>
+                                <p>Rolling doubles (11, 22, 33, etc.) on a d100 is a **Critical**. A successful Critical is a Critical Success. A failed Critical is a Critical Failure, and you must make a Panic Check. A roll of 00 is always a Critical Success, and 99 is always a Critical Failure.</p>
                             </div>
                             <div>
                                 <h4 className="text-xl font-bold text-primary mb-1 uppercase">Stress & Panic</h4>
-                                <p>Failing saves and witnessing horrors increases your **Stress**. When the GM calls for a **Panic Check**, you roll 2d10. If the roll is **greater than** your current Stress, you're fine. If it's **equal to or less than** your Stress, you panic and must roll on the Panic Effect Table.</p>
+                                <p>Failing saves and witnessing horrors increases your **Stress**. When the Warden calls for a **Panic Check**, you roll a **1d20 (the Panic Die)**. If the roll is **greater than** your current Stress, you keep your cool. If it's **less than or equal to** your Stress, you panic and consult the Panic Effect Table.</p>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, Stat, ShopItem } from '../../types';
-import { ALL_SKILLS, CLASSES_DATA, TRINKETS, PATCHES, SCIENTIST_SKILL_CHOICES, PRONOUNS, SHOP_ITEMS } from '../../constants';
+import { ALL_SKILLS, CLASSES_DATA, TRINKETS, PATCHES, PRONOUNS, SHOP_ITEMS } from '../../constants';
 import { set } from '../../utils/helpers';
 import { SkillSelector } from '../SkillSelector';
 import { useTooltip } from '../Tooltip';
@@ -207,9 +207,10 @@ const ShopAndInventory: React.FC<{
     const { character } = characterData;
 
     const handleBuyItem = (item: ShopItem) => {
-        if (character.credits >= item.price) {
+        const price = parseInt(item.price.replace(/,/g, '').replace('cr', '').replace('kcr', '000'));
+        if (character.credits >= price) {
             const newSaveData = JSON.parse(JSON.stringify(characterData));
-            newSaveData.character.credits -= item.price;
+            newSaveData.character.credits -= price;
             newSaveData.character.equipment.inventory.push(item.name);
             onCharacterUpdate(newSaveData);
         }
@@ -263,7 +264,8 @@ const ShopAndInventory: React.FC<{
                      <div className="bg-black/30 p-2 min-h-[200px] max-h-96 overflow-y-auto">
                         <ul className="space-y-1">
                             {SHOP_ITEMS.map(item => {
-                                const canAfford = character.credits >= item.price;
+                                const price = parseInt(item.price.replace(/,/g, '').replace('cr', '').replace('kcr', '000').replace(/ ea\./, ''));
+                                const canAfford = character.credits >= price;
                                 return (
                                 <li key={item.name} className="flex justify-between items-center bg-black/50 p-2 text-sm"
                                      onMouseEnter={(e) => showTooltip(
@@ -275,7 +277,7 @@ const ShopAndInventory: React.FC<{
                                     onMouseLeave={hideTooltip}
                                 >
                                     <span className="flex-1">{item.name}</span>
-                                    <span className="text-primary/80 font-mono w-20 text-right">{item.price.toLocaleString()}cr</span>
+                                    <span className="text-primary/80 font-mono w-20 text-right">{item.price}</span>
                                     <button 
                                         onClick={() => handleBuyItem(item)}
                                         disabled={!canAfford}
@@ -299,7 +301,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
     }
     
     // Deconstruct saveData to use directly from props. No more local state for character data.
-    const { character: char, baseStats, baseSaves, androidPenalty, scientistBonus } = characterData;
+    const { character: char, baseStats, baseSaves, androidPenalty, scientistBonus, scientistMasterSkill } = characterData;
 
     // UI-only state remains local.
     const [isCustomPronoun, setIsCustomPronoun] = useState(false);
@@ -415,6 +417,13 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
         });
     }, [characterData, onCharacterUpdate]);
 
+    const handleScientistMasterSkillChange = useCallback((skillName: string | null) => {
+        onCharacterUpdate({
+            ...characterData,
+            scientistMasterSkill: skillName
+        })
+    }, [characterData, onCharacterUpdate]);
+
     const handleSelectClass = useCallback((className: ClassName) => {
         const classData = CLASSES_DATA.find(c => c.name === className)!;
         const isSameClass = characterData.character.class?.name === className;
@@ -423,6 +432,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
             ...characterData,
             androidPenalty: isSameClass ? characterData.androidPenalty : null,
             scientistBonus: isSameClass ? characterData.scientistBonus : null,
+            scientistMasterSkill: isSameClass ? characterData.scientistMasterSkill : null,
             character: {
                 ...characterData.character,
                 class: isSameClass ? null : classData,
@@ -434,6 +444,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
             newSaveData.character.class = null;
             newSaveData.androidPenalty = null;
             newSaveData.scientistBonus = null;
+            newSaveData.scientistMasterSkill = null;
         }
 
         onCharacterUpdate(newSaveData);
@@ -490,7 +501,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
     }, [characterData, onCharacterUpdate, char]);
 
     const handleSaveCharacter = useCallback(() => {
-        const saveData: CharacterSaveData = { character: finalCharacter, baseStats, baseSaves, androidPenalty, scientistBonus };
+        const saveData: CharacterSaveData = { ...characterData, character: finalCharacter };
         const jsonString = JSON.stringify(saveData, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -502,7 +513,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-    }, [finalCharacter, baseStats, baseSaves, androidPenalty, scientistBonus]);
+    }, [finalCharacter, characterData]);
     
     const tertiarySelectionClasses = (isSelected: boolean) => {
         const base = 'flex-1 p-2 text-center uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus';
@@ -604,22 +615,32 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                     </div>
                 </div>
                 
-                {char.class?.name === 'Android' && (
+                {char.class?.flexible_stats_mod && (
                     <div className="border border-primary/30 p-4">
-                        <h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Android Penalty (-10)</h4>
-                        <p className="text-xs text-muted mb-3">Androids have a specific operational flaw. Choose one stat to reduce by 10.</p>
+                        <h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">
+                            {char.class.name === 'Android' ? 'Android Penalty (-10)' : 'Scientist Bonus (+5)'}
+                        </h4>
+                        <p className="text-xs text-muted mb-3">
+                            {char.class.name === 'Android' 
+                                ? 'Androids have a specific operational flaw. Choose one stat to reduce by 10.'
+                                : 'Scientists have a particular field of expertise. Choose one stat to improve by 5.'
+                            }
+                        </p>
                         <div className="flex gap-4">
-                            {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => <button key={stat} onClick={() => onCharacterUpdate({...characterData, androidPenalty: stat})} className={tertiarySelectionClasses(androidPenalty === stat)}>{stat}</button>)}
-                        </div>
-                    </div>
-                )}
-
-                {char.class?.name === 'Scientist' && (
-                    <div className="border border-primary/30 p-4">
-                        <h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Scientist Bonus (+5)</h4>
-                        <p className="text-xs text-muted mb-3">Scientists have a particular field of expertise. Choose one stat to improve by 5.</p>
-                        <div className="flex gap-4">
-                            {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => <button key={stat} onClick={() => onCharacterUpdate({...characterData, scientistBonus: stat})} className={tertiarySelectionClasses(scientistBonus === stat)}>{stat}</button>)}
+                            {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => {
+                                const isAndroid = char.class?.name === 'Android';
+                                const isSelected = isAndroid ? androidPenalty === stat : scientistBonus === stat;
+                                const path = isAndroid ? 'androidPenalty' : 'scientistBonus';
+                                return (
+                                    <button 
+                                        key={stat} 
+                                        onClick={() => onCharacterUpdate({ ...characterData, [path]: stat })} 
+                                        className={tertiarySelectionClasses(isSelected)}
+                                    >
+                                        {stat}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
                 )}
@@ -630,7 +651,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                         {CLASSES_DATA.map(classData => {
                             const isSelected = char.class?.name === classData.name;
                             const buttonClasses = isSelected ? 'bg-tertiary text-background border border-tertiary' : 'bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background';
-                            return <button key={classData.name} onClick={() => handleSelectClass(classData.name as ClassName)} className={`p-4 text-left transition-colors ${buttonClasses}`}><h4 className="font-bold text-lg uppercase text-secondary">{classData.name}</h4><p className="text-xs text-muted mt-2">Trauma: {classData.trauma_response}</p></button>;
+                            return <button key={classData.name} onClick={() => handleSelectClass(classData.name as ClassName)} className={`p-4 text-left transition-colors ${buttonClasses}`}><h4 className="font-bold text-lg uppercase text-secondary">{classData.name}</h4><p className="text-xs text-muted mt-2">{classData.description}</p></button>;
                         })}
                     </div>
                 </div>
@@ -653,7 +674,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                 
                 <div className="border border-primary/30 p-4">
                     <h3 className="text-sm uppercase tracking-wider mb-4 text-muted">Skills</h3>
-                    {char.class ? <SkillSelector characterClass={char.class} allSkills={ALL_SKILLS} selectedSkills={char.skills} onSkillsChange={handleSkillsChange} /> : <p className="text-xs text-muted">Select a class to see available skills.</p>}
+                    {char.class ? <SkillSelector characterClass={char.class} selectedSkills={char.skills} onSkillsChange={handleSkillsChange} scientistMasterSkill={scientistMasterSkill} onScientistMasterSkillChange={handleScientistMasterSkillChange} /> : <p className="text-xs text-muted">Select a class to see available skills.</p>}
                 </div>
 
                 <div className="border border-primary/30 p-4">

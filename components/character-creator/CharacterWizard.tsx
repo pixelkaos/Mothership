@@ -1,9 +1,11 @@
+
+
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import type { Character, CharacterSaveData, ClassName, Stat, CharacterClass } from '../../types';
-import { initialSaveData } from '../../utils/character';
+import type { Character, CharacterSaveData, ClassName, Stat, CharacterClass, CharacterStats, CharacterSaves } from '../../types';
+import { initialSaveData, getSkillAndPrerequisites } from '../../utils/character';
 import { set } from '../../utils/helpers';
 import { rollDice } from '../../utils/dice';
-import { ALL_SKILLS, CLASSES_DATA, STARTING_EQUIPMENT_TABLES, PATCHES, PRONOUNS, SCIENTIST_SKILL_CHOICES, TRINKETS, FIRST_NAMES, LAST_NAMES } from '../../constants';
+import { ALL_SKILLS, CLASSES_DATA, STARTING_EQUIPMENT_TABLES, PATCHES, PRONOUNS, TRINKETS, FIRST_NAMES, LAST_NAMES } from '../../constants';
 import { SplitStatInput, StatInput } from './CharacterManifest';
 import { SkillSelector } from '../SkillSelector';
 import { generateCharacterBackstory, generateCharacterPortrait } from '../../services/geminiService';
@@ -328,12 +330,35 @@ const Step3Vitals: React.FC<StepProps> = ({ saveData, onUpdate }) => {
 };
 
 const Step4Skills: React.FC<StepProps> = ({ saveData, onUpdate }) => {
-    const { character } = saveData;
+    const { character, scientistMasterSkill } = saveData;
     if (!character.class) return <p className="text-muted text-center">Go back and select a class to continue.</p>;
+    
+    const handleScientistMasterSkillChange = (skillName: string | null) => {
+        onUpdate('scientistMasterSkill', skillName);
+
+        let newSkills: Character['skills'] = { trained: [], expert: [], master: [] };
+        if (skillName) {
+            const newChain = getSkillAndPrerequisites(skillName);
+            newSkills.master.push(newChain[0]);
+            newSkills.expert.push(newChain[1]);
+            newSkills.trained.push(newChain[2]);
+        }
+        
+        // This wipes any chosen bonus skill, which is acceptable UX when changing a core skill branch.
+        // The user can re-select their bonus skill afterwards.
+        onUpdate('character.skills', newSkills);
+    };
+
     return (
         <div>
             <div className="text-center mb-6"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Skill Selection</h2><p className="text-muted mt-2">Spend your skill points based on your chosen class.</p></div>
-            <SkillSelector characterClass={character.class} allSkills={ALL_SKILLS} selectedSkills={character.skills} onSkillsChange={skills => onUpdate('character.skills', skills)} />
+            <SkillSelector 
+                characterClass={character.class} 
+                selectedSkills={character.skills} 
+                onSkillsChange={skills => onUpdate('character.skills', skills)}
+                scientistMasterSkill={scientistMasterSkill}
+                onScientistMasterSkillChange={handleScientistMasterSkillChange}
+            />
         </div>
     );
 };
@@ -467,20 +492,51 @@ const Step6Style: React.FC<StepProps> = ({ saveData, onUpdate }) => {
 };
 
 const Step7Manifest: React.FC<{saveData: CharacterSaveData, onGoToStep: (step: number) => void}> = ({ saveData, onGoToStep }) => {
-    const { character } = saveData;
-    const EditButton = ({step}: {step: number}) => <button onClick={() => onGoToStep(step)} className="text-xs text-secondary hover:text-primary">[Edit]</button>;
+    const { character, baseStats, baseSaves, androidPenalty, scientistBonus, scientistMasterSkill } = saveData;
+    
+    const { finalStats, finalSaves, finalMaxWounds } = useMemo(() => {
+        const classData = character.class;
+        let stats: CharacterStats = { ...baseStats };
+        let saves: CharacterSaves = { ...baseSaves };
+        let maxWounds = 2; // Base wounds
+
+        if (classData) {
+            maxWounds += classData.max_wounds_mod || 0;
+
+            for (const [stat, mod] of Object.entries(classData.stats_mods || {})) {
+                stats[stat as keyof typeof stats] += mod;
+            }
+            for (const [save, mod] of Object.entries(classData.saves_mods || {})) {
+                saves[save as keyof typeof saves] += mod;
+            }
+
+            if (classData.name === 'Android' && androidPenalty) {
+                stats[androidPenalty] -= 10;
+            }
+            if (classData.name === 'Scientist' && scientistBonus) {
+                stats[scientistBonus] += 5;
+            }
+        }
+        return { finalStats: stats, finalSaves: saves, finalMaxWounds: maxWounds };
+    }, [character.class, baseStats, baseSaves, androidPenalty, scientistBonus]);
+    
+    const allSkills = [...character.skills.trained, ...character.skills.expert, ...character.skills.master];
+
+    const EditButton = ({step}: {step: number}) => <button onClick={() => onGoToStep(step)} className="ml-2 text-xs text-secondary hover:text-primary">[Edit]</button>;
+    
     return (
         <div>
             <div className="text-center mb-6"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Final Manifest</h2><p className="text-muted mt-2">Review your character. You can go back to any previous step to make changes.</p></div>
-            <div className="space-y-4 text-sm">
-                <p><strong>Name:</strong> {character.name} ({character.pronouns}) <EditButton step={6} /></p>
-                <p><strong>Class:</strong> {character.class?.name} <EditButton step={2} /></p>
-                <p><strong>Stats:</strong> Str {character.stats.strength}, Spd {character.stats.speed}, Int {character.stats.intellect}, Com {character.stats.combat} <EditButton step={1} /></p>
-                <p><strong>Saves:</strong> Sanity {character.saves.sanity}, Fear {character.saves.fear}, Body {character.saves.body} <EditButton step={1} /></p>
-                <p><strong>Health:</strong> {character.health.current}/{character.health.max} | <strong>Wounds:</strong> {character.wounds.current}/{character.wounds.max} | <strong>Stress:</strong> {character.stress.current} <EditButton step={3} /></p>
-                <p><strong>Skills ({character.skills.trained.length + character.skills.expert.length + character.skills.master.length}):</strong> {[...character.skills.trained, ...character.skills.expert, ...character.skills.master].join(', ')} <EditButton step={4} /></p>
-                <p><strong>Equipment:</strong> {character.equipment.loadout}, {character.equipment.trinket}, {character.equipment.patch}, {character.credits}c <EditButton step={5} /></p>
-            </div>
+            <dl className="divide-y divide-primary/50 bg-black/30 p-4 text-sm">
+                <div className="py-2 grid grid-cols-3 gap-4"><dt className="font-bold text-primary/80">Name</dt><dd className="col-span-2">{character.name || 'N/A'} ({character.pronouns || 'N/A'}) <EditButton step={6} /></dd></div>
+                <div className="py-2 grid grid-cols-3 gap-4"><dt className="font-bold text-primary/80">Class</dt><dd className="col-span-2">{character.class?.name || 'N/A'} <EditButton step={2} /></dd></div>
+                <div className="py-2 grid grid-cols-3 gap-4"><dt className="font-bold text-primary/80">Stats</dt><dd className="col-span-2">Str {finalStats.strength}, Spd {finalStats.speed}, Int {finalStats.intellect}, Com {finalStats.combat} <EditButton step={1} /></dd></div>
+                <div className="py-2 grid grid-cols-3 gap-4"><dt className="font-bold text-primary/80">Saves</dt><dd className="col-span-2">Sanity {finalSaves.sanity}, Fear {finalSaves.fear}, Body {finalSaves.body} <EditButton step={1} /></dd></div>
+                <div className="py-2 grid grid-cols-3 gap-4"><dt className="font-bold text-primary/80">Vitals</dt><dd className="col-span-2">HP: {character.health.current}/{character.health.max} | Wounds: {character.wounds.current}/{finalMaxWounds} | Stress: {character.stress.current} <EditButton step={3} /></dd></div>
+                <div className="py-2 grid grid-cols-3 gap-4"><dt className="font-bold text-primary/80">Skills ({allSkills.length})</dt><dd className="col-span-2">{allSkills.join(', ') || 'None selected'} <EditButton step={4} /></dd></div>
+                <div className="py-2 grid grid-cols-3 gap-4"><dt className="font-bold text-primary/80">Equipment</dt><dd className="col-span-2">{character.equipment.loadout || 'None selected'}. Trinket: {character.equipment.trinket || 'N/A'}. Patch: {character.equipment.patch || 'N/A'}. <EditButton step={5} /></dd></div>
+                <div className="py-2 grid grid-cols-3 gap-4"><dt className="font-bold text-primary/80">Credits</dt><dd className="col-span-2">{character.credits}cr <EditButton step={5} /></dd></div>
+            </dl>
         </div>
     );
 };

@@ -1,5 +1,3 @@
-
-
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { RollResult, Character, Stat, Save } from '../types';
 import { parseAndRoll } from '../utils/dice';
@@ -11,12 +9,13 @@ interface HistoryEntry extends RollResult {
     timestamp: number;
     success?: boolean;
     target?: number;
+    isCritical?: boolean;
 }
 
 type Advantage = 'none' | 'adv' | 'disadv';
 
 const getSkillBonus = (skillName: string, character: Character): number => {
-    if (character.skills.master.includes(skillName)) return 15;
+    if (character.skills.master.includes(skillName)) return 20;
     if (character.skills.expert.includes(skillName)) return 15;
     if (character.skills.trained.includes(skillName)) return 10;
     return 0;
@@ -31,6 +30,7 @@ const CREATION_ROLLS_MAP: { [key: string]: { name: string, formula: string } } =
     'fear': { name: 'Fear', formula: '2d10+10' },
     'body': { name: 'Body', formula: '2d10+10' },
     'health.max': { name: 'Max Health', formula: '1d10+10' },
+    'credits': { name: 'Credits', formula: '2d10*10'},
 };
 
 interface CharacterRollerProps {
@@ -66,7 +66,7 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
     }, [initialPosition]);
 
     const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-        if (!rollerRef.current) return;
+        if (!rollerRef.current || e.target !== e.currentTarget) return;
         setIsDragging(true);
         const rect = rollerRef.current.getBoundingClientRect();
         dragOffset.current = {
@@ -127,46 +127,23 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
         let newChar = JSON.parse(JSON.stringify(character));
         let needsUpdate = false;
 
+        // Gain stress on any failure
         if (entry.success === false && (entry.name.includes('Save') || entry.name.includes('Check'))) {
-            newChar.stress.current += 1;
+            newChar.stress.current = Math.min(20, newChar.stress.current + 1);
             needsUpdate = true;
         }
 
-        if (entry.name === 'Panic' && entry.total <= character.stress.current) {
-            newChar.stress.current += 1;
-            needsUpdate = true;
+        // On Critical Failure, make a panic check
+        if(entry.isCritical && entry.success === false) {
+             const panicRoll = parseAndRoll('1d20');
+             const panicSuccess = panicRoll.total > newChar.stress.current;
+             const panicEntry: HistoryEntry = { ...panicRoll, name: 'Panic Check (Crit Fail)', success: panicSuccess, target: newChar.stress.current, timestamp: Date.now() + 1 };
+             setHistory(prev => [panicEntry, ...prev].slice(0,10));
+             if(!panicSuccess) {
+                // You can add logic here to show the panic table result if needed.
+             }
         }
 
-        if (entry.name === 'Unarmed') {
-            needsUpdate = true;
-            let newHealth = newChar.health.current - entry.total;
-            if (newHealth <= 0) {
-                newChar.wounds.current += 1;
-                newChar.stress.current += 1;
-                
-                if (newChar.wounds.current >= newChar.wounds.max) {
-                    newChar.health.current = 0;
-                    if (!newChar.notes.includes('[DECEASED]')) {
-                        newChar.notes += `\n[DECEASED]`;
-                    }
-                } else {
-                    newChar.health.current = newChar.health.max;
-                }
-            } else {
-                newChar.health.current = newHealth;
-            }
-        }
-        
-        if (entry.name.includes('Blunt Force') || entry.name.includes('Bleeding') || entry.name.includes('Gunshot') || entry.name.includes('Fire') || entry.name.includes('Gore')) {
-            needsUpdate = true;
-            newChar.wounds.current += 1;
-            if (newChar.wounds.current >= newChar.wounds.max) {
-                 if (!newChar.notes.includes('[DECEASED]')) {
-                    newChar.notes += `\n[DECEASED]`;
-                }
-            }
-        }
-        
         if (needsUpdate) onUpdate(newChar);
 
     }, [character, onUpdate]);
@@ -185,16 +162,21 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
              finalRoll.formula = `${formula.replace('1d', '2d')} (${adv})`;
         }
         
+        const isPanicCheck = name === 'Panic';
+        const panicSuccess = isPanicCheck ? finalRoll.total > character.stress.current : undefined;
+        
         addToHistory({
             name,
             total: finalRoll.total,
             rolls: finalRoll.rolls,
             modifier: finalRoll.modifier,
             formula: finalRoll.formula,
+            success: panicSuccess,
+            target: isPanicCheck ? character.stress.current : undefined
         });
         setAdvantage('none');
         setScreen('main');
-    }, [addToHistory]);
+    }, [addToHistory, character.stress.current]);
     
     useEffect(() => {
         if (activeCheck) {
@@ -206,7 +188,7 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
             } else if (activeCheck.type === 'wound') {
                 setScreen('wound');
             } else if (activeCheck.type === 'panic') {
-                handleSimpleRoll('Panic', '2d10');
+                handleSimpleRoll('Panic', '1d20');
                 onStateChange({ activeCheck: null });
             }
         } else {
@@ -244,8 +226,12 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
             }
             finalRoll.formula = `2d100 (${advantage})`;
         }
-
-        const isSuccess = finalRoll.total <= finalTarget;
+        
+        const tens = Math.floor(finalRoll.total / 10);
+        const ones = finalRoll.total % 10;
+        
+        const isSuccess = finalRoll.total < finalTarget;
+        const isCritical = (tens === ones && finalRoll.total !== 100) || finalRoll.total === 0 || finalRoll.total === 99;
         
         addToHistory({
             name: `${selectedTarget.toUpperCase()} ${type === 'stat' ? 'Check' : 'Save'}`,
@@ -255,6 +241,7 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
             formula: finalRoll.formula,
             success: isSuccess,
             target: finalTarget,
+            isCritical: isCritical
         });
 
         resetCheckState();
@@ -266,7 +253,7 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
         return [
             ...character.skills.trained.map(name => ({ name, bonus: 10 })),
             ...character.skills.expert.map(name => ({ name, bonus: 15 })),
-            ...character.skills.master.map(name => ({ name, bonus: 15 }))
+            ...character.skills.master.map(name => ({ name, bonus: 20 }))
         ].sort((a,b) => a.name.localeCompare(b.name));
     }, [character]);
 
@@ -283,7 +270,7 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
                     <div className="w-1/4 h-px bg-primary/50 my-4" />
                     {result.target !== undefined && (
                          <span className={`text-2xl font-bold uppercase tracking-wider ${result.success ? 'text-positive' : 'text-negative'}`}>
-                            {result.success ? 'Success' : 'Failure'}
+                            {result.isCritical && 'CRITICAL '}{result.success ? 'Success' : 'Failure'}
                         </span>
                     )}
                     <span className="text-sm text-muted mt-2">
@@ -443,7 +430,7 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
                     <button onClick={() => setScreen('wound')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">WOUND</button>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                    <button onClick={() => handleSimpleRoll('Panic', '2d10')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">PANIC</button>
+                    <button onClick={() => handleSimpleRoll('Panic', '1d20')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">PANIC</button>
                     <button onClick={() => setScreen('other')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">OTHER</button>
                 </div>
             </div>
@@ -493,7 +480,6 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
         ], true),
         other: renderSimpleRollScreen('Other Rolls', [
             { name: 'Rest Save', formula: '1d100' },
-            { name: 'Death Save', formula: '1d100' }
         ], false),
     }
 

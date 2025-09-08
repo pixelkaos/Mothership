@@ -96,7 +96,7 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
                     <h2 className="text-4xl font-bold text-primary uppercase tracking-wider">Hangar</h2>
                 </div>
                 <p className="text-muted text-sm max-w-xs text-right hidden sm:block mt-2">
-                    Infotext that explains the page and give information on what the user can expect on this page.
+                   Create, load, or generate a character for the Mothership Sci-Fi Horror RPG. Your life is cheap—make a new one.
                 </p>
             </div>
             
@@ -107,21 +107,21 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2 border border-primary/50 flex flex-col bg-black/30 text-left overflow-hidden h-full">
                            <div className="w-full aspect-video bg-black/50 border-b border-muted/50 flex items-center justify-center">
-                                <span className="text-muted text-lg tracking-widest">Space for suitable visual</span>
+                                <span className="text-muted text-lg tracking-widest">STEP-BY-STEP CREATION</span>
                             </div>
                             <div className="p-6 flex flex-col flex-grow">
                                 <div className="flex-grow">
-                                    <h4 className="text-xl font-bold text-primary uppercase tracking-wider">Start with a fresh Character</h4>
-                                    <p className="text-muted text-sm mt-2">Infotext that explains the function and what the user can expect.</p>
+                                    <h4 className="text-xl font-bold text-primary uppercase tracking-wider">New Recruit</h4>
+                                    <p className="text-muted text-sm mt-2">Go through a guided process to build a character from the ground up, making every choice yourself.</p>
                                 </div>
                                 <button onClick={onStartNew} className="mt-auto w-full px-6 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed">Start Fresh Character</button>
                             </div>
                         </div>
 
                         <SmallHangarCard
-                            visualContent={<span className="text-muted text-lg tracking-widest">Space for suitable visual</span>}
-                            title={<h4 className="text-xl font-bold text-primary uppercase tracking-wider">Already built a Character</h4>}
-                            description={<p className="text-muted text-sm mt-2">Infotext that explains the the function and what the user can expect.</p>}
+                            visualContent={<span className="text-muted text-lg tracking-widest">LOAD FROM FILE</span>}
+                            title={<h4 className="text-xl font-bold text-primary uppercase tracking-wider">Load Manifest</h4>}
+                            description={<p className="text-muted text-sm mt-2">Import a previously saved character file (.json) to continue your session or make edits.</p>}
                             buttonText="Load Saved Character"
                             onButtonClick={() => fileInputRef.current?.click()}
                             isButtonALabel={true}
@@ -130,9 +130,9 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
                         </SmallHangarCard>
 
                         <SmallHangarCard
-                            visualContent={<span className="text-muted text-lg tracking-widest">Space for suitable visual</span>}
-                            title={<h4 className="text-xl font-bold text-primary uppercase tracking-wider">I'm Feeling Lucky</h4>}
-                            description={<p className="text-muted text-sm mt-2">Infotext that explains the function and what the user can expect.</p>}
+                            visualContent={<span className="text-muted text-lg tracking-widest">AI-ASSISTED RANDOM</span>}
+                            title={<h4 className="text-xl font-bold text-primary uppercase tracking-wider">Random Recruit</h4>}
+                            description={<p className="text-muted text-sm mt-2">Instantly generate a complete, ready-to-play character with random stats, gear, and an AI-generated portrait and backstory.</p>}
                             buttonText={isGenerating ? 'Generating...' : 'Generate Random'}
                             onButtonClick={handleGenerateRandom}
                             isButtonDisabled={isGenerating}
@@ -162,12 +162,11 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
                                 }
                                 description={
                                     <>
-                                        <p className="text-sm text-secondary">{charInfo.data.character.class?.name} | Skills</p>
-                                        <p className="text-xs text-muted/80">Stats | Saves | Vitals</p>
+                                        <p className="text-sm text-secondary">{charInfo.data.character.class?.name}</p>
                                         <p className="text-muted text-sm mt-2">{charInfo.shortDescription}</p>
                                     </>
                                 }
-                                buttonText="Load Saved Character"
+                                buttonText="Load This Character"
                                 onButtonClick={() => onCharacterReady(charInfo.data)}
                             />
                         ))}

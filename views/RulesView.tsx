@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { STARTING_EQUIPMENT_TABLES, TRINKETS, PATCHES, SHOP_ITEMS, ARMOR_ITEMS, WEAPON_ITEMS } from '../constants';
 
@@ -99,10 +100,12 @@ const ArmorTable: React.FC = () => (
                 <tr>
                     <th className="border-b-2 border-primary/50 p-2">Armor</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">Price</th>
-                    <th className="border-b-2 border-primary/50 p-2 text-right">PB</th>
+                    {/* FIX: Header 'PB' changed to 'AP' for consistency with ArmorItem type */}
+                    <th className="border-b-2 border-primary/50 p-2 text-right">AP</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">O2</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">Speed</th>
-                    <th className="border-b-2 border-primary/50 p-2">Peculiarities</th>
+                    {/* FIX: Header 'Peculiarities' changed to 'Special' for consistency with ArmorItem type */}
+                    <th className="border-b-2 border-primary/50 p-2">Special</th>
                 </tr>
             </thead>
             <tbody>
@@ -112,11 +115,14 @@ const ArmorTable: React.FC = () => (
                             <div className="font-bold text-secondary">{item.name}</div>
                             {item.description && <div className="text-xs text-muted">{item.description}</div>}
                         </td>
-                        <td className="p-2 align-top font-mono text-right">{item.price}</td>
-                        <td className="p-2 align-top font-mono text-right">{item.pb}</td>
+                        {/* FIX: Property 'price' does not exist on type 'ArmorItem'. Correct property is 'cost'. */}
+                        <td className="p-2 align-top font-mono text-right">{item.cost}</td>
+                        {/* FIX: Property 'pb' does not exist on type 'ArmorItem'. Correct property is 'ap'. */}
+                        <td className="p-2 align-top font-mono text-right">{item.ap}</td>
                         <td className="p-2 align-top font-mono text-right">{item.o2}</td>
                         <td className="p-2 align-top font-mono text-right">{item.speed}</td>
-                        <td className="p-2 align-top text-sm">{item.peculiarities}</td>
+                        {/* FIX: Property 'peculiarities' does not exist on type 'ArmorItem'. Correct property is 'special'. */}
+                        <td className="p-2 align-top text-sm">{item.special}</td>
                     </tr>
                 ))}
             </tbody>
@@ -131,23 +137,31 @@ const WeaponTable: React.FC = () => (
                 <tr>
                     <th className="border-b-2 border-primary/50 p-2">Weapon</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">Price</th>
-                    <th className="border-b-2 border-primary/50 p-2">Distance</th>
+                    {/* FIX: Header 'Distance' changed to 'Range' for consistency with WeaponItem type */}
+                    <th className="border-b-2 border-primary/50 p-2">Range</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">Damage</th>
-                    <th className="border-b-2 border-primary/50 p-2 text-right">Shots fired</th>
-                    <th className="border-b-2 border-primary/50 p-2">Wounds</th>
-                    <th className="border-b-2 border-primary/50 p-2">Peculiarities</th>
+                    {/* FIX: Header 'Shots fired' changed to 'Shots' for consistency with WeaponItem type */}
+                    <th className="border-b-2 border-primary/50 p-2 text-right">Shots</th>
+                    {/* FIX: Header 'Wounds' changed to 'Wound' for consistency with WeaponItem type */}
+                    <th className="border-b-2 border-primary/50 p-2">Wound</th>
+                    {/* FIX: Header 'Peculiarities' changed to 'Special' for consistency with WeaponItem type */}
+                    <th className="border-b-2 border-primary/50 p-2">Special</th>
                 </tr>
             </thead>
             <tbody>
                 {WEAPON_ITEMS.map((item) => (
                     <tr key={item.name} className="border-b border-muted/30">
                         <td className="p-2 align-top font-bold text-secondary">{item.name}</td>
-                        <td className="p-2 align-top font-mono text-right">{item.price}</td>
-                        <td className="p-2 align-top">{item.distance}</td>
+                        {/* FIX: Property 'price' does not exist on type 'WeaponItem'. Correct property is 'cost'. */}
+                        <td className="p-2 align-top font-mono text-right">{item.cost}</td>
+                        {/* FIX: Property 'distance' does not exist on type 'WeaponItem'. Correct property is 'range'. */}
+                        <td className="p-2 align-top">{item.range}</td>
                         <td className="p-2 align-top font-mono text-right">{item.damage}</td>
                         <td className="p-2 align-top font-mono text-right">{item.shots}</td>
-                        <td className="p-2 align-top">{item.wounds}</td>
-                        <td className="p-2 align-top text-sm">{item.peculiarities}</td>
+                        {/* FIX: Property 'wounds' does not exist on type 'WeaponItem'. Correct property is 'wound'. */}
+                        <td className="p-2 align-top">{item.wound}</td>
+                        {/* FIX: Property 'peculiarities' does not exist on type 'WeaponItem'. Correct property is 'special'. */}
+                        <td className="p-2 align-top text-sm">{item.special}</td>
                     </tr>
                 ))}
             </tbody>
