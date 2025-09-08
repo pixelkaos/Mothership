@@ -161,13 +161,13 @@ export const SplitStatInput: React.FC<{
             onMouseLeave={hideTooltip}
         >
             <span id={`${id}-label`} className="text-xs uppercase text-muted mb-1">{label}</span>
-            <div className="relative flex items-center w-48 h-16 bg-transparent border border-muted rounded-full group-hover:border-primary transition-colors px-4 overflow-hidden">
+            <div className="relative flex items-center w-48 h-12 bg-transparent border border-muted rounded-full group-hover:border-primary transition-colors px-4 overflow-hidden">
                 {/* Current Value Input */}
                 <input
                     id={`${id}-current`}
                     aria-label={`${label} Current`}
                     type="number"
-                    className={`w-1/2 bg-transparent text-center text-3xl font-bold text-foreground focus:ring-0 focus:outline-none appearance-none z-10 ${onRollRequestCurrent ? 'cursor-pointer' : ''}`}
+                    className={`w-1/2 bg-transparent text-center text-2xl font-bold text-foreground focus:ring-0 focus:outline-none appearance-none z-10 ${onRollRequestCurrent ? 'cursor-pointer' : ''}`}
                     value={currentValue || ''}
                     onChange={onCurrentChange}
                     onClick={onRollRequestCurrent}
@@ -182,7 +182,7 @@ export const SplitStatInput: React.FC<{
                     id={`${id}-max`}
                     aria-label={`${label} Maximum`}
                     type="number"
-                    className={`w-1/2 bg-transparent text-center text-3xl font-bold text-foreground focus:ring-0 focus:outline-none appearance-none z-10 ${onRollRequestMax ? 'cursor-pointer' : ''} ${isMaxReadOnly ? 'cursor-default' : ''}`}
+                    className={`w-1/2 bg-transparent text-center text-2xl font-bold text-foreground focus:ring-0 focus:outline-none appearance-none z-10 ${onRollRequestMax ? 'cursor-pointer' : ''} ${isMaxReadOnly ? 'cursor-default' : ''}`}
                     value={maxValue || ''}
                     onChange={onMaxChange}
                     onClick={onRollRequestMax}
@@ -599,18 +599,18 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                     <div className="border border-primary/30 p-4">
                         <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Stats</h3>
                         <div className="flex justify-around">
-                            <StatInput id="stats.strength" label="Strength" value={finalStats.strength} baseValue={baseStats.strength} onChange={(e) => handleFieldChange('stats.strength', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Strength']} onRollRequest={char.class ? () => handleRollRequest('stat', 'strength') : () => handleRollRequest('creation', 'stats.strength')} />
-                            <StatInput id="stats.speed" label="Speed" value={finalStats.speed} baseValue={baseStats.speed} onChange={(e) => handleFieldChange('stats.speed', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Speed']} onRollRequest={char.class ? () => handleRollRequest('stat', 'speed') : () => handleRollRequest('creation', 'stats.speed')} />
-                            <StatInput id="stats.intellect" label="Intellect" value={finalStats.intellect} baseValue={baseStats.intellect} onChange={(e) => handleFieldChange('stats.intellect', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Intellect']} onRollRequest={char.class ? () => handleRollRequest('stat', 'intellect') : () => handleRollRequest('creation', 'stats.intellect')} />
-                            <StatInput id="stats.combat" label="Combat" value={finalStats.combat} baseValue={baseStats.combat} onChange={(e) => handleFieldChange('stats.combat', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Combat']} onRollRequest={char.class ? () => handleRollRequest('stat', 'combat') : () => handleRollRequest('creation', 'stats.combat')} />
+                            <StatInput id="stats.strength" label="Strength" value={finalCharacter.stats.strength} baseValue={baseStats.strength} onChange={(e) => handleFieldChange('stats.strength', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Strength']} onRollRequest={char.class ? () => handleRollRequest('stat', 'strength') : () => handleRollRequest('creation', 'stats.strength')} />
+                            <StatInput id="stats.speed" label="Speed" value={finalCharacter.stats.speed} baseValue={baseStats.speed} onChange={(e) => handleFieldChange('stats.speed', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Speed']} onRollRequest={char.class ? () => handleRollRequest('stat', 'speed') : () => handleRollRequest('creation', 'stats.speed')} />
+                            <StatInput id="stats.intellect" label="Intellect" value={finalCharacter.stats.intellect} baseValue={baseStats.intellect} onChange={(e) => handleFieldChange('stats.intellect', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Intellect']} onRollRequest={char.class ? () => handleRollRequest('stat', 'intellect') : () => handleRollRequest('creation', 'stats.intellect')} />
+                            <StatInput id="stats.combat" label="Combat" value={finalCharacter.stats.combat} baseValue={baseStats.combat} onChange={(e) => handleFieldChange('stats.combat', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Combat']} onRollRequest={char.class ? () => handleRollRequest('stat', 'combat') : () => handleRollRequest('creation', 'stats.combat')} />
                         </div>
                     </div>
                      <div className="border border-primary/30 p-4">
                         <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Saves</h3>
                         <div className="flex justify-around">
-                            <StatInput id="saves.sanity" label="Sanity" value={finalSaves.sanity} baseValue={baseSaves.sanity} onChange={(e) => handleFieldChange('saves.sanity', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Sanity']} onRollRequest={char.class ? () => handleRollRequest('save', 'sanity') : () => handleRollRequest('creation', 'saves.sanity')} />
-                            <StatInput id="saves.fear" label="Fear" value={finalSaves.fear} baseValue={baseSaves.fear} onChange={(e) => handleFieldChange('saves.fear', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Fear']} onRollRequest={char.class ? () => handleRollRequest('save', 'fear') : () => handleRollRequest('creation', 'saves.fear')} />
-                            <StatInput id="saves.body" label="Body" value={finalSaves.body} baseValue={baseSaves.body} onChange={(e) => handleFieldChange('saves.body', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Body']} onRollRequest={char.class ? () => handleRollRequest('save', 'body') : () => handleRollRequest('creation', 'saves.body')} />
+                            <StatInput id="saves.sanity" label="Sanity" value={finalCharacter.saves.sanity} baseValue={baseSaves.sanity} onChange={(e) => handleFieldChange('saves.sanity', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Sanity']} onRollRequest={char.class ? () => handleRollRequest('save', 'sanity') : () => handleRollRequest('creation', 'saves.sanity')} />
+                            <StatInput id="saves.fear" label="Fear" value={finalCharacter.saves.fear} baseValue={baseSaves.fear} onChange={(e) => handleFieldChange('saves.fear', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Fear']} onRollRequest={char.class ? () => handleRollRequest('save', 'fear') : () => handleRollRequest('creation', 'saves.fear')} />
+                            <StatInput id="saves.body" label="Body" value={finalCharacter.saves.body} baseValue={baseSaves.body} onChange={(e) => handleFieldChange('saves.body', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Body']} onRollRequest={char.class ? () => handleRollRequest('save', 'body') : () => handleRollRequest('creation', 'saves.body')} />
                         </div>
                     </div>
                 </div>
@@ -666,7 +666,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                     <div className="border border-primary/30 p-4">
                          <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Condition</h3>
                          <div className="flex justify-around items-center gap-4">
-                            <SplitStatInput label="Wounds" id="wounds" currentValue={char.wounds.current} maxValue={finalMaxWounds} onCurrentChange={(e) => handleFieldChange('wounds.current', e.target.value)} onMaxChange={() => {}} tooltipContent={STAT_DESCRIPTIONS['Wounds']} isMaxReadOnly={true} onRollRequestCurrent={() => handleRollRequest('wound', 'wound')} />
+                            <SplitStatInput label="Wounds" id="wounds" currentValue={char.wounds.current} maxValue={finalCharacter.wounds.max} onCurrentChange={(e) => handleFieldChange('wounds.current', e.target.value)} onMaxChange={() => {}} tooltipContent={STAT_DESCRIPTIONS['Wounds']} isMaxReadOnly={true} onRollRequestCurrent={() => handleRollRequest('wound', 'wound')} />
                             <StatInput id="stress.current" label="Stress" value={char.stress.current} onChange={(e) => handleFieldChange('stress.current', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Stress']} onRollRequest={() => handleRollRequest('panic', 'panic')} />
                          </div>
                     </div>

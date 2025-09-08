@@ -1,5 +1,3 @@
-
-
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import type { Character, CharacterSaveData, ClassName, Stat, CharacterClass, CharacterStats, CharacterSaves } from '../../types';
 import { initialSaveData, getSkillAndPrerequisites } from '../../utils/character';
@@ -165,10 +163,26 @@ export const CharacterWizard: React.FC<{
         if (currentStep === 2) {
             const classData = saveData.character.class;
             if (classData) {
+                let startingSkills = classData.starting_skills || [];
+                // Special handling for Scientist starting skills from master skill choice
+                if (classData.name === 'Scientist' && saveData.scientistMasterSkill) {
+                    const skillChain = getSkillAndPrerequisites(saveData.scientistMasterSkill);
+                    // Filter out duplicates that might be in the chain
+                    startingSkills = [...new Set([...startingSkills, ...skillChain])];
+                }
                 updateData('character.skills', {
-                    trained: classData.starting_skills || [],
-                    expert: [],
-                    master: []
+                    trained: startingSkills.filter(s => {
+                        const skillDef = ALL_SKILLS.find(sk => sk.name === s);
+                        return skillDef && skillDef.tier === 'trained';
+                    }),
+                    expert: startingSkills.filter(s => {
+                        const skillDef = ALL_SKILLS.find(sk => sk.name === s);
+                        return skillDef && skillDef.tier === 'expert';
+                    }),
+                    master: startingSkills.filter(s => {
+                        const skillDef = ALL_SKILLS.find(sk => sk.name === s);
+                        return skillDef && skillDef.tier === 'master';
+                    })
                 });
             }
         }
@@ -180,15 +194,6 @@ export const CharacterWizard: React.FC<{
             setCurrentStep(step);
         }
     };
-    
-    // Auto-roll equipment for selected loadout
-    useEffect(() => {
-        if(saveData.character.equipment.loadout && !saveData.character.equipment.trinket) {
-            updateData('character.equipment.trinket', TRINKETS[Math.floor(Math.random() * TRINKETS.length)]);
-            updateData('character.equipment.patch', PATCHES[Math.floor(Math.random() * PATCHES.length)]);
-            updateData('character.credits', rollDice('5d10') * 10);
-        }
-    }, [saveData.character.equipment.loadout, updateData]);
 
     return (
         <div className="max-w-4xl mx-auto border border-primary/50 p-6 sm:p-8 bg-black/30">
@@ -268,12 +273,43 @@ const Step1Stats: React.FC<StepProps> = ({ saveData, onUpdate, onRollRequest }) 
 };
 
 const Step2Class: React.FC<StepProps> = ({ saveData, onUpdate }) => {
+    const { character, baseStats, baseSaves, androidPenalty, scientistBonus } = saveData;
+    
     const handleSelectClass = (c: CharacterClass) => {
         onUpdate('character.class', c);
         if (c.name !== 'Android') onUpdate('androidPenalty', null);
         if (c.name !== 'Scientist') onUpdate('scientistBonus', null);
     };
     const tertiarySelectionClasses = (isSelected: boolean) => isSelected ? 'bg-tertiary text-background border border-tertiary' : 'bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background';
+
+    const StatRow: React.FC<{ label: string; base: number; modifier: number }> = ({ label, base, modifier }) => (
+        <div className="grid grid-cols-4 items-center text-center py-1.5">
+            <span className="text-left font-bold uppercase tracking-wider text-sm">{label}</span>
+            <span className="text-muted">{base}</span>
+            <span className={modifier > 0 ? 'text-positive' : modifier < 0 ? 'text-negative' : 'text-muted'}>
+                {modifier > 0 ? `+${modifier}` : modifier !== 0 ? modifier : '—'}
+            </span>
+            <span className="font-bold text-primary text-lg">{base + modifier}</span>
+        </div>
+    );
+    
+    const calculateModifier = (type: 'stat' | 'save', name: string) => {
+        if (!character.class) return 0;
+        let mod = 0;
+        if (type === 'stat') {
+            mod = character.class.stats_mods[name as keyof CharacterStats] || 0;
+            if (character.class.name === 'Android' && androidPenalty === name) {
+                mod -= 10;
+            }
+            if (character.class.name === 'Scientist' && scientistBonus === name) {
+                mod += 5;
+            }
+        } else {
+             mod = character.class.saves_mods[name as keyof CharacterSaves] || 0;
+        }
+        return mod;
+    };
+    
     return (
         <div className="space-y-6">
             <div className="text-center"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Class Selection</h2><p className="text-muted mt-2">Your class determines your role, special abilities, and how you handle trauma.</p></div>
@@ -304,12 +340,47 @@ const Step2Class: React.FC<StepProps> = ({ saveData, onUpdate }) => {
                     </button>
                 )}
             </div></div>)}
+
+            {character.class && (
+                <div className="mt-8 border-t border-primary/50 pt-6">
+                    <h3 className="text-lg font-bold text-primary uppercase tracking-wider text-center mb-4">Stat & Save Summary</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 max-w-2xl mx-auto bg-black/30 p-4">
+                        <div>
+                             <div className="grid grid-cols-4 items-center text-center py-1.5 border-b border-muted/30 mb-2">
+                                <span className="text-left font-bold uppercase tracking-wider text-xs text-muted">Stat</span>
+                                <span className="text-xs text-muted">Base</span>
+                                <span className="text-xs text-muted">Mod</span>
+                                <span className="text-xs text-muted">Final</span>
+                            </div>
+                            <StatRow label="Strength" base={baseStats.strength} modifier={calculateModifier('stat', 'strength')} />
+                            <StatRow label="Speed" base={baseStats.speed} modifier={calculateModifier('stat', 'speed')} />
+                            <StatRow label="Intellect" base={baseStats.intellect} modifier={calculateModifier('stat', 'intellect')} />
+                            <StatRow label="Combat" base={baseStats.combat} modifier={calculateModifier('stat', 'combat')} />
+                        </div>
+                        <div>
+                             <div className="grid grid-cols-4 items-center text-center py-1.5 border-b border-muted/30 mb-2">
+                                <span className="text-left font-bold uppercase tracking-wider text-xs text-muted">Save / Vital</span>
+                                <span className="text-xs text-muted">Base</span>
+                                <span className="text-xs text-muted">Mod</span>
+                                <span className="text-xs text-muted">Final</span>
+                            </div>
+                            <StatRow label="Sanity" base={baseSaves.sanity} modifier={calculateModifier('save', 'sanity')} />
+                            <StatRow label="Fear" base={baseSaves.fear} modifier={calculateModifier('save', 'fear')} />
+                            <StatRow label="Body" base={baseSaves.body} modifier={calculateModifier('save', 'body')} />
+                            <div className="col-span-4 my-2 border-t border-muted/30"></div>
+                            <StatRow label="Wounds" base={2} modifier={character.class?.max_wounds_mod || 0} />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
 const Step3Vitals: React.FC<StepProps> = ({ saveData, onUpdate }) => {
     const char = saveData.character;
+    const maxWounds = 2 + (char.class?.max_wounds_mod || 0);
+    
     return (
         <div className="space-y-6">
             <div className="text-center"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Vitals & Condition</h2><p className="text-muted mt-2">Determine your starting health and condition. You can roll for max health or enter a value.</p></div>
@@ -321,8 +392,17 @@ const Step3Vitals: React.FC<StepProps> = ({ saveData, onUpdate }) => {
                     </div>
                 </div>
                 <div className="flex gap-8">
-                    <StatInput id="wounds" label="Wounds" value={char.wounds.current} onChange={e => onUpdate('character.wounds.current', parseInt(e.target.value))} tooltipContent="" />
-                    <StatInput id="stress" label="Stress" value={char.stress.current} onChange={e => onUpdate('character.stress.current', parseInt(e.target.value))} tooltipContent="" />
+                    <SplitStatInput
+                        label="Wounds"
+                        id="wounds"
+                        currentValue={char.wounds.current}
+                        maxValue={maxWounds}
+                        onCurrentChange={e => onUpdate('character.wounds.current', parseInt(e.target.value))}
+                        onMaxChange={() => {}} // Read-only
+                        isMaxReadOnly={true}
+                        tooltipContent="The number of critical injuries you can sustain before dying. Maximum is based on your class."
+                    />
+                    <StatInput id="stress" label="Stress" value={char.stress.current} onChange={e => onUpdate('character.stress.current', parseInt(e.target.value))} tooltipContent="Your accumulated anxiety. Starts at 2." />
                 </div>
             </div>
         </div>
@@ -365,42 +445,82 @@ const Step4Skills: React.FC<StepProps> = ({ saveData, onUpdate }) => {
 
 const Step5Equipment: React.FC<StepProps> = ({ saveData, onUpdate }) => {
     const { equipment, credits, class: charClass } = saveData.character;
-    
-    const handleRollEquipment = () => {
+
+    const handleRollLoadout = () => {
         if (!charClass) return;
         const equipmentTable = STARTING_EQUIPMENT_TABLES[charClass.name];
         const rolledEquipment = equipmentTable[Math.floor(Math.random() * equipmentTable.length)];
         onUpdate('character.equipment.loadout', rolledEquipment);
+        onUpdate('character.equipment.trinket', TRINKETS[Math.floor(Math.random() * TRINKETS.length)]);
+        onUpdate('character.equipment.patch', PATCHES[Math.floor(Math.random() * PATCHES.length)]);
+        onUpdate('character.credits', rollDice('5d10'));
+    };
+
+    const handleTakeCredits = () => {
+        if (!charClass) return;
+        onUpdate('character.equipment.loadout', 'Custom Gear Selection');
+        onUpdate('character.equipment.trinket', TRINKETS[Math.floor(Math.random() * TRINKETS.length)]);
+        onUpdate('character.equipment.patch', PATCHES[Math.floor(Math.random() * PATCHES.length)]);
+        onUpdate('character.credits', rollDice('5d10*10'));
+    };
+
+    const handleReset = () => {
+        onUpdate('character.equipment.loadout', '');
+        onUpdate('character.equipment.trinket', '');
+        onUpdate('character.equipment.patch', '');
+        onUpdate('character.credits', 0);
     };
 
     if (!charClass) {
         return <p className="text-muted text-center">Go back and select a class to see equipment options.</p>;
     }
 
-    return (
-        <div className="space-y-6">
-            <div className="text-center">
-                <h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Equipment</h2>
-                <p className="text-muted mt-2">Roll on your class's table to determine your starting gear. Your trinket, patch, and credits will also be assigned.</p>
-            </div>
-            <div className="text-center">
-                <button 
-                    onClick={handleRollEquipment}
-                    className="px-6 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed"
-                >
-                    Roll for Equipment
-                </button>
-            </div>
-            {equipment.loadout && (
-                <div className="text-center border-t border-primary/50 pt-6 mt-6 space-y-2 text-sm bg-black/30 p-4">
+    if (equipment.loadout) {
+        return (
+            <div className="space-y-6 text-center">
+                 <h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Equipment Manifest</h2>
+                 <div className="text-center border border-primary/50 pt-6 mt-6 space-y-2 text-sm bg-black/30 p-4">
                     <p className="text-lg text-foreground">{equipment.loadout}</p>
-                    <div className="pt-4 mt-4 border-t border-muted/50 flex justify-around">
+                    <div className="pt-4 mt-4 border-t border-muted/50 flex flex-col sm:flex-row justify-around gap-2">
                         <p><strong className="text-primary/80">Trinket:</strong> {equipment.trinket}</p>
                         <p><strong className="text-primary/80">Patch:</strong> {equipment.patch}</p>
                         <p><strong className="text-primary/80">Credits:</strong> {credits}</p>
                     </div>
                 </div>
-            )}
+                <button 
+                    onClick={handleReset}
+                    className="mt-4 px-4 py-2 text-sm uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background"
+                >
+                    Reset Choice
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-6">
+            <div className="text-center">
+                <h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Starting Equipment</h2>
+                <p className="text-muted mt-2 max-w-2xl mx-auto">Choose how to equip your character. You can either take a pre-rolled package with some pocket money, or a larger starting fund to buy your own gear from the ship's store later.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="border border-primary/50 p-6 flex flex-col text-center bg-black/30 h-full">
+                    <h3 className="text-xl font-bold text-secondary uppercase tracking-wider">Option 1: Roll for Loadout</h3>
+                    <p className="text-muted text-sm my-4 flex-grow">Receive a random, class-specific equipment package. You'll be ready for action immediately. Also includes a random trinket, patch, and pocket money.</p>
+                    <p className="font-bold text-primary mb-4">Credits: 5d10</p>
+                    <button onClick={handleRollLoadout} className="w-full mt-auto px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed">
+                        Roll Loadout
+                    </button>
+                </div>
+                <div className="border border-primary/50 p-6 flex flex-col text-center bg-black/30 h-full">
+                    <h3 className="text-xl font-bold text-secondary uppercase tracking-wider">Option 2: Purchase Gear</h3>
+                    <p className="text-muted text-sm my-4 flex-grow">Forgo the random package for a substantial starting fund. You'll need to purchase all your gear, from armor to weapons. Also includes a random trinket and patch.</p>
+                    <p className="font-bold text-primary mb-4">Credits: 5d10 x 10</p>
+                     <button onClick={handleTakeCredits} className="w-full mt-auto px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed">
+                        Take Credits
+                    </button>
+                </div>
+            </div>
         </div>
     );
 };
@@ -492,7 +612,7 @@ const Step6Style: React.FC<StepProps> = ({ saveData, onUpdate }) => {
 };
 
 const Step7Manifest: React.FC<{saveData: CharacterSaveData, onGoToStep: (step: number) => void}> = ({ saveData, onGoToStep }) => {
-    const { character, baseStats, baseSaves, androidPenalty, scientistBonus, scientistMasterSkill } = saveData;
+    const { character, baseStats, baseSaves, androidPenalty, scientistBonus } = saveData;
     
     const { finalStats, finalSaves, finalMaxWounds } = useMemo(() => {
         const classData = character.class;
@@ -520,7 +640,7 @@ const Step7Manifest: React.FC<{saveData: CharacterSaveData, onGoToStep: (step: n
         return { finalStats: stats, finalSaves: saves, finalMaxWounds: maxWounds };
     }, [character.class, baseStats, baseSaves, androidPenalty, scientistBonus]);
     
-    const allSkills = [...character.skills.trained, ...character.skills.expert, ...character.skills.master];
+    const allSkills = [...(character.skills.trained || []), ...(character.skills.expert || []), ...(character.skills.master || [])].filter(Boolean);
 
     const EditButton = ({step}: {step: number}) => <button onClick={() => onGoToStep(step)} className="ml-2 text-xs text-secondary hover:text-primary">[Edit]</button>;
     

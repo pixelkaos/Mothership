@@ -41,69 +41,6 @@ export const getSkillAndPrerequisites = (masterSkillName: string): string[] => {
     return [masterSkillName, expertSkillName, trainedSkillName];
 };
 
-export const autoSelectSkills = (characterClass: CharacterClass): Character['skills'] => {
-    let selectedSkills: Character['skills'] = {
-        trained: [...characterClass.starting_skills],
-        expert: [],
-        master: [],
-    };
-    
-    // Helper function to get available skills of a certain tier
-    const getAvailable = (tier: SkillTier, currentSkills: Character['skills']) => {
-        const allSelected = [...currentSkills.trained, ...currentSkills.expert, ...currentSkills.master];
-        return ALL_SKILLS.filter(s => {
-            if (s.tier !== tier || allSelected.includes(s.name)) return false;
-            if (!s.prerequisites) return true;
-            return s.prerequisites.every(p => [...currentSkills.trained, ...currentSkills.expert].includes(p));
-        });
-    };
-
-    if (characterClass.name === 'Scientist') {
-        // Choose a random master skill, get its prereqs, add to skills
-        const masterSkills = ALL_SKILLS.filter(s => s.tier === 'master');
-        const randomMaster = masterSkills[Math.floor(Math.random() * masterSkills.length)];
-        const skillChain = getSkillAndPrerequisites(randomMaster.name);
-        
-        selectedSkills.master.push(skillChain[0]);
-        selectedSkills.expert.push(skillChain[1]);
-        selectedSkills.trained.push(skillChain[2]);
-
-        // Add 1 bonus trained skill
-        const availableTrained = getAvailable('trained', selectedSkills);
-        if (availableTrained.length > 0) {
-            selectedSkills.trained.push(availableTrained[Math.floor(Math.random() * availableTrained.length)].name);
-        }
-    } else if (characterClass.name === 'Teamster') {
-        // 1 trained, 1 expert
-        const availableTrained = getAvailable('trained', selectedSkills);
-        if (availableTrained.length > 0) {
-            selectedSkills.trained.push(availableTrained[Math.floor(Math.random() * availableTrained.length)].name);
-        }
-        const availableExpert = getAvailable('expert', selectedSkills);
-         if (availableExpert.length > 0) {
-            selectedSkills.expert.push(availableExpert[Math.floor(Math.random() * availableExpert.length)].name);
-        }
-    } else if (characterClass.name === 'Marine' || characterClass.name === 'Android') {
-        // Choice: 1 expert OR 2 trained
-        if (Math.random() < 0.5) { // 1 expert
-            const availableExpert = getAvailable('expert', selectedSkills);
-            if (availableExpert.length > 0) {
-                selectedSkills.expert.push(availableExpert[Math.floor(Math.random() * availableExpert.length)].name);
-            }
-        } else { // 2 trained
-            let availableTrained = getAvailable('trained', selectedSkills);
-            for(let i = 0; i < 2; i++) {
-                if(availableTrained.length > 0) {
-                    const skillToAdd = availableTrained.splice(Math.floor(Math.random() * availableTrained.length), 1)[0];
-                    selectedSkills.trained.push(skillToAdd.name);
-                }
-            }
-        }
-    }
-
-    return selectedSkills;
-};
-
 
 export const generateRandomRecruit = async (): Promise<CharacterSaveData> => {
     const randomClass = CLASSES_DATA[Math.floor(Math.random() * CLASSES_DATA.length)];
@@ -132,19 +69,81 @@ export const generateRandomRecruit = async (): Promise<CharacterSaveData> => {
         scientistBonus = bonusOptions[Math.floor(Math.random() * bonusOptions.length)];
     }
     
-    const skills = autoSelectSkills(randomClass);
+    // SKILL GENERATION
+    let skills: Character['skills'] = {
+        trained: [...randomClass.starting_skills],
+        expert: [],
+        master: [],
+    };
+    let scientistMasterSkill: string | null = null;
+
+    const getAvailable = (tier: SkillTier, currentSkills: Character['skills']) => {
+        const allSelected = [...currentSkills.trained, ...currentSkills.expert, ...currentSkills.master];
+        return ALL_SKILLS.filter(s => {
+            if (s.tier !== tier || allSelected.includes(s.name)) return false;
+            if (s.prerequisites) {
+                 return s.prerequisites.every(p => [...currentSkills.trained, ...currentSkills.expert].includes(p));
+            }
+            return true;
+        });
+    };
+
+    if (randomClass.name === 'Scientist') {
+        const masterSkills = ALL_SKILLS.filter(s => s.tier === 'master');
+        const randomMaster = masterSkills[Math.floor(Math.random() * masterSkills.length)];
+        scientistMasterSkill = randomMaster.name;
+        
+        const skillChain = getSkillAndPrerequisites(scientistMasterSkill);
+        
+        if (!skills.master.includes(skillChain[0])) skills.master.push(skillChain[0]);
+        if (!skills.expert.includes(skillChain[1])) skills.expert.push(skillChain[1]);
+        if (!skills.trained.includes(skillChain[2])) skills.trained.push(skillChain[2]);
+
+        const availableTrained = getAvailable('trained', skills);
+        if (availableTrained.length > 0) {
+            skills.trained.push(availableTrained[Math.floor(Math.random() * availableTrained.length)].name);
+        }
+    } else if (randomClass.name === 'Teamster') {
+        const availableTrained = getAvailable('trained', skills);
+        if (availableTrained.length > 0) {
+            skills.trained.push(availableTrained[Math.floor(Math.random() * availableTrained.length)].name);
+        }
+        const availableExpert = getAvailable('expert', skills);
+         if (availableExpert.length > 0) {
+            skills.expert.push(availableExpert[Math.floor(Math.random() * availableExpert.length)].name);
+        }
+    } else if (randomClass.name === 'Marine' || randomClass.name === 'Android') {
+        if (Math.random() < 0.5) { // 1 expert
+            const availableExpert = getAvailable('expert', skills);
+            if (availableExpert.length > 0) {
+                skills.expert.push(availableExpert[Math.floor(Math.random() * availableExpert.length)].name);
+            }
+        } else { // 2 trained
+            let availableTrained = getAvailable('trained', skills);
+            for(let i = 0; i < 2; i++) {
+                if(availableTrained.length > 0) {
+                    const skillIndex = Math.floor(Math.random() * availableTrained.length);
+                    const skillToAdd = availableTrained.splice(skillIndex, 1)[0];
+                    skills.trained.push(skillToAdd.name);
+                }
+            }
+        }
+    }
+
     const maxHealth = rollDice('1d10+10');
 
-    const equipmentTable = STARTING_EQUIPMENT_TABLES[randomClass.name];
-    const rolledEquipment = equipmentTable[Math.floor(Math.random() * equipmentTable.length)];
-
+    // EQUIPMENT & CREDITS
     const equipment = {
-        loadout: rolledEquipment,
+        loadout: '',
         trinket: TRINKETS[Math.floor(Math.random() * TRINKETS.length)],
         patch: PATCHES[Math.floor(Math.random() * PATCHES.length)],
         inventory: [],
     };
-    const credits = rollDice('2d10') * 10;
+    
+    const equipmentTable = STARTING_EQUIPMENT_TABLES[randomClass.name];
+    equipment.loadout = equipmentTable[Math.floor(Math.random() * equipmentTable.length)];
+    const credits = rollDice('5d10');
+
     const name = `${FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)]} ${LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)]}`;
     const pronouns = PRONOUNS[Math.floor(Math.random() * PRONOUNS.length)];
     
@@ -206,6 +205,6 @@ export const generateRandomRecruit = async (): Promise<CharacterSaveData> => {
         baseSaves,
         androidPenalty,
         scientistBonus,
-        scientistMasterSkill: randomClass.name === 'Scientist' ? skills.master[0] : null
+        scientistMasterSkill
     };
 };
