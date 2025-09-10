@@ -14,7 +14,7 @@ export interface SalvageItem {
 
 export interface DerelictShip {
   name: string;
-  shipClass: string;
+  shipModel: string;
   status: string;
   systems: string;
   survivors: string;
@@ -170,4 +170,70 @@ export interface WoundEntry {
     gunshot: string;
     fireExplosives: string;
     goreMassive: string;
+}
+
+// Shipbreaker's Toolkit Data
+export interface ShipData {
+  name: string;
+  modelCode: string;
+  stats: {
+    thrusters: number;
+    systems: number;
+    weapons: number;
+    base_weapons?: number;
+  };
+  cost: string;
+  crew: number;
+  cryopods: number;
+  fuel: number;
+  escape_pods: string;
+  hardpoints: string;
+  megadamage: string;
+  upgrades: string;
+  notes?: string;
+  image: string;
+  description: string;
+}
+
+export interface ShipUpgrade {
+  type: 'Minor' | 'Major';
+  name: string;
+  cost: string;
+  install: string;
+  description: string;
+}
+
+export interface ShipWeapon {
+  name: string;
+  cost: string;
+  bonus: string;
+  description: string;
+}
+
+// Ship Manifest Data
+export interface ShipManifestData {
+  identifier: string;
+  captain: string;
+  modelInfo: string; // Make / Model / Jump / Class / Type
+  transponderOn: boolean;
+  stats: {
+    thrusters: number;
+    battle: number;
+    systems: number;
+  };
+  o2Remaining: number;
+  fuel: { current: number; max: number };
+  warpCores: number;
+  cryopods: number;
+  escapePods: number;
+  weapons: { base: number; total: number };
+  megadamage: { base: number; total: number };
+  hardpoints: { installed: number; max: number };
+  hullPoints: number;
+  megadamageLevel: number; // 0-9+
+  deckplan: Record<string, string | null>; // key: "row-col", value: iconName
+  upgrades: { installed: number; max: number; list: string };
+  cargo: string;
+  repairs: { minor: string; major: string };
+  crew: { current: number; max: number; list: string };
 }

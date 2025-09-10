@@ -1,13 +1,17 @@
 
 
+
+
+
 import React, { useState } from 'react';
 import type { NavigationView } from '../App';
 
 interface HeaderProps {
     onShowTutorial: () => void;
     activeView: NavigationView | null;
-    onSetView: (view: NavigationView | 'dice-roller' | 'character-sheet') => void;
+    onSetView: (view: NavigationView | 'dice-roller' | 'character-sheet' | 'ship-manifest') => void;
     isCharacterLoaded: boolean;
+    isShipManifestLoaded: boolean;
 }
 
 const NavButton: React.FC<{
@@ -31,7 +35,7 @@ const NavButton: React.FC<{
     );
 };
 
-export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSetView, isCharacterLoaded }) => {
+export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSetView, isCharacterLoaded, isShipManifestLoaded }) => {
     const [isToolsOpen, setIsToolsOpen] = useState(false);
 
     return (
@@ -51,6 +55,7 @@ export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSe
         
         <div className="flex justify-center border-y border-secondary/50">
             <NavButton label="Derelict Generator" isActive={activeView === 'derelict'} onClick={() => onSetView('derelict')} />
+            <NavButton label="Shipyard" isActive={activeView === 'shipyard'} onClick={() => onSetView('shipyard')} />
             <NavButton label="Character Hangar" isActive={activeView === 'character'} onClick={() => onSetView('character')} />
             <NavButton label="Rules" isActive={activeView === 'rules'} onClick={() => onSetView('rules')} />
             <div 
@@ -73,6 +78,13 @@ export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSe
                             className="block w-full text-left px-4 py-2 uppercase text-sm tracking-widest transition-colors duration-200 text-secondary hover:bg-secondary hover:text-background disabled:text-muted disabled:bg-black/20 disabled:cursor-not-allowed"
                         >
                             Character Sheet
+                        </button>
+                         <button
+                            onClick={() => onSetView('ship-manifest')}
+                            disabled={!isShipManifestLoaded}
+                            className="block w-full text-left px-4 py-2 uppercase text-sm tracking-widest transition-colors duration-200 text-secondary hover:bg-secondary hover:text-background disabled:text-muted disabled:bg-black/20 disabled:cursor-not-allowed"
+                        >
+                            Ship Manifest
                         </button>
                     </div>
                 )}

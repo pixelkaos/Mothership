@@ -1,13 +1,21 @@
 
+
+
+
 import React, { useState, useCallback } from 'react';
 import { GeneratorPanel } from '../components/GeneratorPanel';
 import { AILogDisplay } from '../components/AILogDisplay';
-import type { DerelictShip, ShipClassStatus } from '../types';
-import { SHIP_CLASS_STATUS, CAUSE_OF_RUINATION, WEIRD, CARGO_TYPE, SHIP_NAME_PART1, SHIP_NAME_PART2, SHIP_NAME_PART3 } from '../constants';
+import type { DerelictShip } from '../types';
+import { DERELICT_GENERATION_TABLE, CAUSE_OF_RUINATION, WEIRD, CARGO_TYPE, SHIP_NAME_PART1, SHIP_NAME_PART2, SHIP_NAME_PART3 } from '../constants';
+import { SHIP_DATA } from '../data/shipData';
 import { generateDerelictDescription } from '../services/geminiService';
 import { rollDice } from '../utils/dice';
 
-export const DerelictGeneratorView: React.FC = () => {
+interface DerelictGeneratorViewProps {
+    onOpenManifest: (ship: DerelictShip) => void;
+}
+
+export const DerelictGeneratorView: React.FC<DerelictGeneratorViewProps> = ({ onOpenManifest }) => {
     const [derelictShip, setDerelictShip] = useState<DerelictShip | null>(null);
     const [aiDescription, setAiDescription] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -17,23 +25,27 @@ export const DerelictGeneratorView: React.FC = () => {
         setAiDescription('');
         setError('');
         
-        // A d100 roll results in 1-100. The table uses 0-99 ranges.
-        const roll = rollDice('1d100') - 1; // Correctly maps to 0-99
+        const roll = rollDice('1d100') - 1;
 
-        let shipInfo = SHIP_CLASS_STATUS.find(item => roll >= item.range[0] && roll <= item.range[1]);
+        let generationInfo = DERELICT_GENERATION_TABLE.find(item => roll >= item.range[0] && roll <= item.range[1]);
 
-        if (!shipInfo) {
-            // This case should not be reached if SHIP_CLASS_STATUS covers all 0-99 outcomes.
-            // As a fallback, log an error and use the first entry to prevent a crash.
+        if (!generationInfo) {
             console.error(`Could not find ship info for roll: ${roll}. Defaulting to the first entry.`);
-            shipInfo = SHIP_CLASS_STATUS[0];
+            generationInfo = DERELICT_GENERATION_TABLE[0];
+        }
+
+        const shipDetails = SHIP_DATA.find(s => s.name === generationInfo!.model);
+
+        if (!shipDetails) {
+            console.error(`Could not find ship details for model: ${generationInfo.model}.`);
+            return;
         }
 
         const cause = CAUSE_OF_RUINATION[rollDice('1d100') - 1];
         const weird = WEIRD[rollDice('1d100') - 1];
         const cargo = CARGO_TYPE[rollDice('1d100') - 1];
         
-        const salvageResults = shipInfo.salvage.map(s => {
+        const salvageResults = generationInfo.salvage.map(s => {
             const amount = rollDice(s.dice);
             return `${amount} ${s.item}`;
         });
@@ -45,10 +57,10 @@ export const DerelictGeneratorView: React.FC = () => {
 
         const newShip: DerelictShip = {
             name: shipName,
-            shipClass: shipInfo.class,
-            status: shipInfo.status,
-            systems: shipInfo.systems,
-            survivors: shipInfo.survivors,
+            shipModel: `${shipDetails.name} (${shipDetails.modelCode})`,
+            status: generationInfo.status,
+            systems: generationInfo.systems,
+            survivors: generationInfo.survivors,
             causeOfRuination: cause,
             weirdTrait: weird,
             cargo: cargo,
@@ -76,12 +88,19 @@ export const DerelictGeneratorView: React.FC = () => {
         }
     }, [derelictShip]);
 
+    const handleOpenInManifest = useCallback(() => {
+        if (derelictShip) {
+            onOpenManifest(derelictShip);
+        }
+    }, [derelictShip, onOpenManifest]);
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <GeneratorPanel
                 ship={derelictShip}
                 onGenerate={handleGenerateShip}
                 onEnhance={handleEnhanceWithAI}
+                onOpenInManifest={handleOpenInManifest}
                 isLoading={isLoading}
             />
             <AILogDisplay

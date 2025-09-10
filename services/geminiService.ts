@@ -1,5 +1,6 @@
 
 
+
 import { GoogleGenAI } from "@google/genai";
 import type { DerelictShip, Character } from '../types';
 
@@ -17,7 +18,7 @@ Based on the following randomly generated details for a derelict spacecraft, wri
 
 **Derelict Ship Data:**
 - **Ship Name/Identifier:** ${shipData.name}
-- **Ship Class & Status:** ${shipData.shipClass} (${shipData.status})
+- **Ship Model & Status:** ${shipData.shipModel} (${shipData.status})
 - **Systems:** ${shipData.systems}
 - **Survivors:** ${shipData.survivors}
 - **Cause of Ruination:** ${shipData.causeOfRuination}
