@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import type { Character, CharacterSaveData } from '../types';
 
@@ -9,6 +6,7 @@ interface FloatingCharacterSheetProps {
     onClose: () => void;
     characterData: CharacterSaveData | null;
     onCharacterUpdate: (character: Character) => void;
+    onRollRequest: (type: 'stat' | 'save', name: string) => void;
 }
 
 const SheetSection: React.FC<{ title: string; children: React.ReactNode; className?: string; titleAddon?: React.ReactNode }> = ({ title, children, className = '', titleAddon }) => (
@@ -48,9 +46,9 @@ const VitalDisplay: React.FC<{ label: string; current: number; max: number; curr
     </div>
 );
 
-const StatDisplay: React.FC<{ label: string; value: number }> = ({ label, value }) => (
-    <div className="flex flex-col items-center">
-        <div className="w-16 h-16 border-2 border-primary/50 rounded-full flex items-center justify-center bg-black/30">
+const StatDisplay: React.FC<{ label: string; value: number; onClick?: () => void; }> = ({ label, value, onClick }) => (
+    <div className={`flex flex-col items-center ${onClick ? 'cursor-pointer group' : ''}`} onClick={onClick}>
+        <div className={`w-16 h-16 border-2 border-primary/50 rounded-full flex items-center justify-center bg-black/30 transition-colors ${onClick ? 'group-hover:bg-primary/20 group-hover:border-primary' : ''}`}>
             <span className="text-primary font-bold text-3xl">{value}</span>
         </div>
         <span className="text-muted uppercase text-xs font-bold tracking-wider mt-2">{label}</span>
@@ -58,9 +56,85 @@ const StatDisplay: React.FC<{ label: string; value: number }> = ({ label, value 
 );
 
 
-export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ isVisible, onClose, characterData, onCharacterUpdate }) => {
+// Helper component for individual equipment items with consumable tracking
+const EquipmentItem = ({ item, onUpdate }: { 
+    item: { value: string; source: 'loadout' | 'inventory'; index: number };
+    onUpdate: (source: 'loadout' | 'inventory', index: number, newValue: string) => void;
+}) => {
+    // Regex for (xN) format, e.g., Stimpak (x5)
+    const xRegex = /(.*?) ?\(x(\d+)\)/;
+    // Regex for (N unit) format, e.g., Pulse Rifle (3 mags)
+    const unitRegex = /(.*?) ?\((\d+)\s+(mags?|rounds?|charges?|doses?|shots?)\)/i;
+
+    const xMatch = item.value.match(xRegex);
+    const unitMatch = !xMatch ? item.value.match(unitRegex) : null; // Prevent double-matching
+
+    const match = xMatch || unitMatch;
+
+    if (!match) {
+        return <div className="bg-black/50 p-2">{item.value}</div>;
+    }
+
+    const namePart = match[1].trim();
+    const quantityPart = parseInt(match[2], 10);
+    const isXType = !!xMatch;
+    const unitPart = isXType ? '' : match[3];
+
+    const handleUpdateQuantity = (newQuantity: number) => {
+        let newValue: string;
+        if (isXType) {
+            newValue = `${namePart} (x${newQuantity})`;
+        } else {
+            newValue = `${namePart} (${newQuantity} ${unitPart})`;
+        }
+        onUpdate(item.source, item.index, newValue);
+    };
+
+    const handleDecrement = () => {
+        if (quantityPart > 0) {
+            handleUpdateQuantity(quantityPart - 1);
+        }
+    };
+    
+    const handleIncrement = () => {
+        handleUpdateQuantity(quantityPart + 1);
+    };
+
+    const buttonClasses = "w-6 h-6 flex items-center justify-center bg-black/70 text-primary border border-primary/50 rounded-sm hover:bg-primary hover:text-black transition-colors";
+
+    return (
+        <div className="bg-black/50 p-2 flex justify-between items-center text-sm">
+            <span>{namePart}</span>
+            <div className="flex items-center gap-2">
+                <button onClick={handleDecrement} className={buttonClasses} aria-label={`Decrease ${namePart} quantity`}>-</button>
+                <span className="font-mono w-20 text-center">{quantityPart} {unitPart}</span>
+                <button onClick={handleIncrement} className={buttonClasses} aria-label={`Increase ${namePart} quantity`}>+</button>
+            </div>
+        </div>
+    );
+};
+
+
+export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ isVisible, onClose, characterData, onCharacterUpdate, onRollRequest }) => {
     const character = characterData?.character ?? null;
     const allSkills = character ? [...character.skills.trained, ...character.skills.expert, ...character.skills.master] : [];
+    
+    const allEquipment = useMemo(() => {
+        if (!character) return [];
+        const loadoutItems = character.equipment.loadout
+            ? character.equipment.loadout.split(',').map((item, index) => ({
+                  value: item.trim(),
+                  source: 'loadout' as const,
+                  index,
+              }))
+            : [];
+        const inventoryItems = character.equipment.inventory.map((item, index) => ({
+            value: item.trim(),
+            source: 'inventory' as const,
+            index,
+        }));
+        return [...loadoutItems, ...inventoryItems].filter(item => item.value);
+    }, [character]);
 
     const [position, setPosition] = useState({ x: 100, y: 100 });
     const [isMinimized, setIsMinimized] = useState(false);
@@ -109,6 +183,24 @@ export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ 
             onCharacterUpdate({ ...character, notes: e.target.value });
         }
     };
+
+    const handleEquipmentUpdate = useCallback((source: 'loadout' | 'inventory', index: number, newValue: string) => {
+        if (!character) return;
+        const newCharacter = JSON.parse(JSON.stringify(character));
+
+        if (source === 'loadout') {
+            const loadoutItems = newCharacter.equipment.loadout.split(',').map((i: string) => i.trim());
+            if (index < loadoutItems.length) {
+                loadoutItems[index] = newValue;
+                newCharacter.equipment.loadout = loadoutItems.join(', ');
+            }
+        } else { // source === 'inventory'
+            if (index < newCharacter.equipment.inventory.length) {
+                newCharacter.equipment.inventory[index] = newValue;
+            }
+        }
+        onCharacterUpdate(newCharacter);
+    }, [character, onCharacterUpdate]);
 
     if (!isVisible) {
         return null;
@@ -174,19 +266,19 @@ export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ 
                             </SheetSection>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <SheetSection title="Stats" titleAddon={<div className="text-muted hover:text-primary cursor-pointer" title="Lock/Unlock Stats"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></div>}>
+                                <SheetSection title="Stats">
                                     <div className="flex justify-around py-2">
-                                        <StatDisplay label="Strength" value={character.stats.strength} />
-                                        <StatDisplay label="Speed" value={character.stats.speed} />
-                                        <StatDisplay label="Intellect" value={character.stats.intellect} />
-                                        <StatDisplay label="Combat" value={character.stats.combat} />
+                                        <StatDisplay label="Strength" value={character.stats.strength} onClick={() => onRollRequest('stat', 'strength')} />
+                                        <StatDisplay label="Speed" value={character.stats.speed} onClick={() => onRollRequest('stat', 'speed')} />
+                                        <StatDisplay label="Intellect" value={character.stats.intellect} onClick={() => onRollRequest('stat', 'intellect')} />
+                                        <StatDisplay label="Combat" value={character.stats.combat} onClick={() => onRollRequest('stat', 'combat')} />
                                     </div>
                                 </SheetSection>
-                                <SheetSection title="Saves" titleAddon={<div className="text-muted hover:text-primary cursor-pointer" title="Lock/Unlock Saves"><svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></div>}>
+                                <SheetSection title="Saves">
                                     <div className="flex justify-around py-2">
-                                        <StatDisplay label="Sanity" value={character.saves.sanity} />
-                                        <StatDisplay label="Fear" value={character.saves.fear} />
-                                        <StatDisplay label="Body" value={character.saves.body} />
+                                        <StatDisplay label="Sanity" value={character.saves.sanity} onClick={() => onRollRequest('save', 'sanity')} />
+                                        <StatDisplay label="Fear" value={character.saves.fear} onClick={() => onRollRequest('save', 'fear')} />
+                                        <StatDisplay label="Body" value={character.saves.body} onClick={() => onRollRequest('save', 'body')} />
                                     </div>
                                 </SheetSection>
                             </div>
@@ -200,8 +292,14 @@ export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ 
 
                                 <SheetSection title="Equipment">
                                     <div className="max-h-32 overflow-y-auto bg-black/30 p-2 text-sm space-y-1">
-                                        {[character.equipment.loadout, ...character.equipment.inventory].filter(Boolean).length > 0 ? (
-                                             [character.equipment.loadout, ...character.equipment.inventory].filter(Boolean).map((item, index) => <div key={index} className="bg-black/50 p-2">{item}</div>)
+                                        {allEquipment.length > 0 ? (
+                                            allEquipment.map((item) => (
+                                                <EquipmentItem
+                                                    key={`${item.source}-${item.index}-${item.value}`}
+                                                    item={item}
+                                                    onUpdate={handleEquipmentUpdate}
+                                                />
+                                            ))
                                         ) : <p className="text-muted text-center italic p-4">No equipment.</p>}
                                     </div>
                                 </SheetSection>

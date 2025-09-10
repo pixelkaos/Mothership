@@ -39,7 +39,10 @@ export function parseAndRoll(formula: string): RollResult {
     const rolls: number[] = [];
     let diceTotal = 0;
     for (let i = 0; i < numDice; i++) {
-        const roll = Math.floor(Math.random() * sides) + 1;
+        // Mothership is a d100/percentile system that often uses 0-based results for tables and checks.
+        // This unified dice roller will produce 0-based results (e.g., a d10 will be 0-9).
+        // This makes integration with tables and stat checks (0-99) much cleaner.
+        const roll = Math.floor(Math.random() * sides);
         rolls.push(roll);
         diceTotal += roll;
     }

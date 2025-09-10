@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import type { RollResult, Character, Stat, Save, CharacterSaveData } from '../types';
 import { parseAndRoll } from '../utils/dice';
@@ -10,6 +9,7 @@ interface HistoryEntry extends RollResult {
     timestamp: number;
     success?: boolean;
     target?: number;
+    isCritical?: boolean;
 }
 
 type Advantage = 'none' | 'adv' | 'disadv';
@@ -25,9 +25,12 @@ interface FloatingDiceRollerProps {
     isVisible: boolean;
     onClose: () => void;
     characterData: CharacterSaveData | null;
+    activeCheck?: { type: 'stat' | 'save', name: string } | null;
+    onCheckHandled?: () => void;
+    onCharacterUpdate?: (character: Character) => void;
 }
 
-export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisible, onClose, characterData }) => {
+export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisible, onClose, characterData, activeCheck, onCheckHandled, onCharacterUpdate }) => {
     const character = characterData?.character ?? null;
     const [screen, setScreen] = useState<DiceScreen>('main');
     const [result, setResult] = useState<HistoryEntry | null>(null);
@@ -38,6 +41,17 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
     const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
     const [advantage, setAdvantage] = useState<Advantage>('none');
     
+    useEffect(() => {
+        if (activeCheck && (activeCheck.type === 'stat' || activeCheck.type === 'save')) {
+            setScreen(activeCheck.type);
+            setSelectedTarget(activeCheck.name);
+            setIsMinimized(false); // Ensure roller is visible
+            if (onCheckHandled) {
+                onCheckHandled();
+            }
+        }
+    }, [activeCheck, onCheckHandled]);
+
     // Floating Window Logic
     const [position, setPosition] = useState({ x: window.innerWidth / 2 - 224, y: 100 });
     const [isMinimized, setIsMinimized] = useState(false);
@@ -90,11 +104,36 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
         setAdvantage('none');
     }, []);
 
-    const addToHistory = (entry: Omit<HistoryEntry, 'timestamp'>) => {
+    const addToHistory = useCallback((entry: Omit<HistoryEntry, 'timestamp'>) => {
         const newEntry = { ...entry, timestamp: Date.now() };
         setHistory(prev => [newEntry, ...prev].slice(0, 10));
         setResult(newEntry);
-    };
+
+        if (!character || !onCharacterUpdate) return;
+
+        let newChar = JSON.parse(JSON.stringify(character));
+        let needsUpdate = false;
+
+        // Gain stress on any failure
+        if (entry.success === false && (entry.name.includes('Save') || entry.name.includes('Check'))) {
+            newChar.stress.current = Math.min(20, newChar.stress.current + 1);
+            needsUpdate = true;
+        }
+
+        // On Critical Failure, make a panic check
+        if(entry.isCritical && entry.success === false) {
+             const panicRoll = parseAndRoll('1d20');
+             const panicSuccess = panicRoll.total > newChar.stress.current;
+             const panicEntry: HistoryEntry = { ...panicRoll, name: 'Panic Check (Crit Fail)', success: panicSuccess, target: newChar.stress.current, timestamp: Date.now() + 1, isCritical: false };
+             setHistory(prev => [panicEntry, ...prev].slice(0,10));
+             if(!panicSuccess) {
+                // In a real game, you'd roll on the panic table here.
+                // For now, we just record the failed check.
+             }
+        }
+
+        if (needsUpdate) onCharacterUpdate(newChar);
+    }, [character, onCharacterUpdate]);
     
     const handleCheckRoll = (type: 'stat' | 'save') => {
         if (!character || !selectedTarget) return;
@@ -110,16 +149,31 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
         let finalRoll = roll1;
 
         if (advantage !== 'none') {
-            const roll2 = parseAndRoll('1d100');
+            let roll2 = parseAndRoll('1d100');
+            
+            const originalRolls = { roll1: finalRoll, roll2 };
             if (advantage === 'adv') {
-                finalRoll = roll1.total < roll2.total ? roll1 : roll2;
+                finalRoll = finalRoll.total < roll2.total ? originalRolls.roll1 : originalRolls.roll2;
             } else { // disadv
-                finalRoll = roll1.total > roll2.total ? roll1 : roll2;
+                finalRoll = finalRoll.total > roll2.total ? originalRolls.roll1 : originalRolls.roll2;
             }
             finalRoll.formula = `2d100 (${advantage})`;
         }
 
-        const isSuccess = finalRoll.total < finalTarget;
+        const tens = Math.floor(finalRoll.total / 10);
+        const ones = finalRoll.total % 10;
+        const isCritical = (tens === ones && finalRoll.total > 0) || finalRoll.total === 0 || finalRoll.total === 99;
+
+        let isSuccess;
+        if (finalRoll.total === 0) {
+            isSuccess = true;
+        } else if (finalRoll.total === 99) {
+            isSuccess = false;
+        } else if (finalRoll.total >= 90) {
+            isSuccess = false;
+        } else {
+            isSuccess = finalRoll.total <= finalTarget;
+        }
         
         addToHistory({
             name: `${selectedTarget.toUpperCase()} ${type === 'stat' ? 'Check' : 'Save'}`,
@@ -129,6 +183,7 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
             formula: finalRoll.formula,
             success: isSuccess,
             target: finalTarget,
+            isCritical: isCritical,
         });
 
         resetCheckState();
@@ -182,6 +237,7 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
                     <div className="w-1/4 h-px bg-primary/50 my-4" />
                     {result.target !== undefined && (
                          <span className={`text-2xl font-bold uppercase tracking-wider ${result.success ? 'text-positive' : 'text-negative'}`}>
+                            {result.isCritical && 'CRITICAL '}
                             {result.success ? 'Success' : 'Failure'}
                         </span>
                     )}
@@ -343,7 +399,7 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
         ], true),
         other: renderSimpleRollScreen('Other Rolls', [
             { name: 'Rest Save', formula: '1d100' },
-            { name: 'Death Save', formula: '1d100' }
+            { name: 'Death Save', formula: '1d10' }
         ], false),
         custom: <div>Custom roller coming soon!</div>
     }

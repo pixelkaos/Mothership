@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useState, useCallback } from 'react';
 import { GeneratorPanel } from '../components/GeneratorPanel';
 import { AILogDisplay } from '../components/AILogDisplay';
@@ -25,7 +21,7 @@ export const DerelictGeneratorView: React.FC<DerelictGeneratorViewProps> = ({ on
         setAiDescription('');
         setError('');
         
-        const roll = rollDice('1d100') - 1;
+        const roll = rollDice('1d100') - 1; // 1-100 -> 0-99 for table lookup
 
         let generationInfo = DERELICT_GENERATION_TABLE.find(item => roll >= item.range[0] && roll <= item.range[1]);
 

@@ -38,6 +38,7 @@ const App: React.FC = () => {
 
     // Dice Roller state
     const [isDiceRollerOpen, setIsDiceRollerOpen] = useState<boolean>(false);
+    const [activeDiceCheck, setActiveDiceCheck] = useState<{ type: 'stat' | 'save', name: string } | null>(null);
     
     const activeNav = getActiveNav(view);
 
@@ -56,6 +57,18 @@ const App: React.FC = () => {
         }
         if (targetView === 'tools') return; // "Tools" is a category, not a view itself.
         setView(targetView as View);
+    };
+
+    const handleRollRequest = (type: 'stat' | 'save', name: string) => {
+        if (activeCharacterData) {
+            setActiveDiceCheck({ type, name });
+            setIsDiceRollerOpen(true);
+        }
+    };
+
+    const handleDiceRollerClose = () => {
+        setIsDiceRollerOpen(false);
+        setActiveDiceCheck(null);
     };
 
     const handleCharacterUpdate = (updatedCharacter: Character) => {
@@ -149,8 +162,11 @@ const App: React.FC = () => {
                 
                 <FloatingDiceRoller
                     isVisible={isDiceRollerOpen}
-                    onClose={() => setIsDiceRollerOpen(false)}
+                    onClose={handleDiceRollerClose}
                     characterData={activeCharacterData}
+                    activeCheck={activeDiceCheck}
+                    onCheckHandled={() => setActiveDiceCheck(null)}
+                    onCharacterUpdate={handleCharacterUpdate}
                 />
 
                 <FloatingCharacterSheet
@@ -158,6 +174,7 @@ const App: React.FC = () => {
                     onClose={() => setIsCharacterSheetOpen(false)}
                     characterData={activeCharacterData}
                     onCharacterUpdate={handleCharacterUpdate}
+                    onRollRequest={handleRollRequest}
                 />
 
                 <FloatingShipManifest

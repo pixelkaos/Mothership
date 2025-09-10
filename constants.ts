@@ -285,8 +285,8 @@ export const WOUND_TABLE: WoundEntry[] = [
 ];
 
 export const DEATH_TABLE = [
-    { range: '0', result: 'You are unconscious. You wake up in 2d10 minutes. Reduce your Maximum Health by 1d5.' },
-    { range: '1-2', result: 'You are unconscious and dying. You die in 1d5 rounds without intervention.' },
-    { range: '3-4', result: 'You are comatose. Only extraordinary measures can return you to the waking world.' },
-    { range: '5-9', result: 'You have died. Roll up a new character.' },
+    { range: '1', result: 'You are unconscious. You wake up in 2d10 minutes. Reduce your Maximum Health by 1d5.' },
+    { range: '2-3', result: 'You are unconscious and dying. You die in 1d5 rounds without intervention.' },
+    { range: '4-5', result: 'You are comatose. Only extraordinary measures can return you to the waking world.' },
+    { range: '6-10', result: 'You have died. Roll up a new character.' },
 ];

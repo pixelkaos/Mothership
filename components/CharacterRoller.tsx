@@ -1,5 +1,5 @@
-
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+// FIX: Import `useMemo` from React to fix 'Cannot find name useMemo' error.
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import type { RollResult, Character, Stat, Save } from '../types';
 import { parseAndRoll } from '../utils/dice';
 
@@ -219,11 +219,14 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
         let finalRoll = roll1;
 
         if (advantage !== 'none') {
-            const roll2 = parseAndRoll('1d100');
+            let roll2 = parseAndRoll('1d100');
+
+            const originalRolls = { roll1: finalRoll, roll2 };
+            
             if (advantage === 'adv') {
-                finalRoll = roll1.total < roll2.total ? roll1 : roll2;
+                finalRoll = finalRoll.total < roll2.total ? originalRolls.roll1 : originalRolls.roll2;
             } else { // disadv
-                finalRoll = roll1.total > roll2.total ? roll1 : roll2;
+                finalRoll = finalRoll.total > roll2.total ? originalRolls.roll1 : originalRolls.roll2;
             }
             finalRoll.formula = `2d100 (${advantage})`;
         }
@@ -231,8 +234,16 @@ export const CharacterRoller: React.FC<CharacterRollerProps> = ({ character, onU
         const tens = Math.floor(finalRoll.total / 10);
         const ones = finalRoll.total % 10;
         
-        const isSuccess = finalRoll.total < finalTarget;
-        const isCritical = (tens === ones && finalRoll.total !== 100) || finalRoll.total === 0 || finalRoll.total === 99;
+        let isSuccess;
+        if (finalRoll.total === 0) { // Critical Success on 00
+            isSuccess = true;
+        } else if (finalRoll.total >= 90) { // Auto-fail on 90-99
+            isSuccess = false;
+        } else {
+            isSuccess = finalRoll.total <= finalTarget;
+        }
+        
+        const isCritical = (tens === ones && finalRoll.total > 0) || finalRoll.total === 0 || finalRoll.total === 99;
         
         addToHistory({
             name: `${selectedTarget.toUpperCase()} ${type === 'stat' ? 'Check' : 'Save'}`,

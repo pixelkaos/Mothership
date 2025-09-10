@@ -10,7 +10,7 @@ const TUTORIAL_PAGES = 3;
 const QUIZ_QUESTIONS: QuizQuestion[] = [
     {
         question: "To succeed at a Strength Check with a Strength of 35, you need to roll...",
-        options: ["Over 35 on a d100", "Under 35 on a d100", "Exactly 35 on a d100"],
+        options: ["Over 35 on a d100", "35 or less on a d100", "Exactly 35 on a d100"],
         correctAnswerIndex: 1
     },
     {
@@ -70,7 +70,7 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                         <div className="space-y-4 text-foreground leading-relaxed">
                             <div>
                                 <h4 className="text-xl font-bold text-primary mb-1 uppercase">Checks & Saves</h4>
-                                <p>When the outcome of an action is uncertain, you make a **Stat Check**. To succeed, roll a d100 (two d10s, for a result of 00-99) and get a result **less than** your Stat. **Saves** work the same way to resist danger. A roll of 90-99 is always a failure.</p>
+                                <p>When the outcome of an action is uncertain, you make a **Stat Check**. To succeed, roll a d100 (two d10s, for a result of 00-99) and get a result **equal to or less than** your Stat. **Saves** work the same way to resist danger. A roll of 90-99 is always a failure.</p>
                             </div>
                             <div>
                                 <h4 className="text-xl font-bold text-primary mb-1 uppercase">Advantage & Disadvantage</h4>

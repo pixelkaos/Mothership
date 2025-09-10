@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { STARTING_EQUIPMENT_TABLES, TRINKETS, PATCHES, SHOP_ITEMS, ARMOR_ITEMS, WEAPON_ITEMS } from '../constants';
 
@@ -443,7 +442,7 @@ export const RulesView: React.FC = () => {
                     <p>Your current Stress level is added to all of your Saves. This means the more Stressed you are, the harder it is to succeed on your Saves, which can lead to a downward spiral of accumulating even more Stress.</p>
                 </RuleSection>
                 <RuleSection id="panic-checks" title="Panic Checks">
-                    <p>When a particularly terrifying event occurs, the Warden (GM) may call for a <KeyTerm>Panic Check</KeyTerm>. To make a Panic Check, roll <Dice>2d10</Dice>. If the result is <Highlight>greater than</Highlight> your current Stress, you keep your cool. If the result is <Highlight>equal to or less than</Highlight> your Stress, you Panic.</p>
+                    <p>When a particularly terrifying event occurs, the Warden (GM) may call for a <KeyTerm>Panic Check</KeyTerm>. To make a Panic Check, roll a <Dice>1d20 (the Panic Die)</Dice>. If the result is <Highlight>greater than</Highlight> your current Stress, you keep your cool. If the result is <Highlight>equal to or less than</Highlight> your Stress, you Panic.</p>
                     <p>When you Panic, you must immediately roll <Dice>1d10</Dice> on the Panic Effect Table and act out the result. Your character is not in control during a Panic episode. After the Panic is resolved, your Stress <Highlight>resets to its minimum value</Highlight> (initially 2, but can increase from trauma).</p>
                 </RuleSection>
                 <RuleSection id="skills" title="Skills">
