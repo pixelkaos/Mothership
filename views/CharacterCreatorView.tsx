@@ -6,13 +6,14 @@ import { CharacterManifest } from '../components/character-creator/CharacterMani
 import { useAppContext } from '../context/AppContext';
 
 export const CharacterCreatorView: React.FC = () => {
-  const { activeCharacterData, setActiveCharacterData, openCharacterSheet } = useAppContext();
+  // FIX: Replaced non-existent 'openCharacterSheet' with 'openPanel' which is the correct function for opening panels.
+  const { activeCharacterData, setActiveCharacterData, openPanel } = useAppContext();
   const [mode, setMode] = useState<'hangar' | 'wizard'>('hangar');
 
   // If a character is already loaded (e.g., from a previous random generation or file load),
   // display the full manifest immediately.
   if (activeCharacterData) {
-    return <CharacterManifest characterData={activeCharacterData} onCharacterUpdate={setActiveCharacterData} onOpenSheet={openCharacterSheet} />;
+    return <CharacterManifest characterData={activeCharacterData} onCharacterUpdate={setActiveCharacterData} onOpenSheet={() => openPanel('character-sheet')} />;
   }
 
   // If the user has started the creation process, show the wizard.

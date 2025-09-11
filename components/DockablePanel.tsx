@@ -1,14 +1,13 @@
 
-import React, { useState, useRef, ReactNode, useCallback } from 'react';
+import React, { useRef, ReactNode, useCallback, useEffect } from 'react';
 import { useDraggable } from '../hooks/useDraggable';
 import { Button } from './Button';
 import { useAppContext } from '../context/AppContext';
+import { useDockablePanel } from '../hooks/useDockablePanel';
 
 interface DockablePanelProps {
     title: string;
     children: ReactNode;
-    isVisible: boolean;
-    onClose: () => void;
     initialPosition: { x: number; y: number };
     className?: string;
     panelId: string;
@@ -17,25 +16,37 @@ interface DockablePanelProps {
 export const DockablePanel: React.FC<DockablePanelProps> = ({
     title,
     children,
-    isVisible,
-    onClose,
     initialPosition,
     className = '',
     panelId,
 }) => {
-    const [isMinimized, setIsMinimized] = useState(false);
     const panelRef = useRef<HTMLDivElement>(null);
-    const { position, handleMouseDown: handleDragMouseDown, isDragging } = useDraggable(initialPosition, panelRef);
-    const { panelStack, bringPanelToFront } = useAppContext();
-
-    const handleMouseDown = useCallback((e: React.MouseEvent<HTMLElement>) => {
-        bringPanelToFront(panelId);
-        handleDragMouseDown(e);
-    }, [bringPanelToFront, panelId, handleDragMouseDown]);
-
-    const zIndex = 40 + panelStack.indexOf(panelId);
     
-    if (!isVisible) {
+    const { 
+        isOpen, 
+        isMinimized, 
+        position, 
+        setPosition, 
+        close, 
+        toggleMinimize, 
+        bringToFront 
+    } = useDockablePanel({ id: panelId, initialPosition });
+    
+    const { position: draggablePosition, isDragging, handleMouseDown } = useDraggable(position, panelRef);
+
+    useEffect(() => {
+        setPosition(draggablePosition);
+    }, [draggablePosition, setPosition]);
+
+    const { panelStack } = useAppContext();
+    const zIndex = 40 + (panelStack.length - panelStack.indexOf(panelId));
+
+    const handleHeaderMouseDown = useCallback((e: React.MouseEvent<HTMLElement>) => {
+        bringToFront();
+        handleMouseDown(e);
+    }, [bringToFront, handleMouseDown]);
+    
+    if (!isOpen) {
         return null;
     }
 
@@ -51,22 +62,22 @@ export const DockablePanel: React.FC<DockablePanelProps> = ({
             }}
             role="dialog"
             aria-modal="true"
-            aria-labelledby="panel-title"
+            aria-labelledby={`panel-title-${panelId}`}
         >
             <header
                 className="flex justify-between items-center p-2 bg-black/30 cursor-move border-b border-primary/50"
-                onMouseDown={handleMouseDown}
+                onMouseDown={handleHeaderMouseDown}
             >
-                <h2 id="panel-title" className="font-bold text-primary uppercase tracking-wider text-sm pl-2">
+                <h2 id={`panel-title-${panelId}`} className="font-bold text-primary uppercase tracking-wider text-sm pl-2">
                     {title}
                 </h2>
                 <div className="flex items-center space-x-1">
-                    <Button variant="ghost" size="sm" onClick={() => setIsMinimized(!isMinimized)} aria-label={isMinimized ? "Expand" : "Minimize"}>
+                    <Button variant="ghost" size="sm" onClick={toggleMinimize} aria-label={isMinimized ? "Expand" : "Minimize"}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            {isMinimized ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4h4m12 4V4h-4M4 16v4h4m12-4v4h-4" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />}
                         </svg>
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close">
+                    <Button variant="ghost" size="sm" onClick={close} aria-label="Close">
                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>

@@ -1,11 +1,9 @@
 
-import React, { useState, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import type { CharacterSaveData } from '../../types';
-import { initialSaveData, getSkillAndPrerequisites } from '../../utils/character';
-import { set } from '../../utils/helpers';
-import { ALL_SKILLS } from '../../constants';
 import { CharacterRoller } from '../CharacterRoller';
 import { Button } from '../Button';
+import { useCharacterWizard } from '../../hooks/useCharacterWizard';
 import { Step1Stats } from './wizard-steps/Step1Stats';
 import { Step2Class } from './wizard-steps/Step2Class';
 import { Step3Vitals } from './wizard-steps/Step3Vitals';
@@ -77,7 +75,7 @@ const WizardControls: React.FC<{
             onClick={isLastStep ? onFinish : onNext}
             disabled={isNextDisabled}
         >
-            {isLastStep ? 'Finalize Character' : 'Next'}
+            {isLastStep ? 'Finalize Character' : 'Finish'}
         </Button>
     </div>
 );
@@ -87,14 +85,15 @@ export const CharacterWizard: React.FC<{
     onComplete: (data: CharacterSaveData) => void;
     onExit: () => void;
 }> = ({ onComplete, onExit }) => {
-    const [currentStep, setCurrentStep] = useState(1);
-    const [saveData, setSaveData] = useState<CharacterSaveData>(JSON.parse(JSON.stringify(initialSaveData)));
+    const { state, handlers } = useCharacterWizard();
+    const { currentStep, saveData, isStepComplete } = state;
+    const { updateData, handleNext, handleBack, handleGoToStep } = handlers;
     
     const [rollerState, setRollerState] = useState({
         isVisible: false,
         isMinimized: false,
         position: { x: window.innerWidth - 420, y: 100 },
-        activeCheck: null as { type: 'stat' | 'save' | 'wound' | 'panic' | 'creation', name: string } | null,
+        activeCheck: null as { type: 'creation', name: string } | null,
     });
     const lastPositionRef = useRef(rollerState.position);
 
@@ -120,16 +119,7 @@ export const CharacterWizard: React.FC<{
         }));
     }, []);
 
-
-    const updateData = useCallback((path: string, value: any) => {
-        setSaveData(prev => {
-            const newSaveData = JSON.parse(JSON.stringify(prev));
-            set(newSaveData, path, value);
-            return newSaveData;
-        });
-    }, []);
-
-     const handleApplyRoll = useCallback((path: string, value: number) => {
+    const handleApplyRoll = useCallback((path: string, value: number) => {
         const newPath = path.replace('stats.', 'baseStats.').replace('saves.', 'baseSaves.').replace('health.max', 'character.health.max');
         updateData(newPath, value);
         if (path === 'health.max') {
@@ -137,77 +127,11 @@ export const CharacterWizard: React.FC<{
         }
         setRollerState(prev => ({ ...prev, activeCheck: null, isVisible: false }));
     }, [updateData]);
-    
-    // --- Validation Logic ---
-    const isStepComplete = useMemo(() => {
-        switch (currentStep) {
-            case 1:
-                const { baseStats, baseSaves } = saveData;
-                return Object.values(baseStats).every(v => v > 0) && Object.values(baseSaves).every(v => v > 0);
-            case 2:
-                const { character, androidPenalty, scientistBonus } = saveData;
-                if (!character.class) return false;
-                if (character.class.name === 'Android' && !androidPenalty) return false;
-                if (character.class.name === 'Scientist' && !scientistBonus) return false;
-                return true;
-            case 3:
-                return saveData.character.health.max > 0;
-            case 4:
-                // This is a simplified check. A more robust implementation would check skill point counts.
-                return saveData.character.class !== null;
-            case 5:
-                return saveData.character.equipment.loadout !== '';
-            case 6:
-                return saveData.character.name !== '' && saveData.character.pronouns !== '';
-            case 7:
-                return true;
-            default:
-                return false;
-        }
-    }, [currentStep, saveData]);
-
-    const handleNext = () => {
-        // Class change invalidates skills
-        if (currentStep === 2) {
-            const classData = saveData.character.class;
-            if (classData) {
-                let startingSkills = classData.starting_skills || [];
-                // Special handling for Scientist starting skills from master skill choice
-                if (classData.name === 'Scientist' && saveData.scientistMasterSkill) {
-                    const skillChain = getSkillAndPrerequisites(saveData.scientistMasterSkill);
-                    // Filter out duplicates that might be in the chain
-                    startingSkills = [...new Set([...startingSkills, ...skillChain])];
-                }
-                updateData('character.skills', {
-                    trained: startingSkills.filter(s => {
-                        const skillDef = ALL_SKILLS.find(sk => sk.name === s);
-                        return skillDef && skillDef.tier === 'trained';
-                    }),
-                    expert: startingSkills.filter(s => {
-                        const skillDef = ALL_SKILLS.find(sk => sk.name === s);
-                        return skillDef && skillDef.tier === 'expert';
-                    }),
-                    master: startingSkills.filter(s => {
-                        const skillDef = ALL_SKILLS.find(sk => sk.name === s);
-                        return skillDef && skillDef.tier === 'master';
-                    })
-                });
-            }
-        }
-        setCurrentStep(s => Math.min(s + 1, STEPS.length));
-    };
-    const handleBack = () => setCurrentStep(s => Math.max(s - 1, 1));
-    const handleGoToStep = (step: number) => {
-        if (step < currentStep) {
-            setCurrentStep(step);
-        }
-    };
 
     return (
         <div className="max-w-4xl mx-auto border border-primary/50 p-6 sm:p-8 bg-black/30">
             <Stepper currentStep={currentStep} steps={STEPS} onGoToStep={handleGoToStep} />
             <div className="min-h-[400px]">
-                {/* Render current step's component */}
                 {currentStep === 1 && <Step1Stats saveData={saveData} onUpdate={updateData} onRollRequest={handleRollRequest} />}
                 {currentStep === 2 && <Step2Class saveData={saveData} onUpdate={updateData} />}
                 {currentStep === 3 && <Step3Vitals saveData={saveData} onUpdate={updateData} onRollRequest={handleRollRequest} />}
@@ -224,14 +148,14 @@ export const CharacterWizard: React.FC<{
                 isNextDisabled={!isStepComplete}
                 isLastStep={currentStep === STEPS.length}
             />
-            <CharacterRoller
+             <CharacterRoller
                 character={saveData.character}
-                onUpdate={() => {}} // Not needed for creation
+                onUpdate={() => {}} 
                 isVisible={rollerState.isVisible}
                 isMinimized={rollerState.isMinimized}
                 initialPosition={rollerState.position}
                 onStateChange={handleRollerStateChange}
-                activeCheck={rollerState.activeCheck}
+                activeCheck={rollerState.activeCheck as any}
                 onApplyRoll={handleApplyRoll}
             />
         </div>

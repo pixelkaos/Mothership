@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import { Button } from './Button';
@@ -22,9 +23,10 @@ const NavButton: React.FC<{
 };
 
 export const Header: React.FC = () => {
-    const { activeNav, handleSetView, openTutorial, isCharacterLoaded, isShipManifestLoaded, isDiceRollerOpen, isCharacterSheetOpen, isShipManifestOpen } = useAppContext();
+    const { activeNav, handleSetView, openTutorial, isCharacterLoaded, isShipManifestLoaded, openPanels } = useAppContext();
     
-    const activeView = isDiceRollerOpen || isCharacterSheetOpen || isShipManifestOpen ? 'tools' : activeNav;
+    const isToolOpen = openPanels.has('dice-roller') || openPanels.has('character-sheet') || openPanels.has('ship-manifest');
+    const activeView = isToolOpen ? 'tools' : activeNav;
 
     return (
     <header className="relative text-center pb-4 pt-4 sm:pt-6 md:pt-8 px-4 sm:px-6 md:px-8">

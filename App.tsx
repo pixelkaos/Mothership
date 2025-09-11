@@ -22,25 +22,12 @@ const App: React.FC = () => {
         view,
         isTutorialOpen,
         closeTutorial,
-        isDiceRollerOpen,
-        closeDiceRoller,
         activeCharacterData,
         activeDiceCheck,
         handleCharacterUpdate,
-        isCharacterSheetOpen,
-        closeCharacterSheet,
-        isShipManifestOpen,
-        closeShipManifest,
         activeShipManifest,
         setActiveShipManifest,
-        openDiceRoller,
     } = useAppContext();
-    
-    const handleRollRequest = (type: 'stat' | 'save', name: string) => {
-        if (activeCharacterData) {
-            openDiceRoller({ type, name });
-        }
-    };
 
     return (
         <TooltipProvider>
@@ -50,24 +37,17 @@ const App: React.FC = () => {
                 {isTutorialOpen && <TutorialModal onClose={closeTutorial} />}
                 
                 <FloatingDiceRoller
-                    isVisible={isDiceRollerOpen}
-                    onClose={closeDiceRoller}
                     characterData={activeCharacterData}
                     activeCheck={activeDiceCheck}
                     onCharacterUpdate={handleCharacterUpdate}
                 />
 
                 <FloatingCharacterSheet
-                    isVisible={isCharacterSheetOpen}
-                    onClose={closeCharacterSheet}
                     characterData={activeCharacterData}
                     onCharacterUpdate={handleCharacterUpdate}
-                    onRollRequest={handleRollRequest}
                 />
 
                 <FloatingShipManifest
-                    isVisible={isShipManifestOpen}
-                    onClose={closeShipManifest}
                     shipData={activeShipManifest}
                     onUpdate={setActiveShipManifest}
                 />
