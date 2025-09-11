@@ -1,3 +1,4 @@
+
 import React, { useState, useContext, createContext, useRef, useEffect, useCallback, ReactNode } from 'react';
 import { Button } from '../Button';
 
@@ -40,6 +41,18 @@ const DropdownMenuComponent: React.FC<{ children: ReactNode }> = ({ children }) 
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [isOpen, handleClickOutside]);
+    
+    useEffect(() => {
+        if (!isOpen) return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setIsOpen(false);
+                triggerRef.current?.focus();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen]);
 
     return (
         <DropdownMenuContext.Provider value={{ isOpen, setIsOpen, triggerRef, menuRef }}>
@@ -53,15 +66,30 @@ const Trigger: React.FC<{ children: React.ReactElement, asChild?: boolean }> = (
     const id = React.useId();
     
     const handleToggle = () => setIsOpen(prev => !prev);
+    
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleToggle();
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setIsOpen(true);
+        }
+    };
 
     if (asChild) {
-        // FIX: Cast `children` to `any` to allow cloning with `ref` and `onClick`, a common workaround for `asChild` patterns with TypeScript.
+        const childOnClick = (children.props as any).onClick;
+        const childOnKeyDown = (children.props as any).onKeyDown;
+
         return React.cloneElement(children as any, {
             ref: triggerRef,
             onClick: (e: React.MouseEvent) => {
-                // FIX: Cast children.props to any to access onClick, as its type is inferred as unknown.
-                (children.props as any).onClick?.(e);
+                childOnClick?.(e);
                 handleToggle();
+            },
+             onKeyDown: (e: React.KeyboardEvent) => {
+                childOnKeyDown?.(e);
+                handleKeyDown(e);
             },
             'aria-haspopup': 'menu',
             'aria-expanded': isOpen,
@@ -73,6 +101,7 @@ const Trigger: React.FC<{ children: React.ReactElement, asChild?: boolean }> = (
         <Button
             ref={triggerRef}
             onClick={handleToggle}
+            onKeyDown={handleKeyDown}
             aria-haspopup="menu"
             aria-expanded={isOpen}
             aria-controls={isOpen ? id : undefined}
@@ -86,12 +115,48 @@ const Content: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { isOpen, menuRef } = useDropdownMenu();
     const id = React.useId();
 
+    useEffect(() => {
+        if (isOpen) {
+            const firstItem = menuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]:not([disabled])');
+            firstItem?.focus();
+        }
+    }, [isOpen, menuRef]);
+
+    const handleContentKeyDown = (e: React.KeyboardEvent) => {
+        const { key } = e;
+        if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(key)) return;
+        
+        e.preventDefault();
+        const items = Array.from(
+            menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not([disabled])') || []
+        );
+        if (items.length === 0) return;
+
+        const activeIndex = items.findIndex(item => item === document.activeElement);
+        let nextIndex = -1;
+
+        if (key === 'ArrowDown') {
+            nextIndex = (activeIndex + 1) % items.length;
+        } else if (key === 'ArrowUp') {
+            nextIndex = (activeIndex - 1 + items.length) % items.length;
+        } else if (key === 'Home') {
+            nextIndex = 0;
+        } else if (key === 'End') {
+            nextIndex = items.length - 1;
+        }
+        
+        if (nextIndex !== -1) {
+            items[nextIndex]?.focus();
+        }
+    };
+
     return isOpen ? (
         <div
             id={id}
             ref={menuRef}
             role="menu"
             className="absolute top-full left-0 min-w-full bg-background border border-t-0 border-secondary/50 shadow-lg z-20 animate-fadeIn py-1"
+            onKeyDown={handleContentKeyDown}
         >
             {children}
         </div>
@@ -99,12 +164,13 @@ const Content: React.FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 const Item: React.FC<{ children: ReactNode; onSelect?: () => void; disabled?: boolean }> = ({ children, onSelect, disabled }) => {
-    const { setIsOpen } = useDropdownMenu();
+    const { setIsOpen, triggerRef } = useDropdownMenu();
 
     const handleSelect = () => {
         if (disabled) return;
         onSelect?.();
         setIsOpen(false);
+        triggerRef.current?.focus();
     };
 
     return (
@@ -115,18 +181,17 @@ const Item: React.FC<{ children: ReactNode; onSelect?: () => void; disabled?: bo
             disabled={disabled}
             className="block w-full text-left justify-start px-4 text-secondary hover:bg-secondary hover:text-background disabled:text-muted disabled:bg-black/20 rounded-none"
             role="menuitem"
+            tabIndex={-1} // Items are focused programmatically
         >
             {children}
         </Button>
     );
 };
 
-// FIX: Use Object.assign to correctly attach sub-components to the main DropdownMenu component.
 const DropdownMenu = Object.assign(DropdownMenuComponent, {
     Trigger,
     Content,
     Item,
 });
-
 
 export { DropdownMenu };

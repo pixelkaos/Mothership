@@ -8,7 +8,6 @@ const NavButton: React.FC<{
     label: string;
     isActive: boolean;
     onClick: () => void;
-    children?: React.ReactNode;
 }> = ({ label, isActive, onClick }) => {
     return (
         <Button
@@ -16,6 +15,7 @@ const NavButton: React.FC<{
             size="sm"
             onClick={onClick}
             className={`py-2 px-4 rounded-none ${isActive ? 'bg-secondary text-background hover:bg-secondary' : 'text-secondary hover:bg-secondary hover:text-background'}`}
+            aria-current={isActive ? 'page' : undefined}
         >
             {label}
         </Button>
