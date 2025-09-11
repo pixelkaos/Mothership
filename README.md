@@ -8,6 +8,8 @@ A digital toolkit and companion app for the award-winning sci-fi horror tabletop
 
 This project was born from a love for the gritty, blue-collar sci-fi horror of Mothership. The goal is to create a comprehensive, aesthetically-pleasing, and easy-to-use web application that assists in running and playing the game. By leveraging modern web technologies and the power of generative AI, this companion app aims to reduce prep time and inspire creativity at the gaming table.
 
+The UI is built around a flexible system of dockable panels, allowing you to arrange your tools on screen however you like.
+
 ### Built With
 
 *   **[React](https://reactjs.org/)**: For building the user interface.
@@ -19,27 +21,30 @@ This project was born from a love for the gritty, blue-collar sci-fi horror of M
 
 The Mothership RPG Companion is packed with features to help you get your next session off the ground:
 
-*   **Derelict Ship Generator**:
+*   **Derelict Generator & AI Gamemaster**:
     *   Instantly generate a complete derelict ship using the official random tables.
-    *   Includes ship name, class, status, cause of ruination, cargo, and potential salvage.
+    *   With a single click, use the Gemini API to weave the random data points into a cohesive, atmospheric, and spooky narrative description, providing instant adventure hooks.
 
-*   **AI Gamemaster**:
-    *   Enhance the generated ship data with a single click.
-    *   Leverages the Gemini API to weave the random data points into a cohesive, atmospheric, and spooky narrative description, providing instant adventure hooks.
+*   **Comprehensive Character Hangar**:
+    *   A full-featured character creation and management suite with multiple creation paths:
+        *   **Character Wizard**: A step-by-step guide to building a new character from scratch.
+        *   **Random Recruit Generator**: Create a complete, ready-to-play character in one click, including an AI-generated backstory and portrait.
+        *   **Pre-Generated Characters**: Choose from a list of ready-made characters to jump right into the action.
+        *   **Load/Save Functionality**: Export your character to a `.json` file and load them back in later.
 
-*   **Character Hangar**:
-    *   A full-featured character creation and management suite.
-    *   **Character Wizard**: A step-by-step guide to building a new character from scratch.
-    *   **Random Recruit Generator**: Create a complete, ready-to-play character with a single click, including an AI-generated backstory and portrait.
-    *   **Load/Save Functionality**: Export your character to a `.json` file and load them back in later.
+*   **Shipyard Database**:
+    *   Browse a database of all official ships, upgrades, and weapons from the Shipbreaker's Toolkit.
+    *   Open any vessel directly in the Ship Manifest to use as a template for your own.
 
-*   **AI-Powered Character Details**:
-    *   Generate compelling, setting-appropriate backstories based on a character's stats, class, and skills.
-    *   Create unique character portraits using generative image models, tailored to your character's description.
+*   **Interactive Dockable UI Panels**:
+    *   A persistent, multi-window UI that lets you manage your tools on screen. Panels remember their positions and can be opened, closed, and minimized.
+    *   **Dice Roller**: A full-featured dice roller that can handle simple rolls, stat/save checks for the active character, damage rolls, and more.
+    *   **In-Game Character Sheet**: A compact, persistent view of your active character for quick reference during play. You can trigger stat and save rolls directly from the sheet.
+    *   **Ship Manifest**: A fully editable sheet for tracking your ship's status, from hull points and megadamage to crew and cargo. Can be populated from the Derelict Generator or the Shipyard.
 
-*   **Rules Database**:
-    *   A fully searchable and easy-to-navigate reference for the core player-facing rules of Mothership 1e.
-    *   Includes tables for equipment, armor, weapons, trinkets, and patches.
+*   **Navigable Rules Database**:
+    *   An easy-to-navigate reference for the core player-facing rules of Mothership 1e.
+    *   Includes expandable tables for equipment, armor, weapons, trinkets, and patches.
 
 ## Getting Started
 
@@ -65,7 +70,6 @@ You will need a modern web browser and a Google Gemini API key.
 
 This project is actively being developed. Here are some features planned for the future:
 
-*   [ ] **Interactive Dice Roller**: A floating, in-app dice roller that can be used for any check.
 *   [ ] **AI Warden Chat**: An interactive chat mode where you can ask the AI Gamemaster questions about the derelict ship or session events.
 *   [ ] **Campaign & Session Management**: Tools for Wardens to track campaign progress, notes, and NPCs.
 *   [ ] **Bestiary**: A database of alien creatures and horrors, with AI-generated descriptions and stats.
