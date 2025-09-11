@@ -7,6 +7,7 @@ import { useTooltip } from '../Tooltip';
 import { CharacterRoller } from '../CharacterRoller';
 import { generateCharacterPortrait, generateCharacterBackstory } from '../../services/geminiService';
 import { Button } from '../Button';
+import { Panel } from '../ui/Panel';
 
 
 const STAT_DESCRIPTIONS: { [key: string]: React.ReactNode } = {
@@ -226,20 +227,15 @@ const ShopAndInventory: React.FC<{
 
     if (!isOpen) {
         return (
-            <div className="border border-primary/30 p-4">
-                <button onClick={() => setIsOpen(true)} className="w-full text-left text-sm uppercase tracking-wider text-muted hover:text-primary">
-                    <h3 className="inline">Shop & Inventory</h3> <span className="text-xs">[Click to Open]</span>
-                </button>
-            </div>
+            <Panel title="Shop & Inventory" titleAddon={<span className="text-xs">[Click to Open]</span>} className="cursor-pointer" >
+                <div onClick={() => setIsOpen(true)} className="h-0"></div>
+            </Panel>
         );
     }
     
     return (
-        <div className="border border-primary/30 p-4">
-            <button onClick={() => setIsOpen(false)} className="w-full text-left text-sm uppercase tracking-wider text-muted hover:text-primary mb-4">
-                <h3 className="inline">Shop & Inventory</h3> <span className="text-xs">[Click to Close]</span>
-            </button>
-
+        <Panel title="Shop & Inventory" titleAddon={<span className="text-xs">[Click to Close]</span>} className="cursor-pointer">
+            <div onClick={() => setIsOpen(false)} className="absolute inset-0 top-12"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Inventory */}
                 <div>
@@ -293,7 +289,7 @@ const ShopAndInventory: React.FC<{
                     </div>
                 </div>
             </div>
-        </div>
+        </Panel>
     );
 };
 
@@ -613,31 +609,26 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="border border-primary/30 p-4">
-                        <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Stats</h3>
+                    <Panel title="Stats">
                         <div className="flex justify-around">
                             <StatInput id="stats.strength" label="Strength" value={finalCharacter.stats.strength} baseValue={baseStats.strength} onChange={(e) => handleFieldChange('stats.strength', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Strength']} onRollRequest={() => handleRollRequest('stat', 'strength')} />
                             <StatInput id="stats.speed" label="Speed" value={finalCharacter.stats.speed} baseValue={baseStats.speed} onChange={(e) => handleFieldChange('stats.speed', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Speed']} onRollRequest={() => handleRollRequest('stat', 'speed')} />
                             <StatInput id="stats.intellect" label="Intellect" value={finalCharacter.stats.intellect} baseValue={baseStats.intellect} onChange={(e) => handleFieldChange('stats.intellect', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Intellect']} onRollRequest={() => handleRollRequest('stat', 'intellect')} />
                             <StatInput id="stats.combat" label="Combat" value={finalCharacter.stats.combat} baseValue={baseStats.combat} onChange={(e) => handleFieldChange('stats.combat', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Combat']} onRollRequest={() => handleRollRequest('stat', 'combat')} />
                         </div>
-                    </div>
-                     <div className="border border-primary/30 p-4">
-                        <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Saves</h3>
+                    </Panel>
+                     <Panel title="Saves">
                         <div className="flex justify-around">
                             <StatInput id="saves.sanity" label="Sanity" value={finalCharacter.saves.sanity} baseValue={baseSaves.sanity} onChange={(e) => handleFieldChange('saves.sanity', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Sanity']} onRollRequest={() => handleRollRequest('save', 'sanity')} />
                             <StatInput id="saves.fear" label="Fear" value={finalCharacter.saves.fear} baseValue={baseSaves.fear} onChange={(e) => handleFieldChange('saves.fear', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Fear']} onRollRequest={() => handleRollRequest('save', 'fear')} />
                             <StatInput id="saves.body" label="Body" value={finalCharacter.saves.body} baseValue={baseSaves.body} onChange={(e) => handleFieldChange('saves.body', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Body']} onRollRequest={() => handleRollRequest('save', 'body')} />
                         </div>
-                    </div>
+                    </Panel>
                 </div>
                 
                 {char.class?.flexible_stats_mod && (
-                    <div className="border border-primary/30 p-4">
-                        <h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">
-                            {char.class.name === 'Android' ? 'Android Penalty (-10)' : 'Scientist Bonus (+5)'}
-                        </h4>
-                        <p className="text-xs text-muted mb-3">
+                    <Panel title={char.class.name === 'Android' ? 'Android Penalty (-10)' : 'Scientist Bonus (+5)'}>
+                        <p className="text-xs text-muted mb-3 text-center">
                             {char.class.name === 'Android' 
                                 ? 'Androids have a specific operational flaw. Choose one stat to reduce by 10.'
                                 : 'Scientists have a particular field of expertise. Choose one stat to improve by 5.'
@@ -661,11 +652,10 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                                 );
                             })}
                         </div>
-                    </div>
+                    </Panel>
                 )}
                 
-                <div className="border border-primary/30 p-4">
-                    <h3 className="text-sm uppercase tracking-wider mb-4 text-muted">Select Your Class</h3>
+                <Panel title="Select Your Class">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {CLASSES_DATA.map(classData => {
                             const isSelected = char.class?.name === classData.name;
@@ -685,31 +675,27 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                             );
                         })}
                     </div>
-                </div>
+                </Panel>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     <div className="border border-primary/30 p-4">
-                         <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Vitals</h3>
+                     <Panel title="Vitals">
                          <div className="flex justify-around items-center">
                             <SplitStatInput label="Health" id="health" currentValue={char.health.current} maxValue={char.health.max} onCurrentChange={(e) => handleFieldChange('health.current', e.target.value)} onMaxChange={(e) => handleFieldChange('health.max', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Health']} onRollRequestCurrent={() => handleRollRequest('save', 'body')} onRollRequestMax={() => handleRollRequest('creation', 'health.max')} />
                          </div>
-                    </div>
-                    <div className="border border-primary/30 p-4">
-                         <h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Condition</h3>
+                    </Panel>
+                    <Panel title="Condition">
                          <div className="flex justify-around items-center gap-4">
                             <SplitStatInput label="Wounds" id="wounds" currentValue={char.wounds.current} maxValue={finalCharacter.wounds.max} onCurrentChange={(e) => handleFieldChange('wounds.current', e.target.value)} onMaxChange={() => {}} tooltipContent={STAT_DESCRIPTIONS['Wounds']} isMaxReadOnly={true} onRollRequestCurrent={() => handleRollRequest('wound', 'wound')} />
                             <StatInput id="stress.current" label="Stress" value={char.stress.current} onChange={(e) => handleFieldChange('stress.current', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Stress']} onRollRequest={() => handleRollRequest('panic', 'panic')} />
                          </div>
-                    </div>
+                    </Panel>
                 </div>
                 
-                <div className="border border-primary/30 p-4">
-                    <h3 className="text-sm uppercase tracking-wider mb-4 text-muted">Skills</h3>
+                <Panel title="Skills">
                     {char.class ? <SkillSelector characterClass={char.class} selectedSkills={char.skills} onSkillsChange={handleSkillsChange} scientistMasterSkill={scientistMasterSkill} onScientistMasterSkillChange={handleScientistMasterSkillChange} /> : <p className="text-xs text-muted">Select a class to see available skills.</p>}
-                </div>
+                </Panel>
 
-                <div className="border border-primary/30 p-4">
-                     <h3 className="text-sm uppercase tracking-wider mb-4 text-muted">Equipment</h3>
+                <Panel title="Equipment">
                     <div className="space-y-2 text-sm">
                         <p><strong className="text-primary/80">Loadout:</strong> {char.equipment.loadout || '...'}</p>
                         <p><strong className="text-primary/80">Trinket:</strong> {char.equipment.trinket || '...'}</p>
@@ -719,7 +705,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                             <input type="number" className="bg-black/50 border border-muted p-1 w-24 focus:ring-0 focus:outline-none focus:border-primary" value={char.credits || ''} onChange={e => handleFieldChange('credits', e.target.value)} placeholder="0" />
                         </div>
                     </div>
-                </div>
+                </Panel>
                 <ShopAndInventory characterData={characterData} onCharacterUpdate={onCharacterUpdate} />
             </div>
              

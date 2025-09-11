@@ -1,28 +1,7 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import { Button } from '../components/Button';
-
-const NavCard: React.FC<{
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    onClick: () => void;
-}> = ({ title, description, icon, onClick }) => (
-    <div 
-        className="border border-primary/50 p-6 flex flex-col items-center text-center bg-black/30 h-full group transition-all duration-300 hover:bg-primary/10 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 cursor-pointer"
-        onClick={onClick}
-    >
-        <div className="w-20 h-20 text-primary mb-4 transition-transform duration-300 group-hover:scale-110">{icon}</div>
-        <h3 className="text-2xl font-bold text-primary uppercase tracking-wider">{title}</h3>
-        <p className="text-muted text-sm my-4 flex-grow">{description}</p>
-        <Button
-            tabIndex={-1} // The whole card is clickable
-            className="w-full mt-auto"
-        >
-            Access Terminal
-        </Button>
-    </div>
-);
+import { Card } from '../components/ui/Card';
 
 export const HomeView: React.FC = () => {
     const { handleSetView } = useAppContext();
@@ -37,7 +16,7 @@ export const HomeView: React.FC = () => {
 
             <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="animate-slideInUp" style={{ animationDelay: '200ms' }}>
-                    <NavCard
+                    <Card
                         title="Derelict Generator"
                         description="Scan the void for drifting hulks. Generate random derelict ships, complete with their class, status, cargo, and a grim cause of their ruination."
                         icon={
@@ -48,10 +27,15 @@ export const HomeView: React.FC = () => {
                             </svg>
                         }
                         onClick={() => handleSetView('derelict')}
+                        action={
+                            <Button tabIndex={-1} className="w-full mt-auto">
+                                Access Terminal
+                            </Button>
+                        }
                     />
                 </div>
                  <div className="animate-slideInUp" style={{ animationDelay: '400ms' }}>
-                    <NavCard
+                    <Card
                         title="Character Hangar"
                         description="Your life is cheap, make a new one. Create a new character from scratch, load a veteran, or quickly generate a random recruit for the meat grinder."
                         icon={
@@ -60,10 +44,15 @@ export const HomeView: React.FC = () => {
                             </svg>
                         }
                         onClick={() => handleSetView('character')}
+                        action={
+                            <Button tabIndex={-1} className="w-full mt-auto">
+                                Access Terminal
+                            </Button>
+                        }
                     />
                 </div>
                  <div className="animate-slideInUp" style={{ animationDelay: '600ms' }}>
-                    <NavCard
+                    <Card
                         title="Rules Database"
                         description="Access the Mothership player-facing rules. A searchable database for quick reference on checks, combat, stress, panic, and survival."
                         icon={
@@ -72,6 +61,11 @@ export const HomeView: React.FC = () => {
                             </svg>
                         }
                         onClick={() => handleSetView('rules')}
+                        action={
+                            <Button tabIndex={-1} className="w-full mt-auto">
+                                Access Terminal
+                            </Button>
+                        }
                     />
                 </div>
             </div>

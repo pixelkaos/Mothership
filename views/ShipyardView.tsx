@@ -3,6 +3,7 @@ import { SHIP_DATA, SHIP_UPGRADES, SHIP_WEAPONS } from '../data/shipData';
 import type { ShipData, ShipUpgrade, ShipWeapon } from '../types';
 import { useAppContext } from '../context/AppContext';
 import { Button } from '../components/Button';
+import { Panel } from '../components/ui/Panel';
 
 type ShipyardTab = 'ships' | 'upgrades' | 'weapons';
 
@@ -126,12 +127,9 @@ export const ShipyardView: React.FC = () => {
                     </aside>
                     <main className="lg:col-span-2">
                         {selectedShip && (
-                            <div className="border border-primary/50 p-6 bg-black/30">
-                                <div className="flex justify-between items-start gap-4">
-                                    <div>
-                                        <h3 className="text-2xl sm:text-3xl font-bold text-primary uppercase tracking-wider">{selectedShip.name}</h3>
-                                        <p className="text-secondary tracking-widest mb-4">{selectedShip.modelCode}</p>
-                                    </div>
+                            <Panel title={selectedShip.name} className="!p-6">
+                                <div className="flex justify-between items-start gap-4 -mt-4 mb-4">
+                                     <p className="text-secondary tracking-widest">{selectedShip.modelCode}</p>
                                     <Button
                                         size="sm"
                                         onClick={() => handleOpenShipyardManifest(selectedShip)}
@@ -160,7 +158,7 @@ export const ShipyardView: React.FC = () => {
                                     <DetailRow label="Upgrades" value={selectedShip.upgrades} />
                                     {selectedShip.notes && <DetailRow label="Notes" value={selectedShip.notes} />}
                                 </dl>
-                            </div>
+                            </Panel>
                         )}
                     </main>
                 </div>

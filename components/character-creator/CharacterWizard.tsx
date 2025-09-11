@@ -9,6 +9,7 @@ import { SkillSelector } from '../SkillSelector';
 import { generateCharacterBackstory, generateCharacterPortrait } from '../../services/geminiService';
 import { CharacterRoller } from '../CharacterRoller';
 import { Button } from '../Button';
+import { Panel } from '../ui/Panel';
 
 const STEPS = [
     { id: 1, name: 'Stats & Saves' },
@@ -259,17 +260,21 @@ const Step1Stats: React.FC<StepProps> = ({ saveData, onUpdate, onRollRequest }) 
                 <Button variant="secondary" size="sm" onClick={handleRollAll} className="mt-4">Roll All</Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="border border-primary/30 p-4"><h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Stats (2d10+25)</h3><div className="flex justify-around">
-                    <StatInput id="bs.str" label="Strength" value={saveData.baseStats.strength} onChange={e => onUpdate('baseStats.strength', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.strength') : undefined} />
-                    <StatInput id="bs.spd" label="Speed" value={saveData.baseStats.speed} onChange={e => onUpdate('baseStats.speed', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.speed') : undefined} />
-                    <StatInput id="bs.int" label="Intellect" value={saveData.baseStats.intellect} onChange={e => onUpdate('baseStats.intellect', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.intellect') : undefined} />
-                    <StatInput id="bs.com" label="Combat" value={saveData.baseStats.combat} onChange={e => onUpdate('baseStats.combat', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.combat') : undefined} />
-                </div></div>
-                <div className="border border-primary/30 p-4"><h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Saves (2d10+10)</h3><div className="flex justify-around">
-                    <StatInput id="sv.san" label="Sanity" value={saveData.baseSaves.sanity} onChange={e => onUpdate('baseSaves.sanity', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'saves.sanity') : undefined} />
-                    <StatInput id="sv.fer" label="Fear" value={saveData.baseSaves.fear} onChange={e => onUpdate('baseSaves.fear', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'saves.fear') : undefined} />
-                    <StatInput id="sv.bdy" label="Body" value={saveData.baseSaves.body} onChange={e => onUpdate('baseSaves.body', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'saves.body') : undefined} />
-                </div></div>
+                <Panel title="Stats (2d10+25)">
+                    <div className="flex justify-around">
+                        <StatInput id="bs.str" label="Strength" value={saveData.baseStats.strength} onChange={e => onUpdate('baseStats.strength', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.strength') : undefined} />
+                        <StatInput id="bs.spd" label="Speed" value={saveData.baseStats.speed} onChange={e => onUpdate('baseStats.speed', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.speed') : undefined} />
+                        <StatInput id="bs.int" label="Intellect" value={saveData.baseStats.intellect} onChange={e => onUpdate('baseStats.intellect', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.intellect') : undefined} />
+                        <StatInput id="bs.com" label="Combat" value={saveData.baseStats.combat} onChange={e => onUpdate('baseStats.combat', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'stats.combat') : undefined} />
+                    </div>
+                </Panel>
+                <Panel title="Saves (2d10+10)">
+                    <div className="flex justify-around">
+                        <StatInput id="sv.san" label="Sanity" value={saveData.baseSaves.sanity} onChange={e => onUpdate('baseSaves.sanity', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'saves.sanity') : undefined} />
+                        <StatInput id="sv.fer" label="Fear" value={saveData.baseSaves.fear} onChange={e => onUpdate('baseSaves.fear', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'saves.fear') : undefined} />
+                        <StatInput id="sv.bdy" label="Body" value={saveData.baseSaves.body} onChange={e => onUpdate('baseSaves.body', parseInt(e.target.value))} tooltipContent="" onRollRequest={onRollRequest ? () => onRollRequest('creation', 'saves.body') : undefined} />
+                    </div>
+                </Panel>
             </div>
         </div>
     );
@@ -341,34 +346,44 @@ const Step2Class: React.FC<StepProps> = ({ saveData, onUpdate }) => {
                     );
                 })}
             </div>
-            {saveData.character.class?.name === 'Android' && (<div className="border border-primary/30 p-4"><h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Android Penalty (-10)</h4><p className="text-xs text-muted mb-3">Choose one stat to reduce by 10.</p><div className="flex gap-4">
-                {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => 
-                    <Button 
-                        key={stat}
-                        variant="tertiary"
-                        size="sm"
-                        onClick={() => onUpdate('androidPenalty', stat)}
-                        className={`flex-1 flex flex-col items-center justify-center p-3 normal-case ${saveData.androidPenalty === stat ? 'bg-tertiary text-background' : ''}`}
-                    >
-                        <span className="uppercase text-sm tracking-wider">{stat}</span>
-                        <span className="font-bold text-2xl mt-1">{saveData.baseStats[stat]}</span>
-                    </Button>
-                )}
-            </div></div>)}
-            {saveData.character.class?.name === 'Scientist' && (<div className="border border-primary/30 p-4"><h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Scientist Bonus (+5)</h4><p className="text-xs text-muted mb-3">Choose one stat to improve by 5.</p><div className="flex gap-4">
-                 {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => 
-                    <Button 
-                        key={stat}
-                        variant="tertiary"
-                        size="sm"
-                        onClick={() => onUpdate('scientistBonus', stat)}
-                        className={`flex-1 flex flex-col items-center justify-center p-3 normal-case ${saveData.scientistBonus === stat ? 'bg-tertiary text-background' : ''}`}
-                    >
-                        <span className="uppercase text-sm tracking-wider">{stat}</span>
-                        <span className="font-bold text-2xl mt-1">{saveData.baseStats[stat]}</span>
-                    </Button>
-                )}
-            </div></div>)}
+            {saveData.character.class?.name === 'Android' && (
+                <Panel title="Android Penalty (-10)">
+                    <p className="text-xs text-muted mb-3 text-center">Choose one stat to reduce by 10.</p>
+                    <div className="flex gap-4">
+                        {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => 
+                            <Button 
+                                key={stat}
+                                variant="tertiary"
+                                size="sm"
+                                onClick={() => onUpdate('androidPenalty', stat)}
+                                className={`flex-1 flex flex-col items-center justify-center p-3 normal-case ${saveData.androidPenalty === stat ? 'bg-tertiary text-background' : ''}`}
+                            >
+                                <span className="uppercase text-sm tracking-wider">{stat}</span>
+                                <span className="font-bold text-2xl mt-1">{saveData.baseStats[stat]}</span>
+                            </Button>
+                        )}
+                    </div>
+                </Panel>
+            )}
+            {saveData.character.class?.name === 'Scientist' && (
+                <Panel title="Scientist Bonus (+5)">
+                    <p className="text-xs text-muted mb-3 text-center">Choose one stat to improve by 5.</p>
+                    <div className="flex gap-4">
+                         {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => 
+                            <Button 
+                                key={stat}
+                                variant="tertiary"
+                                size="sm"
+                                onClick={() => onUpdate('scientistBonus', stat)}
+                                className={`flex-1 flex flex-col items-center justify-center p-3 normal-case ${saveData.scientistBonus === stat ? 'bg-tertiary text-background' : ''}`}
+                            >
+                                <span className="uppercase text-sm tracking-wider">{stat}</span>
+                                <span className="font-bold text-2xl mt-1">{saveData.baseStats[stat]}</span>
+                            </Button>
+                        )}
+                    </div>
+                </Panel>
+            )}
 
             {character.class && (
                 <div className="mt-8 border-t border-primary/50 pt-6">
@@ -536,22 +551,20 @@ const Step5Equipment: React.FC<StepProps> = ({ saveData, onUpdate }) => {
                 <p className="text-muted mt-2 max-w-2xl mx-auto">Choose how to equip your character. You can either take a pre-rolled package with some pocket money, or a larger starting fund to buy your own gear from the ship's store later.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="border border-primary/50 p-6 flex flex-col text-center bg-black/30 h-full">
-                    <h3 className="text-xl font-bold text-secondary uppercase tracking-wider">Option 1: Roll for Loadout</h3>
+                <Panel title="Option 1: Roll for Loadout" className="text-center flex flex-col">
                     <p className="text-muted text-sm my-4 flex-grow">Receive a random, class-specific equipment package. You'll be ready for action immediately. Also includes a random trinket, patch, and pocket money.</p>
                     <p className="font-bold text-primary mb-4">Credits: 5d10</p>
                     <Button onClick={handleRollLoadout} className="w-full mt-auto">
                         Roll Loadout
                     </Button>
-                </div>
-                <div className="border border-primary/50 p-6 flex flex-col text-center bg-black/30 h-full">
-                    <h3 className="text-xl font-bold text-secondary uppercase tracking-wider">Option 2: Purchase Gear</h3>
+                </Panel>
+                <Panel title="Option 2: Purchase Gear" className="text-center flex flex-col">
                     <p className="text-muted text-sm my-4 flex-grow">Forgo the random package for a substantial starting fund. You'll need to purchase all your gear, from armor to weapons. Also includes a random trinket and patch.</p>
                     <p className="font-bold text-primary mb-4">Credits: 5d10 x 10</p>
                      <Button onClick={handleTakeCredits} className="w-full mt-auto">
                         Take Credits
                     </Button>
-                </div>
+                </Panel>
             </div>
         </div>
     );

@@ -1,6 +1,7 @@
 import React from 'react';
 import type { DerelictShip } from '../types';
 import { Button } from './Button';
+import { Panel } from './ui/Panel';
 
 interface GeneratorPanelProps {
     ship: DerelictShip | null;
@@ -19,8 +20,7 @@ const ShipDataRow: React.FC<{ label: string; value: string | undefined }> = ({ l
 
 export const GeneratorPanel: React.FC<GeneratorPanelProps> = ({ ship, onGenerate, onEnhance, onOpenInManifest, isLoading }) => {
     return (
-        <div className="border border-primary/50 p-6 flex flex-col h-full bg-black/30">
-            <h3 className="text-2xl font-bold text-primary mb-4 uppercase tracking-wider">System Parameters</h3>
+        <Panel title="System Parameters" className="flex flex-col h-full">
             <div className="flex-grow overflow-y-auto">
                 <dl className="divide-y divide-primary/50">
                     <ShipDataRow label="IDENTIFIER" value={ship?.name} />
@@ -62,6 +62,6 @@ export const GeneratorPanel: React.FC<GeneratorPanelProps> = ({ ship, onGenerate
                     </Button>
                 </div>
             </div>
-        </div>
+        </Panel>
     );
 };
