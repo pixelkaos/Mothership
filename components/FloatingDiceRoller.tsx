@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import type { RollResult, Character, Stat, Save, CharacterSaveData } from '../types';
 import { parseAndRoll } from '../utils/dice';
+import { useAppContext } from '../context/AppContext';
+import { Button } from './Button';
 
 type DiceScreen = 'main' | 'stat' | 'save' | 'damage' | 'wound' | 'other' | 'custom';
 
@@ -26,12 +28,12 @@ interface FloatingDiceRollerProps {
     onClose: () => void;
     characterData: CharacterSaveData | null;
     activeCheck?: { type: 'stat' | 'save', name: string } | null;
-    onCheckHandled?: () => void;
     onCharacterUpdate?: (character: Character) => void;
 }
 
-export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisible, onClose, characterData, activeCheck, onCheckHandled, onCharacterUpdate }) => {
+export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisible, onClose, characterData, activeCheck, onCharacterUpdate }) => {
     const character = characterData?.character ?? null;
+    const { clearActiveDiceCheck } = useAppContext();
     const [screen, setScreen] = useState<DiceScreen>('main');
     const [result, setResult] = useState<HistoryEntry | null>(null);
     const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -46,11 +48,8 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
             setScreen(activeCheck.type);
             setSelectedTarget(activeCheck.name);
             setIsMinimized(false); // Ensure roller is visible
-            if (onCheckHandled) {
-                onCheckHandled();
-            }
         }
-    }, [activeCheck, onCheckHandled]);
+    }, [activeCheck]);
 
     // Floating Window Logic
     const [position, setPosition] = useState({ x: window.innerWidth / 2 - 224, y: 100 });
@@ -102,7 +101,8 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
         setSelectedTarget(null);
         setSelectedSkills([]);
         setAdvantage('none');
-    }, []);
+        clearActiveDiceCheck();
+    }, [clearActiveDiceCheck]);
 
     const addToHistory = useCallback((entry: Omit<HistoryEntry, 'timestamp'>) => {
         const newEntry = { ...entry, timestamp: Date.now() };
@@ -226,11 +226,13 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
 
     const renderResult = () => (
         <div className="relative flex-1 flex flex-col items-center justify-center p-4 border border-primary/50 min-h-[240px]">
-             {result && <button onClick={() => setResult(null)} className="absolute top-4 right-4 text-muted hover:text-primary" aria-label="Clear Result">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>}
+             {result && (
+                <Button variant="ghost" size="sm" onClick={() => setResult(null)} className="absolute top-2 right-2" aria-label="Clear Result">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </Button>
+            )}
             {result ? (
                 <>
                     <span className="text-9xl font-bold text-foreground">{result.total}</span>
@@ -253,20 +255,12 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
         </div>
     );
 
-    const tertiarySelectionClasses = (isSelected: boolean) => {
-        const base = 'py-2 uppercase transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus';
-        if (isSelected) {
-            return `${base} bg-tertiary text-background border border-tertiary`;
-        }
-        return `${base} bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed`;
-    }
-
     const renderCheckScreen = (type: 'stat' | 'save') => {
         if (!character) return (
             <div className="flex flex-col items-center justify-center h-full text-center p-8">
                 <h3 className="text-lg text-primary">No Active Character</h3>
                 <p className="text-muted mt-2 text-sm">Load a character in the Hangar to use character-specific rolls.</p>
-                <button onClick={() => setScreen('main')} className="mt-4 text-muted uppercase tracking-widest text-sm font-semibold hover:text-primary">Back</button>
+                <Button variant="ghost" onClick={() => { setScreen('main'); resetCheckState(); }} className="mt-4">Back</Button>
             </div>
         );
 
@@ -293,17 +287,17 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
                 </div>
                 <hr className="border-primary/50" />
                 <div className="my-3 grid grid-cols-2 gap-3">
-                    <button onClick={() => setAdvantage(p => p === 'adv' ? 'none' : 'adv')} className={tertiarySelectionClasses(advantage === 'adv')}>Advantage</button>
-                    <button onClick={() => setAdvantage(p => p === 'disadv' ? 'none' : 'disadv')} className={tertiarySelectionClasses(advantage === 'disadv')}>Disadvantage</button>
+                    <Button variant="tertiary" size="sm" onClick={() => setAdvantage(p => p === 'adv' ? 'none' : 'adv')} className={advantage === 'adv' ? 'bg-tertiary text-background' : ''}>Advantage</Button>
+                    <Button variant="tertiary" size="sm" onClick={() => setAdvantage(p => p === 'disadv' ? 'none' : 'disadv')} className={advantage === 'disadv' ? 'bg-tertiary text-background' : ''}>Disadvantage</Button>
                 </div>
-                <button 
+                <Button
                     onClick={() => handleCheckRoll(type)} 
                     disabled={!selectedTarget} 
-                    className="w-full mt-2 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary-hover disabled:text-background/70 disabled:cursor-not-allowed"
+                    className="w-full mt-2"
                 >
                     Roll
-                </button>
-                <button onClick={() => { setScreen('main'); resetCheckState(); }} className="mt-4 text-muted uppercase tracking-widest text-sm font-semibold hover:text-primary">Back</button>
+                </Button>
+                <Button variant="ghost" onClick={() => { setScreen('main'); resetCheckState(); }} className="mt-4">Back</Button>
             </div>
         );
     };
@@ -314,25 +308,26 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
             <hr className="border-primary/50 my-4" />
             <div className="space-y-3 flex-grow">
                 {buttons.map(({name, formula}) => (
-                     <button 
+                     <Button
                         key={name} 
+                        variant="secondary"
                         onClick={() => handleSimpleRoll(name, formula, showAdvantage ? advantage: 'none')} 
-                        className="w-full py-4 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed"
+                        className="w-full"
                      >
                         {name} <span className="font-normal normal-case text-primary">({formula})</span>
-                     </button>
+                     </Button>
                 ))}
             </div>
             {showAdvantage && (
                 <>
                     <hr className="border-primary/50 my-3" />
                     <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => setAdvantage(p => p === 'adv' ? 'none' : 'adv')} className={tertiarySelectionClasses(advantage === 'adv')}>Advantage</button>
-                        <button onClick={() => setAdvantage(p => p === 'disadv' ? 'none' : 'disadv')} className={tertiarySelectionClasses(advantage === 'disadv')}>Disadvantage</button>
+                        <Button variant="tertiary" size="sm" onClick={() => setAdvantage(p => p === 'adv' ? 'none' : 'adv')} className={advantage === 'adv' ? 'bg-tertiary text-background' : ''}>Advantage</Button>
+                        <Button variant="tertiary" size="sm" onClick={() => setAdvantage(p => p === 'disadv' ? 'none' : 'disadv')} className={advantage === 'disadv' ? 'bg-tertiary text-background' : ''}>Disadvantage</Button>
                     </div>
                 </>
             )}
-            <button onClick={() => {setScreen('main'); setAdvantage('none');}} className="mt-4 text-muted uppercase tracking-widest text-sm font-semibold hover:text-primary">Back</button>
+            <Button variant="ghost" onClick={() => {setScreen('main'); setAdvantage('none');}} className="mt-4">Back</Button>
         </div>
     );
 
@@ -342,17 +337,17 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
                 {renderResult()}
                 <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => setScreen('stat')} disabled={!character} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed disabled:border-muted/50 disabled:text-muted/50 disabled:cursor-not-allowed">STAT</button>
-                        <button onClick={() => setScreen('save')} disabled={!character} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed disabled:border-muted/50 disabled:text-muted/50 disabled:cursor-not-allowed">SAVE</button>
+                        <Button variant="tertiary" size="lg" disabled={!character} onClick={() => setScreen('stat')}>STAT</Button>
+                        <Button variant="tertiary" size="lg" disabled={!character} onClick={() => setScreen('save')}>SAVE</Button>
                     </div>
                     <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center">
-                        <button onClick={() => setScreen('damage')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">DAMAGE</button>
-                        <button onClick={() => handleSimpleRoll('Dice', '1d100')} className="w-20 h-20 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed">DICE</button>
-                        <button onClick={() => setScreen('wound')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">WOUND</button>
+                        <Button variant="tertiary" size="lg" onClick={() => setScreen('damage')}>DAMAGE</Button>
+                        <Button variant="primary" onClick={() => handleSimpleRoll('Dice', '1d100')} className="w-20 h-20 rounded-md">DICE</Button>
+                        <Button variant="tertiary" size="lg" onClick={() => setScreen('wound')}>WOUND</Button>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => handleSimpleRoll('Panic', '1d20')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">PANIC</button>
-                        <button onClick={() => setScreen('other')} className="py-6 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed">OTHER</button>
+                        <Button variant="tertiary" size="lg" onClick={() => handleSimpleRoll('Panic', '1d20')}>PANIC</Button>
+                        <Button variant="tertiary" size="lg" onClick={() => setScreen('other')}>OTHER</Button>
                     </div>
                 </div>
             </div>
@@ -376,7 +371,7 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
                                         </li>
                                     ))}
                                 </ul>
-                                <button onClick={() => setHistory([])} className="w-full mt-3 py-1 text-xs text-center text-muted hover:text-primary uppercase tracking-wider font-semibold">Clear History</button>
+                                <Button variant="ghost" size="sm" onClick={() => setHistory([])} className="w-full mt-3">Clear History</Button>
                             </>
                         )}
                     </div>
@@ -424,16 +419,16 @@ export const FloatingDiceRoller: React.FC<FloatingDiceRollerProps> = ({ isVisibl
             >
                 <h4 className="font-bold text-primary uppercase tracking-wider">Dice Roller</h4>
                 <div className="flex items-center space-x-2">
-                    <button onClick={() => setIsMinimized(!isMinimized)} className="text-primary/70 hover:text-primary" aria-label={isMinimized ? "Expand" : "Minimize"}>
+                    <Button variant="ghost" size="sm" onClick={() => setIsMinimized(!isMinimized)} aria-label={isMinimized ? "Expand" : "Minimize"}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            {isMinimized ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4h4m12 4V4h-4M4 16v4h4m12-4v4h-4" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />}
                         </svg>
-                    </button>
-                    <button onClick={onClose} className="text-primary/70 hover:text-primary" aria-label="Close">
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close">
                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                    </button>
+                    </Button>
                 </div>
             </div>
             

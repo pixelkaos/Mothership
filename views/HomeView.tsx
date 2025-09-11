@@ -1,10 +1,6 @@
-
 import React from 'react';
-import type { NavigationView } from '../App';
-
-interface HomeViewProps {
-    onSetView: (view: NavigationView) => void;
-}
+import { useAppContext } from '../context/AppContext';
+import { Button } from '../components/Button';
 
 const NavCard: React.FC<{
     title: string;
@@ -19,16 +15,18 @@ const NavCard: React.FC<{
         <div className="w-20 h-20 text-primary mb-4 transition-transform duration-300 group-hover:scale-110">{icon}</div>
         <h3 className="text-2xl font-bold text-primary uppercase tracking-wider">{title}</h3>
         <p className="text-muted text-sm my-4 flex-grow">{description}</p>
-        <button
+        <Button
             tabIndex={-1} // The whole card is clickable
-            className="w-full mt-auto px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background group-hover:bg-primary-hover active:bg-primary-pressed"
+            className="w-full mt-auto"
         >
             Access Terminal
-        </button>
+        </Button>
     </div>
 );
 
-export const HomeView: React.FC<HomeViewProps> = ({ onSetView }) => {
+export const HomeView: React.FC = () => {
+    const { handleSetView } = useAppContext();
+
     return (
         <div className="flex flex-col items-center justify-center min-h-full py-10 px-4 sm:px-6 md:px-8">
             <div className="text-center mb-12 animate-fadeIn">
@@ -49,7 +47,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onSetView }) => {
                                 <path d="M15.75 12.75a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" fill="currentColor"/>
                             </svg>
                         }
-                        onClick={() => onSetView('derelict')}
+                        onClick={() => handleSetView('derelict')}
                     />
                 </div>
                  <div className="animate-slideInUp" style={{ animationDelay: '400ms' }}>
@@ -61,7 +59,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onSetView }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                         }
-                        onClick={() => onSetView('character')}
+                        onClick={() => handleSetView('character')}
                     />
                 </div>
                  <div className="animate-slideInUp" style={{ animationDelay: '600ms' }}>
@@ -73,7 +71,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onSetView }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                             </svg>
                         }
-                        onClick={() => onSetView('rules')}
+                        onClick={() => handleSetView('rules')}
                     />
                 </div>
             </div>

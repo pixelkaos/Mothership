@@ -1,47 +1,35 @@
-
-
-
-
-
 import React, { useState } from 'react';
-import type { NavigationView } from '../App';
-
-interface HeaderProps {
-    onShowTutorial: () => void;
-    activeView: NavigationView | null;
-    onSetView: (view: NavigationView | 'dice-roller' | 'character-sheet' | 'ship-manifest') => void;
-    isCharacterLoaded: boolean;
-    isShipManifestLoaded: boolean;
-}
+import { useAppContext } from '../context/AppContext';
+import { Button } from './Button';
 
 const NavButton: React.FC<{
     label: string;
     isActive: boolean;
     onClick: () => void;
     children?: React.ReactNode;
-}> = ({ label, isActive, onClick, children }) => {
-    const baseClasses = 'px-4 py-2 uppercase text-sm tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus';
-    const activeClasses = 'bg-secondary text-background';
-    const inactiveClasses = 'bg-transparent text-secondary hover:bg-secondary hover:text-background';
-    
+}> = ({ label, isActive, onClick }) => {
     return (
-        <button
+        <Button
+            variant="ghost"
+            size="sm"
             onClick={onClick}
-            className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
+            className={`py-2 px-4 rounded-none ${isActive ? 'bg-secondary text-background hover:bg-secondary' : 'text-secondary hover:bg-secondary hover:text-background'}`}
         >
             {label}
-            {children}
-        </button>
+        </Button>
     );
 };
 
-export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSetView, isCharacterLoaded, isShipManifestLoaded }) => {
+export const Header: React.FC = () => {
+    const { activeNav, handleSetView, openTutorial, isCharacterLoaded, isShipManifestLoaded, isDiceRollerOpen, isCharacterSheetOpen, isShipManifestOpen } = useAppContext();
     const [isToolsOpen, setIsToolsOpen] = useState(false);
+    
+    const activeView = isDiceRollerOpen || isCharacterSheetOpen || isShipManifestOpen ? 'tools' : activeNav;
 
     return (
     <header className="relative text-center pb-4 pt-4 sm:pt-6 md:pt-8 px-4 sm:px-6 md:px-8">
         <button
-            onClick={() => onSetView('home')}
+            onClick={() => handleSetView('home')}
             className="bg-transparent border-0 p-0 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus rounded-sm"
             aria-label="Go to home page"
         >
@@ -54,10 +42,10 @@ export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSe
         </button>
         
         <div className="flex justify-center border-y border-secondary/50">
-            <NavButton label="Derelict Generator" isActive={activeView === 'derelict'} onClick={() => onSetView('derelict')} />
-            <NavButton label="Shipyard" isActive={activeView === 'shipyard'} onClick={() => onSetView('shipyard')} />
-            <NavButton label="Character Hangar" isActive={activeView === 'character'} onClick={() => onSetView('character')} />
-            <NavButton label="Rules" isActive={activeView === 'rules'} onClick={() => onSetView('rules')} />
+            <NavButton label="Derelict Generator" isActive={activeView === 'derelict'} onClick={() => handleSetView('derelict')} />
+            <NavButton label="Shipyard" isActive={activeView === 'shipyard'} onClick={() => handleSetView('shipyard')} />
+            <NavButton label="Character Hangar" isActive={activeView === 'character'} onClick={() => handleSetView('character')} />
+            <NavButton label="Rules" isActive={activeView === 'rules'} onClick={() => handleSetView('rules')} />
             <div 
                 className="relative"
                 onMouseEnter={() => setIsToolsOpen(true)}
@@ -66,36 +54,44 @@ export const Header: React.FC<HeaderProps> = ({ onShowTutorial, activeView, onSe
                 <NavButton label="Tools" isActive={activeView === 'tools'} onClick={() => {}} />
                 {isToolsOpen && (
                     <div className="absolute top-full left-0 w-full bg-background border border-t-0 border-secondary/50 shadow-lg z-20 animate-fadeIn">
-                        <button 
-                            onClick={() => onSetView('dice-roller')}
-                            className="block w-full text-left px-4 py-2 uppercase text-sm tracking-widest transition-colors duration-200 text-secondary hover:bg-secondary hover:text-background"
+                        <Button 
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleSetView('dice-roller')}
+                            className="block w-full text-left justify-start px-4 text-secondary hover:bg-secondary hover:text-background rounded-none"
                         >
                             Dice Roller
-                        </button>
-                        <button
-                            onClick={() => onSetView('character-sheet')}
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleSetView('character-sheet')}
                             disabled={!isCharacterLoaded}
-                            className="block w-full text-left px-4 py-2 uppercase text-sm tracking-widest transition-colors duration-200 text-secondary hover:bg-secondary hover:text-background disabled:text-muted disabled:bg-black/20 disabled:cursor-not-allowed"
+                            className="block w-full text-left justify-start px-4 text-secondary hover:bg-secondary hover:text-background disabled:text-muted disabled:bg-black/20 rounded-none"
                         >
                             Character Sheet
-                        </button>
-                         <button
-                            onClick={() => onSetView('ship-manifest')}
+                        </Button>
+                         <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleSetView('ship-manifest')}
                             disabled={!isShipManifestLoaded}
-                            className="block w-full text-left px-4 py-2 uppercase text-sm tracking-widest transition-colors duration-200 text-secondary hover:bg-secondary hover:text-background disabled:text-muted disabled:bg-black/20 disabled:cursor-not-allowed"
+                            className="block w-full text-left justify-start px-4 text-secondary hover:bg-secondary hover:text-background disabled:text-muted disabled:bg-black/20 rounded-none"
                         >
                             Ship Manifest
-                        </button>
+                        </Button>
                     </div>
                 )}
             </div>
         </div>
 
-        <button
-            onClick={onShowTutorial}
-            className="absolute top-2 right-2 px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed disabled:border-secondary-hover disabled:text-secondary-hover/70 disabled:cursor-not-allowed"
+        <Button
+            variant="secondary"
+            size="sm"
+            onClick={openTutorial}
+            className="absolute top-2 right-2"
         >
             How to Play
-        </button>
+        </Button>
     </header>
 )};

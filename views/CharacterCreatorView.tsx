@@ -1,22 +1,18 @@
 
-
 import React, { useState } from 'react';
-import type { CharacterSaveData } from '../types';
 import { CharacterHangar } from '../components/character-creator/CharacterHangar';
 import { CharacterWizard } from '../components/character-creator/CharacterWizard';
 import { CharacterManifest } from '../components/character-creator/CharacterManifest';
+import { useAppContext } from '../context/AppContext';
 
-export const CharacterCreatorView: React.FC<{
-  characterData: CharacterSaveData | null;
-  onCharacterUpdate: (data: CharacterSaveData | null) => void;
-  onOpenSheet: () => void;
-}> = ({ characterData, onCharacterUpdate, onOpenSheet }) => {
+export const CharacterCreatorView: React.FC = () => {
+  const { activeCharacterData, setActiveCharacterData, openCharacterSheet } = useAppContext();
   const [mode, setMode] = useState<'hangar' | 'wizard'>('hangar');
 
   // If a character is already loaded (e.g., from a previous random generation or file load),
   // display the full manifest immediately.
-  if (characterData) {
-    return <CharacterManifest characterData={characterData} onCharacterUpdate={onCharacterUpdate} onOpenSheet={onOpenSheet} />;
+  if (activeCharacterData) {
+    return <CharacterManifest characterData={activeCharacterData} onCharacterUpdate={setActiveCharacterData} onOpenSheet={openCharacterSheet} />;
   }
 
   // If the user has started the creation process, show the wizard.
@@ -26,7 +22,7 @@ export const CharacterCreatorView: React.FC<{
         onComplete={(data) => {
           // When the wizard is finished, update the app's state with the new character.
           // This will cause this component to re-render and show the CharacterManifest.
-          onCharacterUpdate(data);
+          setActiveCharacterData(data);
           setMode('hangar'); // Reset mode for the next time.
         }}
         onExit={() => setMode('hangar')}
@@ -38,7 +34,7 @@ export const CharacterCreatorView: React.FC<{
   return (
     <CharacterHangar
       onStartNew={() => setMode('wizard')}
-      onCharacterReady={onCharacterUpdate}
+      onCharacterReady={setActiveCharacterData}
     />
   );
 };

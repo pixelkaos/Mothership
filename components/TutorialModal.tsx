@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { QuizQuestion } from '../types';
+import { Button } from './Button';
 
 interface TutorialModalProps {
     onClose: () => void;
@@ -128,12 +129,9 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                                     You scored {score} out of {QUIZ_QUESTIONS.length}. {score === QUIZ_QUESTIONS.length ? "Excellent work, Marine!" : "Back to the simulator, recruit."}
                                 </p>
                             ) : (
-                                <button
-                                    onClick={handleSubmitQuiz}
-                                    className="px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary-hover disabled:text-background/70 disabled:cursor-not-allowed"
-                                >
+                                <Button onClick={handleSubmitQuiz}>
                                     Submit Answers
-                                </button>
+                                </Button>
                             )}
                         </div>
                     </div>
@@ -151,28 +149,31 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                     {renderPageContent()}
                 </div>
                 <div className="flex justify-between items-center p-4 bg-black/50">
-                    <button
+                    <Button
+                        variant="tertiary"
+                        size="sm"
                         onClick={() => setPage(p => Math.max(1, p - 1))}
                         disabled={page === 1}
-                        className="px-4 py-2 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-primary text-primary hover:bg-primary hover:text-background active:bg-primary-pressed active:border-primary-pressed disabled:border-primary-hover disabled:text-primary-hover/70 disabled:cursor-not-allowed"
                     >
                         Prev
-                    </button>
+                    </Button>
                     <span className="text-muted">Page {page} of {TUTORIAL_PAGES}</span>
                     {page < TUTORIAL_PAGES ? (
-                        <button
+                        <Button
+                            variant="tertiary"
+                            size="sm"
                             onClick={() => setPage(p => Math.min(TUTORIAL_PAGES, p + 1))}
-                            className="px-4 py-2 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-primary text-primary hover:bg-primary hover:text-background active:bg-primary-pressed active:border-primary-pressed disabled:border-primary-hover disabled:text-primary-hover/70 disabled:cursor-not-allowed"
                         >
                             Next
-                        </button>
+                        </Button>
                     ) : (
-                         <button
+                         <Button
+                            variant="primary"
+                            size="sm"
                             onClick={onClose}
-                            className="px-4 py-2 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary-hover disabled:text-background/70 disabled:cursor-not-allowed"
-                        >
+                         >
                             Close
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>

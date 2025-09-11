@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import type { Character, CharacterSaveData, ClassName, Stat, CharacterClass, CharacterStats, CharacterSaves } from '../../types';
 import { initialSaveData, getSkillAndPrerequisites } from '../../utils/character';
@@ -11,6 +8,7 @@ import { SplitStatInput, StatInput } from './CharacterManifest';
 import { SkillSelector } from '../SkillSelector';
 import { generateCharacterBackstory, generateCharacterPortrait } from '../../services/geminiService';
 import { CharacterRoller } from '../CharacterRoller';
+import { Button } from '../Button';
 
 const STEPS = [
     { id: 1, name: 'Stats & Saves' },
@@ -63,20 +61,19 @@ const WizardControls: React.FC<{
     isLastStep: boolean;
 }> = ({ onBack, onNext, onFinish, isBackDisabled, isNextDisabled, isLastStep }) => (
     <div className="mt-8 flex justify-between border-t border-primary/50 pt-6">
-        <button
+        <Button
+            variant="secondary"
             onClick={onBack}
             disabled={isBackDisabled}
-            className="px-6 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed disabled:border-secondary/50 disabled:text-secondary/50 disabled:cursor-not-allowed"
         >
             Back
-        </button>
-        <button
+        </Button>
+        <Button
             onClick={isLastStep ? onFinish : onNext}
             disabled={isNextDisabled}
-            className="px-6 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary/50 disabled:text-background/70 disabled:cursor-not-allowed"
         >
             {isLastStep ? 'Finalize Character' : 'Next'}
-        </button>
+        </Button>
     </div>
 );
 
@@ -259,7 +256,7 @@ const Step1Stats: React.FC<StepProps> = ({ saveData, onUpdate, onRollRequest }) 
             <div className="text-center">
                 <h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Stats & Saves</h2>
                 <p className="text-muted mt-2">Roll your base stats and saves. These will be modified by your class later.</p>
-                <button onClick={handleRollAll} className="mt-4 px-4 py-2 text-sm uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background">Roll All</button>
+                <Button variant="secondary" size="sm" onClick={handleRollAll} className="mt-4">Roll All</Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="border border-primary/30 p-4"><h3 className="text-sm uppercase tracking-wider mb-4 text-center text-muted">Stats (2d10+25)</h3><div className="flex justify-around">
@@ -294,8 +291,6 @@ const Step2Class: React.FC<StepProps> = ({ saveData, onUpdate }) => {
         onUpdate('character.notes', newNotes);
     };
 
-    const tertiarySelectionClasses = (isSelected: boolean) => isSelected ? 'bg-tertiary text-background border border-tertiary' : 'bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background';
-
     const StatRow: React.FC<{ label: string; base: number; modifier: number }> = ({ label, base, modifier }) => (
         <div className="grid grid-cols-4 items-center text-center py-1.5">
             <span className="text-left font-bold uppercase tracking-wider text-sm">{label}</span>
@@ -328,30 +323,50 @@ const Step2Class: React.FC<StepProps> = ({ saveData, onUpdate }) => {
         <div className="space-y-6">
             <div className="text-center"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Class Selection</h2><p className="text-muted mt-2">Your class determines your role, special abilities, and how you handle trauma.</p></div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {CLASSES_DATA.map(classData => <button key={classData.name} onClick={() => handleSelectClass(classData)} className={`p-4 text-left transition-colors ${saveData.character.class?.name === classData.name ? tertiarySelectionClasses(true) : tertiarySelectionClasses(false)}`}><h4 className="font-bold text-lg uppercase text-secondary">{classData.name}</h4><p className="text-xs text-muted mt-2">Trauma: {classData.trauma_response}</p></button>)}
+                {CLASSES_DATA.map(classData => {
+                    const isSelected = saveData.character.class?.name === classData.name;
+                    return (
+                        <Button 
+                            key={classData.name} 
+                            variant="tertiary" 
+                            size="sm"
+                            onClick={() => handleSelectClass(classData)} 
+                            className={`p-4 h-full text-left normal-case items-start ${isSelected ? 'bg-tertiary text-background' : ''}`}
+                        >
+                            <div>
+                                <h4 className="font-bold text-lg uppercase text-secondary">{classData.name}</h4>
+                                <p className="text-xs text-muted mt-2">Trauma: {classData.trauma_response}</p>
+                            </div>
+                        </Button>
+                    );
+                })}
             </div>
             {saveData.character.class?.name === 'Android' && (<div className="border border-primary/30 p-4"><h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Android Penalty (-10)</h4><p className="text-xs text-muted mb-3">Choose one stat to reduce by 10.</p><div className="flex gap-4">
                 {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => 
-                    <button 
-                        key={stat} 
-                        onClick={() => onUpdate('androidPenalty', stat)} 
-                        className={`flex-1 p-3 flex flex-col items-center justify-center transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus ${tertiarySelectionClasses(saveData.androidPenalty === stat)}`}
+                    <Button 
+                        key={stat}
+                        variant="tertiary"
+                        size="sm"
+                        onClick={() => onUpdate('androidPenalty', stat)}
+                        className={`flex-1 flex flex-col items-center justify-center p-3 normal-case ${saveData.androidPenalty === stat ? 'bg-tertiary text-background' : ''}`}
                     >
                         <span className="uppercase text-sm tracking-wider">{stat}</span>
                         <span className="font-bold text-2xl mt-1">{saveData.baseStats[stat]}</span>
-                    </button>
+                    </Button>
                 )}
             </div></div>)}
             {saveData.character.class?.name === 'Scientist' && (<div className="border border-primary/30 p-4"><h4 className="text-sm uppercase tracking-wider mb-2 text-secondary">Scientist Bonus (+5)</h4><p className="text-xs text-muted mb-3">Choose one stat to improve by 5.</p><div className="flex gap-4">
                  {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => 
-                    <button 
-                        key={stat} 
-                        onClick={() => onUpdate('scientistBonus', stat)} 
-                        className={`flex-1 p-3 flex flex-col items-center justify-center transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus ${tertiarySelectionClasses(saveData.scientistBonus === stat)}`}
+                    <Button 
+                        key={stat}
+                        variant="tertiary"
+                        size="sm"
+                        onClick={() => onUpdate('scientistBonus', stat)}
+                        className={`flex-1 flex flex-col items-center justify-center p-3 normal-case ${saveData.scientistBonus === stat ? 'bg-tertiary text-background' : ''}`}
                     >
                         <span className="uppercase text-sm tracking-wider">{stat}</span>
                         <span className="font-bold text-2xl mt-1">{saveData.baseStats[stat]}</span>
-                    </button>
+                    </Button>
                 )}
             </div></div>)}
 
@@ -507,12 +522,9 @@ const Step5Equipment: React.FC<StepProps> = ({ saveData, onUpdate }) => {
                         <p><strong className="text-primary/80">Credits:</strong> {credits}</p>
                     </div>
                 </div>
-                <button 
-                    onClick={handleReset}
-                    className="mt-4 px-4 py-2 text-sm uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background"
-                >
+                <Button variant="secondary" size="sm" onClick={handleReset} className="mt-4">
                     Reset Choice
-                </button>
+                </Button>
             </div>
         );
     }
@@ -528,17 +540,17 @@ const Step5Equipment: React.FC<StepProps> = ({ saveData, onUpdate }) => {
                     <h3 className="text-xl font-bold text-secondary uppercase tracking-wider">Option 1: Roll for Loadout</h3>
                     <p className="text-muted text-sm my-4 flex-grow">Receive a random, class-specific equipment package. You'll be ready for action immediately. Also includes a random trinket, patch, and pocket money.</p>
                     <p className="font-bold text-primary mb-4">Credits: 5d10</p>
-                    <button onClick={handleRollLoadout} className="w-full mt-auto px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed">
+                    <Button onClick={handleRollLoadout} className="w-full mt-auto">
                         Roll Loadout
-                    </button>
+                    </Button>
                 </div>
                 <div className="border border-primary/50 p-6 flex flex-col text-center bg-black/30 h-full">
                     <h3 className="text-xl font-bold text-secondary uppercase tracking-wider">Option 2: Purchase Gear</h3>
                     <p className="text-muted text-sm my-4 flex-grow">Forgo the random package for a substantial starting fund. You'll need to purchase all your gear, from armor to weapons. Also includes a random trinket and patch.</p>
                     <p className="font-bold text-primary mb-4">Credits: 5d10 x 10</p>
-                     <button onClick={handleTakeCredits} className="w-full mt-auto px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed">
+                     <Button onClick={handleTakeCredits} className="w-full mt-auto">
                         Take Credits
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
@@ -602,9 +614,9 @@ const Step6Style: React.FC<StepProps> = ({ saveData, onUpdate }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                 <div className="space-y-4">
                     <div className="text-right -mb-2">
-                        <button onClick={handleRandomizeIdentity} disabled={isGeneratingIdentity} className="px-3 py-1 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background disabled:opacity-50">
+                        <Button variant="secondary" size="sm" onClick={handleRandomizeIdentity} disabled={isGeneratingIdentity}>
                             {isGeneratingIdentity ? 'Generating...' : 'Randomize Identity'}
-                        </button>
+                        </Button>
                     </div>
                     <input type="text" placeholder="Name" className="w-full bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" value={character.name} onChange={e => onUpdate('character.name', e.target.value)} />
                     <select className="w-full bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" value={character.pronouns} onChange={e => onUpdate('character.pronouns', e.target.value)}>
@@ -618,13 +630,13 @@ const Step6Style: React.FC<StepProps> = ({ saveData, onUpdate }) => {
                         {character.portrait ? <img src={character.portrait} alt="Portrait" className="w-full h-full object-cover"/> : <span className="text-muted text-xs">No Portrait</span>}
                         {(isGeneratingIdentity || isGeneratingPortrait) && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-primary animate-pulse">{isGeneratingPortrait ? 'Rendering...' : 'Writing...'}</div>}
                     </div>
-                     <button onClick={handleGeneratePortrait} disabled={isGeneratingPortrait} className="w-48 px-4 py-2 text-sm uppercase border border-secondary text-secondary hover:bg-secondary hover:text-background disabled:opacity-50">
+                     <Button variant="secondary" size="sm" onClick={handleGeneratePortrait} disabled={isGeneratingPortrait} className="w-48">
                         {isGeneratingPortrait ? 'Generating...' : 'Generate Portrait'}
-                    </button>
-                    <label className="block w-48 text-center px-4 py-2 text-sm uppercase border border-tertiary text-tertiary hover:bg-tertiary hover:text-background cursor-pointer transition-colors duration-200">
+                    </Button>
+                    <Button as="label" variant="tertiary" size="sm" className="w-48 cursor-pointer">
                         Upload Portrait
                         <input type="file" accept="image/*" className="hidden" onChange={handleUploadPortrait} />
-                    </label>
+                    </Button>
                 </div>
             </div>
         </div>
@@ -662,7 +674,7 @@ const Step7Manifest: React.FC<{saveData: CharacterSaveData, onGoToStep: (step: n
     
     const allSkills = [...(character.skills.trained || []), ...(character.skills.expert || []), ...(character.skills.master || [])].filter(Boolean);
 
-    const EditButton = ({step}: {step: number}) => <button onClick={() => onGoToStep(step)} className="ml-2 text-xs text-secondary hover:text-primary">[Edit]</button>;
+    const EditButton = ({step}: {step: number}) => <Button variant="ghost" size="sm" onClick={() => onGoToStep(step)} className="ml-2 text-xs text-secondary hover:text-primary">[Edit]</Button>;
     
     return (
         <div>

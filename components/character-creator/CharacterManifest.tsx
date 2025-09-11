@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, Stat, ShopItem } from '../../types';
 import { ALL_SKILLS, CLASSES_DATA, TRINKETS, PATCHES, PRONOUNS, SHOP_ITEMS } from '../../constants';
@@ -7,6 +6,7 @@ import { SkillSelector } from '../SkillSelector';
 import { useTooltip } from '../Tooltip';
 import { CharacterRoller } from '../CharacterRoller';
 import { generateCharacterPortrait, generateCharacterBackstory } from '../../services/geminiService';
+import { Button } from '../Button';
 
 
 const STAT_DESCRIPTIONS: { [key: string]: React.ReactNode } = {
@@ -250,7 +250,7 @@ const ShopAndInventory: React.FC<{
                                 {character.equipment.inventory.map((itemName, index) => (
                                     <li key={`${itemName}-${index}`} className="flex justify-between items-center bg-black/50 p-2 text-sm">
                                         <span>{itemName}</span>
-                                        <button onClick={() => handleDropItem(index)} className="text-negative/80 hover:text-negative text-xs">[Drop]</button>
+                                        <Button variant="ghost" size="sm" onClick={() => handleDropItem(index)} className="text-negative/80 hover:text-negative">[Drop]</Button>
                                     </li>
                                 ))}
                             </ul>
@@ -280,11 +280,13 @@ const ShopAndInventory: React.FC<{
                                 >
                                     <span className="flex-1">{item.name}</span>
                                     <span className="text-primary/80 font-mono w-20 text-right">{item.price}</span>
-                                    <button 
+                                    <Button 
+                                        variant="tertiary"
+                                        size="sm"
                                         onClick={() => handleBuyItem(item)}
                                         disabled={!canAfford}
-                                        className="ml-4 px-2 py-1 text-xs uppercase transition-colors border border-primary text-primary hover:bg-primary hover:text-background disabled:border-muted/50 disabled:text-muted/50 disabled:cursor-not-allowed"
-                                    >Buy</button>
+                                        className="ml-4"
+                                    >Buy</Button>
                                 </li>
                             )})}
                         </ul>
@@ -539,12 +541,6 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
         URL.revokeObjectURL(url);
     }, [finalCharacter, characterData]);
     
-    const tertiarySelectionClasses = (isSelected: boolean) => {
-        const base = 'flex-1 p-2 text-center uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus';
-        if (isSelected) return `${base} bg-tertiary text-background border border-tertiary`;
-        return `${base} bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed active:border-tertiary-pressed`;
-    }
-
     return (
         <div>
             <div className="border border-primary/50 p-6 bg-black/30 space-y-6 max-w-4xl mx-auto">
@@ -554,24 +550,15 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                         <span className="block">Manifest</span>
                     </h2>
                     <div className="flex flex-col items-stretch gap-2 w-full sm:w-auto sm:min-w-[280px]">
-                         <button 
-                            onClick={() => onCharacterUpdate(null)}
-                            className="px-4 py-3 text-sm uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed"
-                        >
+                         <Button onClick={() => onCharacterUpdate(null)}>
                             Back to Hangar
-                        </button>
-                        <button 
-                            onClick={onOpenSheet}
-                            className="px-4 py-3 text-sm uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-primary text-primary hover:bg-primary hover:text-background"
-                        >
+                        </Button>
+                        <Button variant="tertiary" onClick={onOpenSheet}>
                             Open In-Game Sheet
-                        </button>
-                        <button 
-                            onClick={handleSaveCharacter}
-                            className="flex-1 px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed"
-                        >
+                        </Button>
+                        <Button variant="secondary" size="sm" onClick={handleSaveCharacter}>
                             Export Character
-                        </button>
+                        </Button>
                     </div>
                 </div>
                 
@@ -591,13 +578,13 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                                 </div>
                             )}
                         </div>
-                         <button onClick={handleGeneratePortrait} disabled={isGeneratingPortrait || !char.class} className="w-full px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed disabled:border-secondary/50 disabled:text-secondary/50 disabled:cursor-not-allowed">
+                         <Button variant="secondary" size="sm" onClick={handleGeneratePortrait} disabled={isGeneratingPortrait || !char.class} className="w-full">
                             {isGeneratingPortrait ? 'Generating...' : 'Generate Picture'}
-                         </button>
-                         <label className="block w-full text-center px-3 py-2 text-xs uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed cursor-pointer">
+                         </Button>
+                         <Button as="label" variant="tertiary" size="sm" className="w-full cursor-pointer">
                             Upload Picture
                             <input type="file" accept="image/png, image/jpeg, image/webp" className="hidden" onChange={handleUploadPortrait} />
-                        </label>
+                        </Button>
                     </div>
                     <div className="md:col-span-2 flex flex-col gap-4">
                          <input type="text" placeholder="Name" className="bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" onChange={e => onCharacterUpdate({...characterData, character: {...char, name: e.target.value}})} value={char.name} />
@@ -613,12 +600,12 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                             {char.backstory && !isEditingBackstory ? (
                                 <>
                                     <FormattedBackstory text={char.backstory} />
-                                    <button onClick={() => setIsEditingBackstory(true)} className="absolute top-1 right-1 px-2 py-1 text-xs uppercase tracking-widest transition-colors duration-200 bg-muted/50 text-foreground hover:bg-secondary hover:text-background" aria-label="Edit backstory">Edit</button>
+                                    <Button variant="ghost" size="sm" onClick={() => setIsEditingBackstory(true)} className="absolute top-1 right-1" aria-label="Edit backstory">Edit</Button>
                                 </>
                             ) : (
                                 <>
                                     <textarea placeholder="Character Story" className="w-full h-full bg-transparent border-none focus:ring-0 focus:outline-none resize-none" onChange={e => onCharacterUpdate({...characterData, character: {...char, backstory: e.target.value}})} value={char.backstory} />
-                                    {isEditingBackstory && <button onClick={() => setIsEditingBackstory(false)} className="absolute top-1 right-1 px-2 py-1 text-xs uppercase tracking-widest transition-colors duration-200 bg-primary text-background hover:bg-primary-hover" aria-label="Save backstory">Save</button>}
+                                    {isEditingBackstory && <Button size="sm" onClick={() => setIsEditingBackstory(false)} className="absolute top-1 right-1" aria-label="Save backstory">Save</Button>}
                                 </>
                             )}
                         </div>
@@ -662,13 +649,15 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                                 const isSelected = isAndroid ? androidPenalty === stat : scientistBonus === stat;
                                 const path = isAndroid ? 'androidPenalty' : 'scientistBonus';
                                 return (
-                                    <button 
-                                        key={stat} 
-                                        onClick={() => onCharacterUpdate({ ...characterData, [path]: stat })} 
-                                        className={tertiarySelectionClasses(isSelected)}
+                                    <Button 
+                                        key={stat}
+                                        variant="tertiary"
+                                        size="sm"
+                                        onClick={() => onCharacterUpdate({ ...characterData, [path]: stat })}
+                                        className={`flex-1 ${isSelected ? 'bg-tertiary text-background' : ''}`}
                                     >
                                         {stat}
-                                    </button>
+                                    </Button>
                                 );
                             })}
                         </div>
@@ -680,8 +669,20 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {CLASSES_DATA.map(classData => {
                             const isSelected = char.class?.name === classData.name;
-                            const buttonClasses = isSelected ? 'bg-tertiary text-background border border-tertiary' : 'bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background';
-                            return <button key={classData.name} onClick={() => handleSelectClass(classData.name as ClassName)} className={`p-4 text-left transition-colors ${buttonClasses}`}><h4 className="font-bold text-lg uppercase text-secondary">{classData.name}</h4><p className="text-xs text-muted mt-2">{classData.description}</p></button>;
+                            return (
+                                <Button 
+                                    key={classData.name} 
+                                    variant="tertiary"
+                                    size="sm"
+                                    onClick={() => handleSelectClass(classData.name as ClassName)} 
+                                    className={`p-4 h-full text-left normal-case items-start ${isSelected ? 'bg-tertiary text-background' : ''}`}
+                                >
+                                    <div>
+                                        <h4 className="font-bold text-lg uppercase text-secondary">{classData.name}</h4>
+                                        <p className="text-xs text-muted mt-2">{classData.description}</p>
+                                    </div>
+                                </Button>
+                            );
                         })}
                     </div>
                 </div>

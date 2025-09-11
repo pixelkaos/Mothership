@@ -1,9 +1,6 @@
-
-
-
-
 import React from 'react';
 import type { DerelictShip } from '../types';
+import { Button } from './Button';
 
 interface GeneratorPanelProps {
     ship: DerelictShip | null;
@@ -38,28 +35,31 @@ export const GeneratorPanel: React.FC<GeneratorPanelProps> = ({ ship, onGenerate
                 </dl>
             </div>
             <div className="mt-6 space-y-4">
-                 <button
+                 <Button
+                    variant="secondary"
                     onClick={onOpenInManifest}
                     disabled={!ship || isLoading}
-                    className="w-full px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed disabled:border-secondary-hover disabled:text-secondary-hover/70 disabled:cursor-not-allowed"
+                    className="w-full"
                 >
                     Open in Manifest
-                </button>
+                </Button>
                 <div className="flex flex-col sm:flex-row gap-4">
-                    <button
+                    <Button
+                        variant="tertiary"
                         onClick={onGenerate}
                         disabled={isLoading}
-                        className="flex-1 px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-transparent border border-primary text-primary hover:bg-primary hover:text-background active:bg-primary-pressed active:border-primary-pressed disabled:border-primary-hover disabled:text-primary-hover/70 disabled:cursor-not-allowed"
+                        className="flex-1"
                     >
                         {ship ? 'New Signal' : 'Scan for Signal'}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                        variant="primary"
                         onClick={onEnhance}
                         disabled={!ship || isLoading}
-                        className="flex-1 px-4 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary-hover disabled:text-background/70 disabled:cursor-not-allowed"
+                        className="flex-1"
                     >
                         {isLoading ? 'Processing...' : 'Enhance Signal'}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

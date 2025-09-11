@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { GeneratorPanel } from '../components/GeneratorPanel';
 import { AILogDisplay } from '../components/AILogDisplay';
@@ -6,12 +7,10 @@ import { DERELICT_GENERATION_TABLE, CAUSE_OF_RUINATION, WEIRD, CARGO_TYPE, SHIP_
 import { SHIP_DATA } from '../data/shipData';
 import { generateDerelictDescription } from '../services/geminiService';
 import { rollDice } from '../utils/dice';
+import { useAppContext } from '../context/AppContext';
 
-interface DerelictGeneratorViewProps {
-    onOpenManifest: (ship: DerelictShip) => void;
-}
-
-export const DerelictGeneratorView: React.FC<DerelictGeneratorViewProps> = ({ onOpenManifest }) => {
+export const DerelictGeneratorView: React.FC = () => {
+    const { handleOpenDerelictManifest } = useAppContext();
     const [derelictShip, setDerelictShip] = useState<DerelictShip | null>(null);
     const [aiDescription, setAiDescription] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -86,9 +85,9 @@ export const DerelictGeneratorView: React.FC<DerelictGeneratorViewProps> = ({ on
 
     const handleOpenInManifest = useCallback(() => {
         if (derelictShip) {
-            onOpenManifest(derelictShip);
+            handleOpenDerelictManifest(derelictShip);
         }
-    }, [derelictShip, onOpenManifest]);
+    }, [derelictShip, handleOpenDerelictManifest]);
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

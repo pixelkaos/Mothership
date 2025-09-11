@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import type { CharacterSaveData } from '../../types';
 import { generateRandomRecruit } from '../../utils/character';
 import { PREGENERATED_CHARACTERS } from './pregeneratedCharacters';
+import { Button } from '../Button';
 
 interface CharacterHangarProps {
     onStartNew: () => void;
@@ -19,8 +20,6 @@ const SmallHangarCard: React.FC<{
     children?: React.ReactNode;
 }> = ({ visualContent, title, description, buttonText, onButtonClick, isButtonDisabled = false, isButtonALabel = false, children }) => {
     
-    const ButtonComponent = isButtonALabel ? 'label' : 'button';
-    
     return (
         <div className="border border-primary/50 flex flex-col bg-black/30 group overflow-hidden h-full">
             <div className="w-full aspect-video bg-black/50 relative border-b border-muted/50 flex items-center justify-center overflow-hidden">
@@ -31,14 +30,26 @@ const SmallHangarCard: React.FC<{
                     {title}
                     {description}
                 </div>
-                <ButtonComponent
-                    onClick={onButtonClick}
-                    disabled={isButtonDisabled}
-                    className="cursor-pointer text-center mt-auto w-full px-6 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary/50 disabled:text-background/70 disabled:cursor-not-allowed"
-                >
-                    {buttonText}
-                    {children}
-                </ButtonComponent>
+                {/* FIX: Conditionally render Button as a <label> or <button> to avoid passing the `disabled` prop to a label, which is invalid and causes a TypeScript error. */}
+                {isButtonALabel ? (
+                    <Button
+                        as="label"
+                        onClick={onButtonClick}
+                        className="cursor-pointer text-center mt-auto w-full"
+                    >
+                        {buttonText}
+                        {children}
+                    </Button>
+                ) : (
+                    <Button
+                        onClick={onButtonClick}
+                        disabled={isButtonDisabled}
+                        className="cursor-pointer text-center mt-auto w-full"
+                    >
+                        {buttonText}
+                        {children}
+                    </Button>
+                )}
             </div>
         </div>
     );
@@ -114,7 +125,7 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
                                     <h4 className="text-xl font-bold text-primary uppercase tracking-wider">New Recruit</h4>
                                     <p className="text-muted text-sm mt-2">Go through a guided process to build a character from the ground up, making every choice yourself.</p>
                                 </div>
-                                <button onClick={onStartNew} className="mt-auto w-full px-6 py-3 uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed">Start Fresh Character</button>
+                                <Button onClick={onStartNew} className="mt-auto w-full">Start Fresh Character</Button>
                             </div>
                         </div>
 
@@ -163,6 +174,7 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
                                 description={
                                     <>
                                         <p className="text-sm text-secondary">{charInfo.data.character.class?.name}</p>
+
                                         <p className="text-muted text-sm mt-2">{charInfo.shortDescription}</p>
                                     </>
                                 }

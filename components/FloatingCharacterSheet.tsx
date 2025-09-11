@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import type { Character, CharacterSaveData } from '../types';
+import { Button } from './Button';
 
 interface FloatingCharacterSheetProps {
     isVisible: boolean;
@@ -100,15 +101,13 @@ const EquipmentItem = ({ item, onUpdate }: {
         handleUpdateQuantity(quantityPart + 1);
     };
 
-    const buttonClasses = "w-6 h-6 flex items-center justify-center bg-black/70 text-primary border border-primary/50 rounded-sm hover:bg-primary hover:text-black transition-colors";
-
     return (
         <div className="bg-black/50 p-2 flex justify-between items-center text-sm">
             <span>{namePart}</span>
             <div className="flex items-center gap-2">
-                <button onClick={handleDecrement} className={buttonClasses} aria-label={`Decrease ${namePart} quantity`}>-</button>
+                <Button variant="tertiary" size="sm" onClick={handleDecrement} className="px-2 py-1 h-6 w-6 rounded-sm" aria-label={`Decrease ${namePart} quantity`}>-</Button>
                 <span className="font-mono w-20 text-center">{quantityPart} {unitPart}</span>
-                <button onClick={handleIncrement} className={buttonClasses} aria-label={`Increase ${namePart} quantity`}>+</button>
+                <Button variant="tertiary" size="sm" onClick={handleIncrement} className="px-2 py-1 h-6 w-6 rounded-sm" aria-label={`Increase ${namePart} quantity`}>+</Button>
             </div>
         </div>
     );
@@ -222,16 +221,16 @@ export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ 
             >
                 <h4 className="font-bold text-primary uppercase tracking-wider text-sm">In-Game Character Sheet</h4>
                 <div className="flex items-center space-x-2">
-                    <button onClick={() => setIsMinimized(!isMinimized)} className="text-primary/70 hover:text-primary" aria-label={isMinimized ? "Expand" : "Minimize"}>
+                    <Button variant="ghost" size="sm" onClick={() => setIsMinimized(!isMinimized)} aria-label={isMinimized ? "Expand" : "Minimize"}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            {isMinimized ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4h4m12 4V4h-4M4 16v4h4m12-4v4h-4" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />}
                         </svg>
-                    </button>
-                    <button onClick={onClose} className="text-primary/70 hover:text-primary" aria-label="Close">
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close">
                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                    </button>
+                    </Button>
                 </div>
             </div>
             

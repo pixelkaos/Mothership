@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { SHIP_DATA, SHIP_UPGRADES, SHIP_WEAPONS } from '../data/shipData';
 import type { ShipData, ShipUpgrade, ShipWeapon } from '../types';
-
-interface ShipyardViewProps {
-    onOpenShipyardManifest: (ship: ShipData) => void;
-}
+import { useAppContext } from '../context/AppContext';
+import { Button } from '../components/Button';
 
 type ShipyardTab = 'ships' | 'upgrades' | 'weapons';
 
@@ -73,21 +71,22 @@ const WeaponsTable: React.FC<{ weapons: ShipWeapon[] }> = ({ weapons }) => (
 );
 
 
-export const ShipyardView: React.FC<ShipyardViewProps> = ({ onOpenShipyardManifest }) => {
+export const ShipyardView: React.FC = () => {
+    const { handleOpenShipyardManifest } = useAppContext();
     const [activeTab, setActiveTab] = useState<ShipyardTab>('ships');
     const [selectedShip, setSelectedShip] = useState<ShipData>(SHIP_DATA[0]);
 
     const TabButton: React.FC<{ tab: ShipyardTab, label: string }> = ({ tab, label }) => {
         const isActive = activeTab === tab;
         return (
-            <button
+            <Button
+                variant="secondary"
+                size="md"
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-3 px-4 text-sm sm:text-base uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus ${
-                    isActive ? 'bg-secondary text-background' : 'bg-transparent text-secondary hover:bg-secondary/20'
-                }`}
+                className={`flex-1 rounded-b-none border-b-0 ${isActive ? 'bg-secondary text-background' : 'bg-transparent text-secondary hover:bg-secondary/20'}`}
             >
                 {label}
-            </button>
+            </Button>
         );
     };
 
@@ -110,13 +109,17 @@ export const ShipyardView: React.FC<ShipyardViewProps> = ({ onOpenShipyardManife
                         <ul className="space-y-2">
                             {SHIP_DATA.map(ship => (
                                 <li key={ship.name}>
-                                    <button 
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
                                         onClick={() => setSelectedShip(ship)}
-                                        className={`w-full text-left p-3 border transition-colors duration-200 ${selectedShip.name === ship.name ? 'bg-primary/20 border-primary' : 'bg-black/30 border-muted/50 hover:bg-muted/20 hover:border-muted'}`}
+                                        className={`w-full text-left p-3 border normal-case justify-start ${selectedShip.name === ship.name ? 'bg-primary/20 border-primary' : 'bg-black/30 border-muted/50 hover:bg-muted/20 hover:border-muted'}`}
                                     >
-                                        <h4 className="font-bold text-primary">{ship.name}</h4>
-                                        <p className="text-xs text-muted">{ship.modelCode}</p>
-                                    </button>
+                                        <div>
+                                            <h4 className="font-bold text-primary">{ship.name}</h4>
+                                            <p className="text-xs text-muted">{ship.modelCode}</p>
+                                        </div>
+                                    </Button>
                                 </li>
                             ))}
                         </ul>
@@ -129,12 +132,13 @@ export const ShipyardView: React.FC<ShipyardViewProps> = ({ onOpenShipyardManife
                                         <h3 className="text-2xl sm:text-3xl font-bold text-primary uppercase tracking-wider">{selectedShip.name}</h3>
                                         <p className="text-secondary tracking-widest mb-4">{selectedShip.modelCode}</p>
                                     </div>
-                                    <button 
-                                        onClick={() => onOpenShipyardManifest(selectedShip)}
-                                        className="px-4 py-3 text-sm uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed whitespace-nowrap"
+                                    <Button
+                                        size="sm"
+                                        onClick={() => handleOpenShipyardManifest(selectedShip)}
+                                        className="whitespace-nowrap"
                                     >
                                         Open in Manifest
-                                    </button>
+                                    </Button>
                                 </div>
 
                                 <p className="text-sm text-foreground mb-6">{selectedShip.description}</p>
