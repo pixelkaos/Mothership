@@ -22,9 +22,10 @@ export const DiceRollerBody: React.FC<DiceRollerBodyProps> = (props) => {
         advantage, character, allCharacterSkills 
     } = state;
     const { 
-        setScreen, setResult, setHistory, setSelectedTarget, 
+        setScreen, setSelectedTarget, 
         setSelectedSkills, setAdvantage, handleCheckRoll, 
-        handleSimpleRoll, resetCheckState 
+        handleSimpleRoll, resetCheckState, clearResult,
+        clearHistory, handleBasicSimpleRoll
     } = handlers;
     
     const renderContent = () => {
@@ -73,10 +74,10 @@ export const DiceRollerBody: React.FC<DiceRollerBodyProps> = (props) => {
                 return (
                     <div className="w-full">
                         <div className="flex flex-col space-y-4">
-                            <ResultDisplay result={result} onClear={() => setResult(null)} />
-                            <ActionPanel onNavigate={setScreen} onSimpleRoll={(name, formula) => handleSimpleRoll(name, formula, 'none')} isCharacterLoaded={!!character} />
+                            <ResultDisplay result={result} onClear={clearResult} />
+                            <ActionPanel onNavigate={setScreen} onSimpleRoll={handleBasicSimpleRoll} isCharacterLoaded={!!character} />
                         </div>
-                        <HistoryList history={history} onClear={() => setHistory([])} />
+                        <HistoryList history={history} onClear={clearHistory} />
                     </div>
                 );
         }

@@ -1,37 +1,41 @@
-
 import React from 'react';
-import { useAppContext } from '../context/AppContext';
 import { Button } from './Button';
 import { DropdownMenu } from './ui/DropdownMenu';
-
-const NavButton: React.FC<{
-    label: string;
-    isActive: boolean;
-    onClick: () => void;
-}> = ({ label, isActive, onClick }) => {
-    return (
-        <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClick}
-            className={`py-2 px-4 rounded-none ${isActive ? 'bg-secondary text-background hover:bg-secondary' : 'text-secondary hover:bg-secondary hover:text-background'}`}
-            aria-current={isActive ? 'page' : undefined}
-        >
-            {label}
-        </Button>
-    );
-};
+import { useNavigation } from '../context/NavigationContext';
+import { useUIState } from '../context/UIStateContext';
+import { useCharacter } from '../context/CharacterContext';
+import { useShip } from '../context/ShipContext';
+import { usePanels, PanelId } from '../context/PanelsContext';
+import type { View, NavigationView } from '../App';
 
 export const Header: React.FC = () => {
-    const { activeNav, handleSetView, openTutorial, isCharacterLoaded, isShipManifestLoaded, openPanels } = useAppContext();
+    const { activeNav, setView } = useNavigation();
+    const { openTutorial } = useUIState();
+    const { isCharacterLoaded } = useCharacter();
+    const { isShipManifestLoaded } = useShip();
+    const panels = usePanels();
     
-    const isToolOpen = openPanels.has('dice-roller') || openPanels.has('character-sheet') || openPanels.has('ship-manifest');
-    const activeView = isToolOpen ? 'tools' : activeNav;
+    const handleSetView = (targetView: NavigationView | PanelId) => {
+        if (targetView === 'dice-roller' || targetView === 'character-sheet' || targetView === 'ship-manifest') {
+            const panelState = panels.getState(targetView);
+            
+            if (targetView === 'character-sheet' && !isCharacterLoaded) return;
+            if (targetView === 'ship-manifest' && !isShipManifestLoaded) return;
+
+            panelState.isOpen ? panels.close(targetView) : panels.open(targetView);
+            return;
+        }
+        
+        if (targetView === 'tools') return; // 'tools' is for display state, not a view itself.
+        setView(targetView as View);
+    };
+
+    const navButtonClasses = (isActive: boolean) => `py-2 px-4 rounded-none ${isActive ? 'bg-secondary text-background hover:bg-secondary' : 'text-secondary hover:bg-secondary hover:text-background'}`;
 
     return (
     <header className="relative text-center pb-4 pt-4 sm:pt-6 md:pt-8 px-4 sm:px-6 md:px-8">
         <button
-            onClick={() => handleSetView('home')}
+            onClick={() => setView('home')}
             className="bg-transparent border-0 p-0 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus rounded-sm"
             aria-label="Go to home page"
         >
@@ -44,13 +48,23 @@ export const Header: React.FC = () => {
         </button>
         
         <div className="flex justify-center border-y border-secondary/50">
-            <NavButton label="Derelict Generator" isActive={activeView === 'derelict'} onClick={() => handleSetView('derelict')} />
-            <NavButton label="Shipyard" isActive={activeView === 'shipyard'} onClick={() => handleSetView('shipyard')} />
-            <NavButton label="Character Hangar" isActive={activeView === 'character'} onClick={() => handleSetView('character')} />
-            <NavButton label="Rules" isActive={activeView === 'rules'} onClick={() => handleSetView('rules')} />
+            <Button variant="ghost" size="sm" onClick={() => setView('derelict')} className={navButtonClasses(activeNav === 'derelict')} aria-current={activeNav === 'derelict' ? 'page' : undefined}>
+                Derelict Generator
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setView('shipyard')} className={navButtonClasses(activeNav === 'shipyard')} aria-current={activeNav === 'shipyard' ? 'page' : undefined}>
+                Shipyard
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setView('character')} className={navButtonClasses(activeNav === 'character')} aria-current={activeNav === 'character' ? 'page' : undefined}>
+                Character Hangar
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setView('rules')} className={navButtonClasses(activeNav === 'rules')} aria-current={activeNav === 'rules' ? 'page' : undefined}>
+                Rules
+            </Button>
             <DropdownMenu>
                 <DropdownMenu.Trigger asChild>
-                    <NavButton label="Tools" isActive={activeView === 'tools'} onClick={() => {}} />
+                     <Button variant="ghost" size="sm" className={navButtonClasses(activeNav === 'tools')}>
+                        Tools
+                    </Button>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                     <DropdownMenu.Item onSelect={() => handleSetView('dice-roller')}>

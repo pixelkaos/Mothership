@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SHIP_DATA, SHIP_UPGRADES, SHIP_WEAPONS } from '../data/shipData';
 import type { ShipData, ShipUpgrade, ShipWeapon } from '../types';
-import { useAppContext } from '../context/AppContext';
+import { useShip } from '../context/ShipContext';
 import { Button } from '../components/Button';
 import { Panel } from '../components/ui/Panel';
 import { Tabs } from '../components/ui/Tabs';
@@ -72,7 +72,7 @@ const WeaponsTable: React.FC<{ weapons: ShipWeapon[] }> = ({ weapons }) => (
 
 
 export const ShipyardView: React.FC = () => {
-    const { handleOpenShipyardManifest } = useAppContext();
+    const { handleOpenShipyardManifest } = useShip();
     const [selectedShip, setSelectedShip] = useState<ShipData>(SHIP_DATA[0]);
 
     return (

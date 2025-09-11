@@ -1,8 +1,7 @@
-
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import type { RollResult, Character, Stat, Save, CharacterSaveData } from '../types';
 import { parseAndRoll } from '../utils/dice';
-import { useAppContext } from '../context/AppContext';
+import { useInteraction } from '../context/InteractionContext';
 
 type DiceScreen = 'main' | 'stat' | 'save' | 'damage' | 'wound' | 'other';
 
@@ -42,7 +41,7 @@ interface DiceRollerOptions {
  */
 export const useDiceRoller = ({ characterData, activeCheck, onCharacterUpdate }: DiceRollerOptions) => {
     const character = characterData?.character ?? null;
-    const { clearActiveDiceCheck } = useAppContext();
+    const { clearActiveDiceCheck } = useInteraction();
     const [screen, setScreen] = useState<DiceScreen>('main');
     const [result, setResult] = useState<HistoryEntry | null>(null);
     const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -161,6 +160,12 @@ export const useDiceRoller = ({ characterData, activeCheck, onCharacterUpdate }:
         setScreen('main');
     }, [addToHistory]);
 
+    const clearResult = useCallback(() => setResult(null), []);
+    const clearHistory = useCallback(() => setHistory([]), []);
+    const handleBasicSimpleRoll = useCallback((name: string, formula: string) => {
+        handleSimpleRoll(name, formula, 'none');
+    }, [handleSimpleRoll]);
+
     const allCharacterSkills = useMemo(() => {
         if (!character) return [];
         return [
@@ -191,6 +196,9 @@ export const useDiceRoller = ({ characterData, activeCheck, onCharacterUpdate }:
             handleCheckRoll,
             handleSimpleRoll,
             resetCheckState,
+            clearResult,
+            clearHistory,
+            handleBasicSimpleRoll,
         },
     };
 };

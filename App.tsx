@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Header } from './components/Header';
 import { DerelictGeneratorView } from './views/DerelictGeneratorView';
@@ -11,23 +10,22 @@ import { TooltipProvider } from './components/Tooltip';
 import { FloatingCharacterSheet } from './components/FloatingCharacterSheet';
 import { FloatingShipManifest } from './components/FloatingShipManifest';
 import { ShipyardView } from './views/ShipyardView';
-import { useAppContext } from './context/AppContext';
+import { useNavigation } from './context/NavigationContext';
+import { useUIState } from './context/UIStateContext';
+import { useCharacter } from './context/CharacterContext';
+import { useShip } from './context/ShipContext';
+import { useInteraction } from './context/InteractionContext';
 
 export type View = 'home' | 'derelict' | 'character' | 'rules' | 'shipyard';
 export type NavigationView = 'derelict' | 'character' | 'rules' | 'tools' | 'home' | 'shipyard';
 
 
 const App: React.FC = () => {
-    const {
-        view,
-        isTutorialOpen,
-        closeTutorial,
-        activeCharacterData,
-        activeDiceCheck,
-        handleCharacterUpdate,
-        activeShipManifest,
-        setActiveShipManifest,
-    } = useAppContext();
+    const { view } = useNavigation();
+    const { isTutorialOpen, closeTutorial } = useUIState();
+    const { activeCharacterData, handleCharacterUpdate } = useCharacter();
+    const { activeShipManifest, setActiveShipManifest } = useShip();
+    const { activeDiceCheck } = useInteraction();
 
     return (
         <TooltipProvider>

@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { GeneratorPanel } from '../components/GeneratorPanel';
 import { AILogDisplay } from '../components/AILogDisplay';
@@ -7,10 +6,10 @@ import { DERELICT_GENERATION_TABLE, CAUSE_OF_RUINATION, WEIRD, CARGO_TYPE, SHIP_
 import { SHIP_DATA } from '../data/shipData';
 import { generateDerelictDescription } from '../services/geminiService';
 import { rollDice } from '../utils/dice';
-import { useAppContext } from '../context/AppContext';
+import { useShip } from '../context/ShipContext';
 
 export const DerelictGeneratorView: React.FC = () => {
-    const { handleOpenDerelictManifest } = useAppContext();
+    const { handleOpenDerelictManifest } = useShip();
     const [derelictShip, setDerelictShip] = useState<DerelictShip | null>(null);
     const [aiDescription, setAiDescription] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);

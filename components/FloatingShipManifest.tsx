@@ -12,21 +12,16 @@ interface FloatingShipManifestProps {
 export const FloatingShipManifest: React.FC<FloatingShipManifestProps> = (props) => {
     const { shipData } = props;
 
-    if (!shipData) {
-        return null;
-    }
-
     return (
         <DockablePanel
             title="Ship Manifest"
-            initialPosition={{ x: 50, y: 50 }}
             className="w-full max-w-5xl"
-            panelId="ship-manifest"
+            id="ship-manifest"
         >
-            <ShipManifestBody 
+            {shipData && <ShipManifestBody 
                 shipData={shipData} 
                 onUpdate={props.onUpdate} 
-            />
+            />}
         </DockablePanel>
     );
 };

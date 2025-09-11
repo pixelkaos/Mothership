@@ -1,9 +1,8 @@
-
 import React from 'react';
 import type { Character, CharacterSaveData } from '../types';
 import { DockablePanel } from './DockablePanel';
 import { CharacterSheetBody } from './character-sheet/CharacterSheetBody';
-import { useAppContext } from '../context/AppContext';
+import { useInteraction } from '../context/InteractionContext';
 
 interface FloatingCharacterSheetProps {
     characterData: CharacterSaveData | null;
@@ -11,20 +10,19 @@ interface FloatingCharacterSheetProps {
 }
 
 export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = (props) => {
-    const { openPanel } = useAppContext();
+    const { requestDiceRoll } = useInteraction();
     
     const handleRollRequest = (type: 'stat' | 'save', name: string) => {
         if (props.characterData) {
-            openPanel('dice-roller', { type, name });
+            requestDiceRoll({ type, name });
         }
     };
 
     return (
         <DockablePanel
             title="In-Game Character Sheet"
-            initialPosition={{ x: 100, y: 100 }}
             className="w-full max-w-2xl"
-            panelId="character-sheet"
+            id="character-sheet"
         >
             <CharacterSheetBody {...props} onRollRequest={handleRollRequest} />
         </DockablePanel>
