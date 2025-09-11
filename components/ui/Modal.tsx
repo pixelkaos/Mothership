@@ -74,7 +74,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, 
         >
             <div
                 ref={modalRef}
-                className={`bg-background border border-primary shadow-2xl shadow-primary/20 flex flex-col ${className}`}
+                className={`bg-background border border-primary shadow-2xl shadow-primary/20 flex flex-col rounded-lg overflow-hidden ${className}`}
                 onClick={e => e.stopPropagation()}
             >
                 {title && (

@@ -2,7 +2,7 @@ import React from 'react';
 import type { ComponentProps, ElementType, ReactNode } from 'react';
 
 // Using a simple object-based approach for variants and sizes.
-const baseClasses = 'inline-flex items-center justify-center uppercase tracking-widest transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus disabled:cursor-not-allowed rounded-sm';
+const baseClasses = 'inline-flex items-center justify-center uppercase tracking-widest transition-colors duration-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus disabled:cursor-not-allowed rounded-md';
 
 const variants = {
   primary: 'bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary/50 disabled:text-background/70',

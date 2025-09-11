@@ -9,7 +9,7 @@ interface PanelProps {
 }
 
 export const Panel: React.FC<PanelProps> = ({ title, children, className = '', actions, footer }) => (
-    <div className={`border border-primary/30 p-4 bg-black/30 ${className}`}>
+    <div className={`border border-primary/30 p-4 bg-black/30 rounded-lg ${className}`}>
         {(title || actions) && (
             <div className="flex justify-between items-center mb-4 text-center">
                  {title ? (
@@ -21,7 +21,7 @@ export const Panel: React.FC<PanelProps> = ({ title, children, className = '', a
                  {!actions && title && <div className="flex-1"></div>}
             </div>
         )}
-        <div>{children}</div>
+        {children}
         {footer && <div className="mt-4 border-t border-primary/50 pt-4">{footer}</div>}
     </div>
 );

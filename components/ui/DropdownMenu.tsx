@@ -155,7 +155,7 @@ const Content: React.FC<{ children: ReactNode }> = ({ children }) => {
             id={id}
             ref={menuRef}
             role="menu"
-            className="absolute top-full left-0 min-w-full bg-background border border-t-0 border-secondary/50 shadow-lg z-20 animate-fadeIn py-1"
+            className="absolute top-full left-0 min-w-full bg-background border border-t-0 border-secondary/50 shadow-lg z-20 animate-fadeIn py-1 rounded-md"
             onKeyDown={handleContentKeyDown}
         >
             {children}

@@ -32,7 +32,7 @@ export const SplitStatInput: React.FC<{
             onMouseLeave={hideTooltip}
         >
             <span id={`${id}-label`} className="text-xs uppercase text-muted mb-1">{label}</span>
-            <div className="relative flex items-center w-48 h-12 bg-transparent border border-muted rounded-full group-hover:border-primary transition-colors px-4 overflow-hidden">
+            <div className="relative flex items-center w-48 h-12 bg-transparent border border-muted rounded-full group-hover:border-primary transition-colors duration-normal px-4 overflow-hidden">
                 {/* Current Value Input */}
                 <input
                     id={`${id}-current`}
@@ -46,7 +46,7 @@ export const SplitStatInput: React.FC<{
                 />
                 
                 {/* Separator */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[125%] w-1 bg-muted transform rotate-[25deg] group-hover:bg-primary transition-colors"></div>
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[125%] w-1 bg-muted transform rotate-[25deg] group-hover:bg-primary transition-colors duration-normal"></div>
 
                 {/* Max Value Input */}
                 <input

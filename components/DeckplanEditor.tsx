@@ -63,7 +63,7 @@ export const DeckplanEditor: React.FC<DeckplanEditorProps> = ({ deckplanData, on
                         <button
                             key={key}
                             onClick={() => handleCellClick(row, col)}
-                            className="w-6 h-6 border-r border-b border-black/20 flex-shrink-0 flex items-center justify-center hover:bg-black/10 transition-colors"
+                            className="w-6 h-6 border-r border-b border-primary/10 flex-shrink-0 flex items-center justify-center text-primary/70 hover:bg-primary/20 transition-colors"
                             aria-label={`Deckplan cell ${row}, ${col}. Current: ${iconName || 'Empty'}`}
                         >
                             {icon && (
@@ -86,18 +86,18 @@ export const DeckplanEditor: React.FC<DeckplanEditorProps> = ({ deckplanData, on
 
     return (
         <div className="flex flex-col h-full">
-            <div className="flex-grow bg-white border-t border-l border-black/20 relative overflow-auto">
+            <div className="flex-grow bg-black/30 border-t border-l border-primary/20 relative overflow-auto">
                 <div className="absolute top-0 left-0">
                     {gridCells}
                 </div>
             </div>
-            <div className="flex-shrink-0 mt-2 p-1 bg-gray-200 border-t-2 border-black">
+            <div className="flex-shrink-0 mt-2 p-1 bg-black/50 border-t-2 border-primary/50">
                 <div className="grid grid-cols-5 gap-0.5">
                     {[...DECKPLAN_ICONS, { name: 'Eraser', svg: <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" strokeWidth="2"/> }].map(icon => (
                         <button
                             key={icon.name}
                             onClick={() => setSelectedIcon(icon.name)}
-                            className={`p-1 border-2 ${selectedIcon === icon.name ? 'border-black bg-white' : 'border-transparent hover:bg-white'}`}
+                            className={`p-1 border-2 text-primary/70 ${selectedIcon === icon.name ? 'border-primary bg-primary/20' : 'border-transparent hover:bg-primary/10'}`}
                             title={icon.name}
                             aria-pressed={selectedIcon === icon.name}
                         >

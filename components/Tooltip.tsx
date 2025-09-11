@@ -87,7 +87,7 @@ const TooltipDisplay: React.FC<TooltipState> = ({ isVisible, content, position }
 
     return (
         <div
-            className="fixed z-[999] p-3 bg-background border border-primary text-foreground text-sm shadow-lg shadow-primary/20 max-w-xs pointer-events-none transition-opacity duration-200"
+            className="fixed z-[999] p-3 bg-background border border-primary text-foreground text-sm shadow-lg shadow-primary/20 max-w-xs pointer-events-none transition-opacity duration-normal rounded-md"
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,

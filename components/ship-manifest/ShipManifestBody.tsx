@@ -1,18 +1,27 @@
-
 import React, { useCallback } from 'react';
 import type { ShipManifestData } from '../../types';
 import { set } from '../../utils/helpers';
 import { DeckplanEditor } from '../DeckplanEditor';
-import { TransponderPanel } from './TransponderPanel';
-import { MegadamagePanel } from './MegadamagePanel';
-import { StatsPanel } from './StatsPanel';
-import { SystemsPanel } from './SystemsPanel';
-import { CrewAndCargoPanel } from './CrewAndCargoPanel';
+import { Panel } from '../ui/Panel';
+import { Field } from '../ui/Field';
+import { Input } from '../ui/Input';
+import { Textarea } from '../ui/Textarea';
+import { Button } from '../Button';
+import { StatInput } from '../ui/StatInput';
+import { SplitStatInput } from '../ui/SplitStatInput';
+
 
 interface ShipManifestBodyProps {
     shipData: ShipManifestData;
     onUpdate: (data: ShipManifestData | null) => void;
 }
+
+const MEGADAMAGE_EFFECTS = [
+    "ALL SYSTEMS NORMAL", "EMERGENCY FUEL LEAK", "WEAPONS OFFLINE",
+    "NAVIGATION OFFLINE", "FIRE ON DECK", "HULL BREACH",
+    "LIFE SUPPORT OFFLINE", "RADIATION LEAK", "DEAD IN THE WATER",
+    "ABANDON SHIP!"
+];
 
 export const ShipManifestBody: React.FC<ShipManifestBodyProps> = ({ shipData, onUpdate }) => {
     const handleUpdate = useCallback((path: string, value: any) => {
@@ -22,46 +31,90 @@ export const ShipManifestBody: React.FC<ShipManifestBodyProps> = ({ shipData, on
     }, [shipData, onUpdate]);
 
     return (
-        <div className="p-4 bg-[#e1e1e1] text-black font-tech border-t-2 border-primary/50 grid grid-cols-1 md:grid-cols-[2fr_1.5fr_2.5fr] gap-4" style={{'textShadow': 'none'}}>
-            {/* Col 1 */}
-            <div className="flex flex-col gap-4">
-                <TransponderPanel
-                    identifier={shipData.identifier}
-                    captain={shipData.captain}
-                    modelInfo={shipData.modelInfo}
-                    transponderOn={shipData.transponderOn}
-                    onUpdate={handleUpdate}
-                />
-                <MegadamagePanel
-                    megadamageLevel={shipData.megadamageLevel}
-                    hullPoints={shipData.hullPoints}
-                    onUpdate={handleUpdate}
-                />
-            </div>
+        <div className="p-4 space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Column 1 */}
+                <div className="space-y-4">
+                    <Panel title="Transponder & Identity">
+                        <div className="space-y-3">
+                            <Field label="Transponder Status">
+                                <div className="grid grid-cols-2 gap-2">
+                                    <Button onClick={() => handleUpdate('transponderOn', true)} variant={shipData.transponderOn ? 'primary' : 'tertiary'} size="sm">ON</Button>
+                                    <Button onClick={() => handleUpdate('transponderOn', false)} variant={!shipData.transponderOn ? 'primary' : 'tertiary'} size="sm">OFF</Button>
+                                </div>
+                            </Field>
+                            <Field label="Ship Identifier"><Input value={shipData.identifier} onChange={e => handleUpdate('identifier', e.target.value)} /></Field>
+                            <Field label="Captain"><Input value={shipData.captain} onChange={e => handleUpdate('captain', e.target.value)} /></Field>
+                            <Field label="Model Info"><Textarea value={shipData.modelInfo} onChange={e => handleUpdate('modelInfo', e.target.value)} rows={2}/></Field>
+                        </div>
+                    </Panel>
+                    <Panel title="Core Stats">
+                        <div className="flex justify-around py-2">
+                            <StatInput id="thrusters" label="Thrusters" value={shipData.stats.thrusters} onChange={(e) => handleUpdate('stats.thrusters', parseInt(e.target.value))} tooltipContent="Governs ship speed and maneuverability." />
+                            <StatInput id="battle" label="Battle" value={shipData.stats.battle} onChange={(e) => handleUpdate('stats.battle', parseInt(e.target.value))} tooltipContent="Determines combat effectiveness and weapons accuracy." />
+                            <StatInput id="systems" label="Systems" value={shipData.stats.systems} onChange={(e) => handleUpdate('stats.systems', parseInt(e.target.value))} tooltipContent="Represents the power and efficiency of onboard electronics, scanners, and defenses." />
+                        </div>
+                    </Panel>
+                     <Panel title="Personnel & Quarters">
+                        <SplitStatInput label="Crew" id="crew" currentValue={shipData.crew.current} maxValue={shipData.crew.max} onCurrentChange={(e) => handleUpdate('crew.current', parseInt(e.target.value))} onMaxChange={(e) => handleUpdate('crew.max', parseInt(e.target.value))} tooltipContent="Current and maximum crew capacity." />
+                        <Field label="Crew Manifest"><Textarea className="h-24" value={shipData.crew.list} onChange={(e) => handleUpdate('crew.list', e.target.value)} /></Field>
+                    </Panel>
+                </div>
 
-            {/* Col 2 */}
-            <div className="flex flex-col gap-4">
-                <StatsPanel
-                    thrusters={shipData.stats.thrusters}
-                    battle={shipData.stats.battle}
-                    systems={shipData.stats.systems}
-                    o2Remaining={shipData.o2Remaining}
-                    onUpdate={handleUpdate}
-                />
-                <div className="border-4 border-black p-2 flex-grow flex flex-col">
-                    <h3 className="text-center font-bold my-2">DECKPLAN</h3>
-                    <DeckplanEditor 
-                        deckplanData={shipData.deckplan} 
-                        onUpdate={(newDeckplan) => handleUpdate('deckplan', newDeckplan)}
-                    />
+                {/* Column 2 */}
+                <div className="space-y-4">
+                     <Panel title="Hull & Damage">
+                        <div className="space-y-4">
+                             <SplitStatInput label="Hull Points" id="hull" currentValue={shipData.hullPoints} maxValue={2} onCurrentChange={(e) => handleUpdate('hullPoints', parseInt(e.target.value))} onMaxChange={() => {}} tooltipContent="Ship's structural integrity. Can be improved with upgrades." isMaxReadOnly/>
+                             <StatInput label="Megadamage" id="megadamage" value={shipData.megadamageLevel} onChange={(e) => handleUpdate('megadamageLevel', parseInt(e.target.value))} tooltipContent="Catastrophic damage level. Each point corresponds to a severe system failure." />
+                            <div className="space-y-1 text-xs max-h-48 overflow-y-auto">
+                                {MEGADAMAGE_EFFECTS.map((effect, index) => (
+                                    <div key={index} className={`flex gap-2 items-start p-1 rounded-sm ${shipData.megadamageLevel === index ? 'bg-negative text-background' : 'bg-black/20'}`}>
+                                        <span className="font-bold w-6 text-center">{index}</span>
+                                        <p className="flex-1">{effect}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </Panel>
+                    <Panel title="Defenses & Payload">
+                        <div className="space-y-4">
+                            <SplitStatInput label="Weapons" id="weapons" currentValue={shipData.weapons.base} maxValue={shipData.weapons.total} onCurrentChange={(e) => handleUpdate('weapons.base', parseInt(e.target.value))} onMaxChange={(e) => handleUpdate('weapons.total', parseInt(e.target.value))} tooltipContent="Base weapon power vs. total power including upgrades." />
+                            <SplitStatInput label="Megadamage" id="megadamage" currentValue={shipData.megadamage.base} maxValue={shipData.megadamage.total} onCurrentChange={(e) => handleUpdate('megadamage.base', parseInt(e.target.value))} onMaxChange={(e) => handleUpdate('megadamage.total', parseInt(e.target.value))} tooltipContent="Base vs. total megadamage output." />
+                            <SplitStatInput label="Hardpoints" id="hardpoints" currentValue={shipData.hardpoints.installed} maxValue={shipData.hardpoints.max} onCurrentChange={(e) => handleUpdate('hardpoints.installed', parseInt(e.target.value))} onMaxChange={(e) => handleUpdate('hardpoints.max', parseInt(e.target.value))} tooltipContent="Installed weapon/module hardpoints vs. ship's maximum." />
+                        </div>
+                    </Panel>
+                </div>
+
+                {/* Column 3 */}
+                <div className="space-y-4">
+                    <Panel title="Propulsion & Power">
+                        <div className="space-y-4">
+                             <SplitStatInput label="Fuel" id="fuel" currentValue={shipData.fuel.current} maxValue={shipData.fuel.max} onCurrentChange={(e) => handleUpdate('fuel.current', parseInt(e.target.value))} onMaxChange={(e) => handleUpdate('fuel.max', parseInt(e.target.value))} tooltipContent="Current and maximum fuel units." />
+                             <div className="flex justify-around">
+                                <StatInput label="Warp Cores" id="warpcores" value={shipData.warpCores} onChange={(e) => handleUpdate('warpCores', parseInt(e.target.value))} tooltipContent="Power source for Jump Drives." />
+                                <StatInput label="Cryopods" id="cryo" value={shipData.cryopods} onChange={(e) => handleUpdate('cryopods', parseInt(e.target.value))} tooltipContent="Number of long-term stasis pods." />
+                                <StatInput label="Escape Pods" id="escape" value={shipData.escapePods} onChange={(e) => handleUpdate('escapePods', parseInt(e.target.value))} tooltipContent="Number of available escape pods." />
+                             </div>
+                        </div>
+                    </Panel>
+                     <Panel title="Upgrades & Cargo">
+                        <SplitStatInput label="Upgrades" id="upgrades" currentValue={shipData.upgrades.installed} maxValue={shipData.upgrades.max} onCurrentChange={(e) => handleUpdate('upgrades.installed', parseInt(e.target.value))} onMaxChange={(e) => handleUpdate('upgrades.max', parseInt(e.target.value))} tooltipContent="Installed upgrades vs. ship's maximum." />
+                        <Field label="Installed Upgrades"><Textarea className="h-20" value={shipData.upgrades.list} onChange={(e) => handleUpdate('upgrades.list', e.target.value)} /></Field>
+                        <Field label="Cargo Manifest"><Textarea className="h-20" value={shipData.cargo} onChange={(e) => handleUpdate('cargo', e.target.value)} /></Field>
+                    </Panel>
+                    <Panel title="Repairs & Notes">
+                        <Field label="Minor Repairs / Notes"><Textarea className="h-20" value={shipData.repairs.minor} onChange={(e) => handleUpdate('repairs.minor', e.target.value)} /></Field>
+                        <Field label="Major Repairs"><Textarea className="h-20" value={shipData.repairs.major} onChange={(e) => handleUpdate('repairs.major', e.target.value)} /></Field>
+                    </Panel>
                 </div>
             </div>
-
-            {/* Col 3 */}
-            <div className="flex flex-col gap-4">
-                 <SystemsPanel data={shipData} onUpdate={handleUpdate} />
-                 <CrewAndCargoPanel data={shipData} onUpdate={handleUpdate} />
-            </div>
+             <Panel title="Deckplan" className="h-[500px] flex flex-col">
+                <DeckplanEditor 
+                    deckplanData={shipData.deckplan} 
+                    onUpdate={(newDeckplan) => handleUpdate('deckplan', newDeckplan)}
+                />
+            </Panel>
         </div>
     );
 };

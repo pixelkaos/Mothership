@@ -53,7 +53,7 @@ export const DockablePanel: React.FC<DockablePanelProps> = ({
     return (
         <div
             ref={panelRef}
-            className={`fixed bg-background border border-primary/80 shadow-2xl shadow-primary/20 flex flex-col ${className}`}
+            className={`fixed bg-background border border-primary/80 shadow-2xl shadow-primary/20 flex flex-col rounded-lg overflow-hidden ${className}`}
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,

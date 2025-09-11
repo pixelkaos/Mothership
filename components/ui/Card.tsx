@@ -13,10 +13,10 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ title, description, visualContent, action, onClick, className }) => (
     <div
-        className={`flex flex-col h-full group transition-all duration-300 hover:-translate-y-1 ${onClick ? 'cursor-pointer' : ''} ${className}`}
+        className={`group transition-all duration-300 hover:-translate-y-1 ${onClick ? 'cursor-pointer' : ''} ${className}`}
         onClick={onClick}
     >
-        <Panel className="flex flex-col flex-grow text-left group-hover:bg-primary/10 group-hover:shadow-2xl group-hover:shadow-primary/20">
+        <Panel className="flex flex-col h-full text-left group-hover:bg-primary/10 group-hover:shadow-2xl group-hover:shadow-primary/20">
             {visualContent && (
                 <div className="w-full aspect-video bg-black/50 relative border-b border-muted/50 flex items-center justify-center overflow-hidden -mt-4 -mx-4 mb-4">
                      {visualContent}
