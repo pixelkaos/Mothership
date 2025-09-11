@@ -1,105 +1,57 @@
-/* === Foundations === */
 :root {
-  /* Color */
-  --color-bg-rgb: 11 11 14;
-  --color-fg-rgb: 231 231 234;
-  --color-muted-rgb: 167 167 176;
-  --color-primary-rgb: 216 240 90;
-  --color-secondary-rgb: 108 111 127;
-  --color-tertiary-rgb: 231 231 234; /* Mapped to fg */
-  --color-danger-rgb: 247 49 102;
-  --color-positive-rgb: 7 224 112;
-  --color-focus-rgb: 216 240 90;
+  /* --- Typography tokens --- */
+  --font-sans: "Inter", ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  --font-mono: "Share Tech Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
 
-  --color-bg: rgb(var(--color-bg-rgb));
-  --color-fg: rgb(var(--color-fg-rgb));
-  --color-muted: rgb(var(--color-muted-rgb));
-  --color-primary: rgb(var(--color-primary-rgb));
-  --color-secondary: rgb(var(--color-secondary-rgb));
-  --color-tertiary: rgb(var(--color-tertiary-rgb));
-  --color-danger: rgb(var(--color-danger-rgb));
-  --color-positive: rgb(var(--color-positive-rgb));
-  --color-focus: rgb(var(--color-focus-rgb));
+  --text-xs: 12px; --text-sm: 14px; --text-md: 16px;
+  --text-lg: 18px; --text-xl: 20px; --text-2xl: 24px; --text-3xl: 30px; --text-4xl: 36px; --text-5xl: 48px;
+  --weight-regular: 400; --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700;
+  --leading-tight: 1.2; --leading-normal: 1.5;
 
-  /* Form Inputs */
-  --color-input-bg-rgb: 9 9 9;
-  --color-input-bg: rgb(var(--color-input-bg-rgb));
-  --color-input-border: color-mix(in srgb, var(--color-fg) 20%, transparent);
-  --color-error: var(--color-danger);
+  /* --- Spacing scale --- */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 36px; --space-8: 40px; --space-9: 48px; --space-10: 56px;
+  --space-12: 72px; --space-16: 96px; --space-24: 144px;
 
-  /* Radius & shadows */
-  --radius-sm: 0.125rem; /* 2px */
-  --radius-md: 0.25rem;  /* 4px */
-  --radius-lg: 0.5rem;   /* 8px */
-  --radius-full: 9999px;
+  /* --- Radii --- */
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-full: 9999px;
+
+  /* --- Motion --- */
+  --duration-1: 120ms; --duration-2: 200ms; --duration-slow: 300ms;
+  --ease-standard: cubic-bezier(.2,0,.2,1);
+
+  /* --- Shadows / Focus --- */
   --shadow-elev-1: 0 2px 8px rgba(0,0,0,.25);
   --shadow-elev-2: 0 8px 24px rgba(0,0,0,.35);
+  --ring-outline: 0 0 0 2px rgb(11 11 14) /* bg */ , 0 0 0 4px rgb(216 240 90 / .6);
 
-  /* Spacing scale */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 40px;
-  --space-8: 48px;
-  --space-9: 56px;
-  --space-10: 64px;
-  --space-12: 80px;
-  --space-16: 128px;
-  --space-24: 192px;
-
-  /* Motion */
-  --duration-1: 150ms;
-  --duration-2: 300ms;
-  --duration-slow: 500ms;
-  --ease-standard: cubic-bezier(.2,.0,.2,1);
-
-  /* === TYPOGRAPHY === */
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-mono: "Share Tech Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
-  /* Type scale */
-  --text-xs: 12px;
-  --text-sm: 14px;
-  --text-md: 16px;
-  --text-lg: 18px;
-  --text-xl: 20px;
-  --text-2xl: 24px;
-  --text-3xl: 30px;
-  --text-4xl: 36px;
-  --text-5xl: 48px;
-
-  /* Line-height & weights */
-  --leading-tight: 1.2;
-  --leading-normal: 1.5;
-  --weight-regular: 400;
-  --weight-medium: 500;
-  --weight-semibold: 600;
-  --weight-bold: 700;
-
-  /* Focus ring */
-  --ring-color: rgba(216, 240, 90, .6);
-  --ring-outline: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--ring-color);
-
-  /* Z-index layers */
-  --z-app: 0;
-  --z-panel: 20;
-  --z-menu: 30;
-  --z-modal: 40;
-  --z-toast: 50;
-
-  /* Sizes */
+  /* --- Z layers --- */
+  --z-app: 0; --z-panel: 20; --z-menu: 30; --z-modal: 40; --z-toast: 50;
+  
+  /* --- Sizing --- */
   --size-xs: 320px;
+
+  /* --- COLORS must be **RGB triples** because you use rgb(var(--…-rgb) / <alpha>) --- */
+  --color-bg-rgb:        11 11 14;
+  --color-fg-rgb:        231 231 234;
+  --color-primary-rgb:   216 240 90;
+  --color-secondary-rgb: 108 111 127;
+  --color-tertiary-rgb:  167 167 176;
+  --color-muted-rgb:     145 145 154;
+  --color-focus-rgb:     216 240 90;
+  --color-positive-rgb:  66 186 150;
+  --color-danger-rgb:    255 82 82;
+
+  /* Inputs (you mapped input-bg + input-border) */
+  --color-input-bg-rgb:  22 22 28;
+  --color-input-border:  rgb(108 111 127 / .5);
 }
 
-
-/* Global typographic defaults */
+/* Global defaults so you don’t see serif/tiny text */
 html, body {
   font-family: var(--font-sans);
   font-size: var(--text-md);
   line-height: var(--leading-normal);
-  color: var(--color-fg);
-  background: var(--color-bg);
+  color: rgb(var(--color-fg-rgb));
+  background: rgb(var(--color-bg-rgb));
 }

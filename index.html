@@ -94,6 +94,20 @@
                 'menu': 'var(--z-menu)',
                 'modal': 'var(--z-modal)',
                 'toast': 'var(--z-toast)',
+            },
+            keyframes: {
+              fadeIn: {
+                'from': { opacity: '0' },
+                'to': { opacity: '1' },
+              },
+              slideInUp: {
+                'from': { transform: 'translateY(20px)', opacity: '0' },
+                'to': { transform: 'translateY(0)', opacity: '1' },
+              },
+            },
+            animation: {
+              fadeIn: 'fadeIn var(--duration-slow) var(--ease-standard) forwards',
+              slideInUp: 'slideInUp var(--duration-slow) ease-out forwards',
             }
           }
         }
@@ -150,22 +164,6 @@
       /* Disabled button text blur */
       button:disabled {
         text-shadow: 0 0 1px;
-      }
-      @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-      }
-      .animate-fadeIn {
-          animation: fadeIn var(--duration-slow) var(--ease-standard) forwards;
-      }
-
-      @keyframes slideInUp {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-      }
-      .animate-slideInUp {
-          animation: slideInUp var(--duration-slow) ease-out forwards;
-          opacity: 0; /* Start hidden */
       }
     </style>
   <script type="importmap">

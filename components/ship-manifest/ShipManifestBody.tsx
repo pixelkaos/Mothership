@@ -69,7 +69,7 @@ export const ShipManifestBody: React.FC<ShipManifestBodyProps> = ({ shipData, on
                              <StatInput label="Megadamage" id="megadamage" value={shipData.megadamageLevel} onChange={(e) => handleUpdate('megadamageLevel', parseInt(e.target.value))} tooltipContent="Catastrophic damage level. Each point corresponds to a severe system failure." />
                             <div className="space-y-1 text-xs max-h-48 overflow-y-auto">
                                 {MEGADAMAGE_EFFECTS.map((effect, index) => (
-                                    <div key={index} className={`flex gap-2 items-start p-1 rounded-sm ${shipData.megadamageLevel === index ? 'bg-negative text-background' : 'bg-black/20'}`}>
+                                    <div key={index} className={`flex gap-2 items-start p-1 rounded-sm ${shipData.megadamageLevel === index ? 'bg-danger text-background' : 'bg-black/20'}`}>
                                         <span className="font-bold w-6 text-center">{index}</span>
                                         <p className="flex-1">{effect}</p>
                                     </div>

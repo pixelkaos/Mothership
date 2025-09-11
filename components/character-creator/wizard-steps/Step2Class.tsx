@@ -27,7 +27,7 @@ export const Step2Class: React.FC<StepProps> = ({ saveData, onUpdate }) => {
         <div className="grid grid-cols-4 items-center text-center py-1.5">
             <span className="text-left font-bold uppercase tracking-wider text-sm">{label}</span>
             <span className="text-muted">{base}</span>
-            <span className={modifier > 0 ? 'text-positive' : modifier < 0 ? 'text-negative' : 'text-muted'}>
+            <span className={modifier > 0 ? 'text-positive' : modifier < 0 ? 'text-danger' : 'text-muted'}>
                 {modifier > 0 ? `+${modifier}` : modifier !== 0 ? modifier : '—'}
             </span>
             <span className="font-bold text-primary text-lg">{base + modifier}</span>

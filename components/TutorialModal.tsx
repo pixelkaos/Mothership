@@ -104,7 +104,7 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
                                             let bgColor = 'bg-black/20';
                                             if (showResults) {
                                                 if (isCorrect) bgColor = 'bg-positive/30';
-                                                else if (isSelected && !isCorrect) bgColor = 'bg-negative/30';
+                                                else if (isSelected && !isCorrect) bgColor = 'bg-danger/30';
                                             }
                                             return (
                                                 <label key={j} className={`block p-2 border border-muted cursor-pointer ${bgColor} transition-colors`}>

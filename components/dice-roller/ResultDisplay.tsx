@@ -31,7 +31,7 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onClear })
                 <span className="text-9xl font-bold text-foreground">{result.total}</span>
                 <div className="w-1/4 h-px bg-primary/50 my-4" />
                 {result.target !== undefined && (
-                     <span className={`text-2xl font-bold uppercase tracking-wider ${result.success ? 'text-positive' : 'text-negative'}`}>
+                     <span className={`text-2xl font-bold uppercase tracking-wider ${result.success ? 'text-positive' : 'text-danger'}`}>
                         {result.isCritical && 'CRITICAL '}
                         {result.success ? 'Success' : 'Failure'}
                     </span>

@@ -55,7 +55,7 @@ export const StatInput: React.FC<{
                     </svg>
                 )}
                  {baseValue !== undefined && value !== baseValue && baseValue !== 0 && (
-                    <span className={`absolute -bottom-3 left-1/2 -translate-x-1/2 text-xs mt-1 ${value > baseValue ? 'text-positive' : 'text-negative'}`}>
+                    <span className={`absolute -bottom-3 left-1/2 -translate-x-1/2 text-xs mt-1 ${value > baseValue ? 'text-positive' : 'text-danger'}`}>
                         ({baseValue})
                     </span>
                 )}

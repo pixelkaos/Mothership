@@ -37,7 +37,8 @@ const Trigger: React.FC<{ children: ReactNode; value: string }> = ({ children, v
             variant="tab"
             size="md"
             onClick={() => setActiveValue(value)}
-            className={`flex-1 ${isActive ? 'bg-secondary text-background' : ''}`}
+            isActive={isActive}
+            className="flex-1"
             role="tab"
             aria-selected={isActive}
             aria-controls={`tab-content-${value}`}
