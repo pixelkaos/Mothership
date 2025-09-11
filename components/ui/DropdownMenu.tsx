@@ -154,7 +154,7 @@ const Content: React.FC<{ children: ReactNode }> = ({ children }) => {
             id={id}
             ref={menuRef}
             role="menu"
-            className="absolute top-full left-0 min-w-full bg-black/20 border border-[var(--color-primary)]/30 shadow-[var(--shadow-elev-2)] z-[var(--z-menu)] animate-fadeIn py-[var(--space-1)] rounded-[var(--radius-lg)]"
+            className="absolute top-full left-0 min-w-full bg-black/20 border border-primary/30 shadow-elev-2 z-menu animate-fadeIn py-1 rounded-lg"
             onKeyDown={handleContentKeyDown}
         >
             {children}
@@ -178,7 +178,7 @@ const Item: React.FC<{ children: ReactNode; onSelect?: () => void; disabled?: bo
             size="sm"
             onClick={handleSelect}
             disabled={disabled}
-            className="block w-full text-left justify-start px-[var(--space-4)] text-[var(--color-secondary)] hover:bg-[var(--color-secondary)] hover:text-[var(--color-bg)] disabled:text-[var(--color-muted)] disabled:bg-black/20 rounded-none"
+            className="block w-full text-left justify-start px-4 text-secondary hover:bg-secondary hover:text-background disabled:text-muted disabled:bg-black/20 rounded-none"
             role="menuitem"
             tabIndex={-1} // Items are focused programmatically
         >

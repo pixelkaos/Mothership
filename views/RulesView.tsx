@@ -98,7 +98,6 @@ const ArmorTable: React.FC = () => (
             <thead>
                 <tr>
                     <th className="border-b-2 border-primary/50 p-2">Armor</th>
-                    {/* FIX: Header 'Price' changed to 'Cost' to match the 'cost' property in ArmorItem type. */}
                     <th className="border-b-2 border-primary/50 p-2 text-right">Cost</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">AP</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">O2</th>
@@ -131,7 +130,6 @@ const WeaponTable: React.FC = () => (
             <thead>
                 <tr>
                     <th className="border-b-2 border-primary/50 p-2">Weapon</th>
-                    {/* FIX: Header 'Price' changed to 'Cost' to match the 'cost' property in WeaponItem type. */}
                     <th className="border-b-2 border-primary/50 p-2 text-right">Cost</th>
                     <th className="border-b-2 border-primary/50 p-2">Range</th>
                     <th className="border-b-2 border-primary/50 p-2 text-right">Damage</th>

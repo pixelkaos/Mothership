@@ -30,9 +30,8 @@ export const Header: React.FC = () => {
         setView(targetView as View);
     };
     
-    const navButtonBaseClasses = "rounded-none border-0";
     const getNavButtonClasses = (isActive: boolean) => {
-        return `${navButtonBaseClasses} ${isActive ? 'bg-secondary text-background' : 'hover:bg-secondary hover:text-background'}`;
+        return isActive ? 'bg-secondary text-background' : '';
     }
 
     return (
@@ -51,21 +50,21 @@ export const Header: React.FC = () => {
         </button>
         
         <div className="flex justify-center border-y border-secondary/50">
-            <Button variant="secondary" size="sm" onClick={() => setView('derelict')} className={getNavButtonClasses(activeNav === 'derelict')} aria-current={activeNav === 'derelict' ? 'page' : undefined}>
+            <Button variant="nav" size="sm" onClick={() => setView('derelict')} className={getNavButtonClasses(activeNav === 'derelict')} aria-current={activeNav === 'derelict' ? 'page' : undefined}>
                 Derelict Generator
             </Button>
-            <Button variant="secondary" size="sm" onClick={() => setView('shipyard')} className={getNavButtonClasses(activeNav === 'shipyard')} aria-current={activeNav === 'shipyard' ? 'page' : undefined}>
+            <Button variant="nav" size="sm" onClick={() => setView('shipyard')} className={getNavButtonClasses(activeNav === 'shipyard')} aria-current={activeNav === 'shipyard' ? 'page' : undefined}>
                 Shipyard
             </Button>
-            <Button variant="secondary" size="sm" onClick={() => setView('character')} className={getNavButtonClasses(activeNav === 'character')} aria-current={activeNav === 'character' ? 'page' : undefined}>
+            <Button variant="nav" size="sm" onClick={() => setView('character')} className={getNavButtonClasses(activeNav === 'character')} aria-current={activeNav === 'character' ? 'page' : undefined}>
                 Character Hangar
             </Button>
-            <Button variant="secondary" size="sm" onClick={() => setView('rules')} className={getNavButtonClasses(activeNav === 'rules')} aria-current={activeNav === 'rules' ? 'page' : undefined}>
+            <Button variant="nav" size="sm" onClick={() => setView('rules')} className={getNavButtonClasses(activeNav === 'rules')} aria-current={activeNav === 'rules' ? 'page' : undefined}>
                 Rules
             </Button>
             <DropdownMenu>
                 <DropdownMenu.Trigger asChild>
-                     <Button variant="secondary" size="sm" className={getNavButtonClasses(activeNav === 'tools')}>
+                     <Button variant="nav" size="sm" className={getNavButtonClasses(activeNav === 'tools')}>
                         Tools
                     </Button>
                 </DropdownMenu.Trigger>

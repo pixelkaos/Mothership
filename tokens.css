@@ -1,18 +1,29 @@
 /* === Foundations === */
 :root {
   /* Color */
-  --color-bg: #0A0A0A;
-  --color-fg: #EAEAEA;
-  --color-muted: #555555;
-  --color-primary: #1bf2dd;
-  --color-secondary: #d03df5;
-  --color-tertiary: #f5f5f5;
-  --color-danger: #f73166;
-  --color-positive: #07e070;
-  --color-focus: #1d05f2;
+  --color-bg-rgb: 10 10 10;
+  --color-fg-rgb: 234 234 234;
+  --color-muted-rgb: 85 85 85;
+  --color-primary-rgb: 27 242 221;
+  --color-secondary-rgb: 208 61 245;
+  --color-tertiary-rgb: 245 245 245;
+  --color-danger-rgb: 247 49 102;
+  --color-positive-rgb: 7 224 112;
+  --color-focus-rgb: 29 5 242;
+
+  --color-bg: rgb(var(--color-bg-rgb));
+  --color-fg: rgb(var(--color-fg-rgb));
+  --color-muted: rgb(var(--color-muted-rgb));
+  --color-primary: rgb(var(--color-primary-rgb));
+  --color-secondary: rgb(var(--color-secondary-rgb));
+  --color-tertiary: rgb(var(--color-tertiary-rgb));
+  --color-danger: rgb(var(--color-danger-rgb));
+  --color-positive: rgb(var(--color-positive-rgb));
+  --color-focus: rgb(var(--color-focus-rgb));
 
   /* Form Inputs */
-  --color-input-bg: color-mix(in srgb, var(--color-bg) 85%, black);
+  --color-input-bg-rgb: 9 9 9;
+  --color-input-bg: rgb(var(--color-input-bg-rgb));
   --color-input-border: color-mix(in srgb, var(--color-fg) 20%, transparent);
   --color-error: var(--color-danger);
 

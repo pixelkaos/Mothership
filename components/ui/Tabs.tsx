@@ -14,7 +14,6 @@ const useTabs = () => {
     return context;
 };
 
-// FIX: Renamed component to avoid conflict before Object.assign
 const TabsComponent: React.FC<{ children: ReactNode; defaultValue: string }> = ({ children, defaultValue }) => {
     const [activeValue, setActiveValue] = useState(defaultValue);
     return (
@@ -25,7 +24,7 @@ const TabsComponent: React.FC<{ children: ReactNode; defaultValue: string }> = (
 };
 
 const List: React.FC<{ children: ReactNode }> = ({ children }) => (
-    <div className="flex border-b border-[var(--color-secondary)]/50" role="tablist">
+    <div className="flex border-b border-secondary/50" role="tablist">
         {children}
     </div>
 );
@@ -35,10 +34,10 @@ const Trigger: React.FC<{ children: ReactNode; value: string }> = ({ children, v
     const isActive = activeValue === value;
     return (
         <Button
-            variant="secondary"
+            variant="tab"
             size="md"
             onClick={() => setActiveValue(value)}
-            className={`flex-1 rounded-b-none border-b-0 ${isActive ? 'bg-[var(--color-secondary)] !text-[var(--color-bg)]' : 'bg-transparent hover:bg-[var(--color-secondary)]/20'}`}
+            className={`flex-1 ${isActive ? 'bg-secondary text-background' : ''}`}
             role="tab"
             aria-selected={isActive}
             aria-controls={`tab-content-${value}`}
@@ -57,7 +56,6 @@ const Content: React.FC<{ children: ReactNode; value: string }> = ({ children, v
     ) : null;
 };
 
-// FIX: Use Object.assign to attach sub-components for the correct component composition pattern.
 const Tabs = Object.assign(TabsComponent, {
     List,
     Trigger,

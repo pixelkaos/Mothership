@@ -6,7 +6,6 @@ import { Button } from '../Button';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 
-// FIX: Add missing interface definition for component props
 interface CharacterHangarProps {
     onStartNew: () => void;
     onCharacterReady: (data: CharacterSaveData) => void;

@@ -2,6 +2,7 @@
 
 
 
+
 import { GoogleGenAI } from "@google/genai";
 import type { DerelictShip, Character } from '../types';
 
@@ -32,7 +33,6 @@ Make it scary, mysterious, and full of hooks for a roleplaying game session. For
 
     try {
         const response = await ai.models.generateContent({
-            // FIX: Use current recommended model 'gemini-2.5-flash' instead of deprecated 'gemini-1.5-flash'.
             model: 'gemini-2.5-flash',
             contents: prompt,
         });
@@ -117,7 +117,6 @@ Format your response exactly as follows, using markdown. Use Level-3 headers for
 
     try {
         const response = await ai.models.generateContent({
-            // FIX: Use current recommended model 'gemini-2.5-flash' instead of deprecated 'gemini-1.5-flash'.
             model: 'gemini-2.5-flash',
             contents: prompt,
         });

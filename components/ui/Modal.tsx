@@ -67,7 +67,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, 
 
     return createPortal(
         <div
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[var(--z-modal)] p-[var(--space-4)] animate-fadeIn"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-modal p-4 animate-fadeIn"
             onClick={onClose}
             role="dialog"
             aria-modal="true"
@@ -80,18 +80,18 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, 
                 onClick={e => e.stopPropagation()}
             >
                 {title && (
-                    <header className="p-[var(--space-4)] border-b border-[var(--color-primary)]/50 flex justify-between items-center flex-shrink-0">
-                        <h2 id="modal-title" className="text-[var(--text-xl)] font-bold text-[var(--color-primary)]">{title}</h2>
+                    <header className="p-4 border-b border-primary/50 flex justify-between items-center flex-shrink-0">
+                        <h2 id="modal-title" className="text-xl font-bold text-primary">{title}</h2>
                         <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close modal">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                         </Button>
                     </header>
                 )}
-                <div className="flex-grow overflow-y-auto p-[var(--space-4)]">
+                <div className="flex-grow overflow-y-auto p-4">
                     {children}
                 </div>
                 {footer && (
-                    <footer className="flex justify-between items-center p-[var(--space-4)] bg-black/50 border-t border-[var(--color-primary)]/50 flex-shrink-0">
+                    <footer className="flex justify-between items-center p-4 bg-black/50 border-t border-primary/50 flex-shrink-0">
                         {footer}
                     </footer>
                 )}

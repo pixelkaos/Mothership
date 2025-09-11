@@ -43,13 +43,13 @@ export const DockablePanel: React.FC<DockablePanelProps> = ({
     }
 
     const shadowClass = isActive
-        ? 'shadow-[var(--shadow-elev-2)] shadow-[var(--color-primary)]/20'
-        : 'shadow-[var(--shadow-elev-1)] shadow-black/50';
+        ? 'shadow-elev-2 shadow-primary/20'
+        : 'shadow-elev-1 shadow-black/50';
 
     return (
         <div
             ref={panelRef}
-            className={`fixed bg-background border border-[var(--color-primary)]/80 flex flex-col rounded-[var(--radius-lg)] overflow-hidden transition-shadow duration-200 ${shadowClass} ${className}`}
+            className={`fixed bg-background border border-primary/80 flex flex-col rounded-lg overflow-hidden transition-shadow duration-200 ${shadowClass} ${className}`}
             style={{
                 left: `${state.position.x}px`,
                 top: `${state.position.y}px`,
@@ -62,13 +62,13 @@ export const DockablePanel: React.FC<DockablePanelProps> = ({
             onMouseDown={bringToFront}
         >
             <header
-                className="flex justify-between items-center p-[var(--space-2)] bg-black/30 cursor-move border-b border-[var(--color-primary)]/50"
+                className="flex justify-between items-center p-2 bg-black/30 cursor-move border-b border-primary/50"
                 onMouseDown={handleHeaderMouseDown}
             >
-                <h2 id={`panel-title-${id}`} className="font-bold text-[var(--color-primary)] uppercase tracking-wider text-[var(--text-sm)] pl-[var(--space-2)]">
+                <h2 id={`panel-title-${id}`} className="font-bold text-primary uppercase tracking-wider text-sm pl-2">
                     {title}
                 </h2>
-                <div className="flex items-center gap-x-[var(--space-1)]">
+                <div className="flex items-center gap-x-1">
                     <IconButton size="sm" onClick={() => (state.isMinimized ? restore() : minimize())} aria-label={state.isMinimized ? "Expand" : "Minimize"}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            {state.isMinimized ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4h4m12 4V4h-4M4 16v4h4m12-4v4h-4" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />}
