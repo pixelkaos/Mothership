@@ -37,6 +37,9 @@ interface AppContextType {
     isShipManifestLoaded: boolean;
 
     handleSetView: (targetView: NavigationView | 'dice-roller' | 'character-sheet' | 'ship-manifest') => void;
+
+    panelStack: string[];
+    bringPanelToFront: (panelId: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -71,6 +74,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     // Dice Roller state
     const [isDiceRollerOpen, setIsDiceRollerOpen] = useState<boolean>(false);
     const [activeDiceCheck, setActiveDiceCheck] = useState<{ type: 'stat' | 'save', name: string } | null>(null);
+
+    // Panel Management
+    const [panelStack, setPanelStack] = useState<string[]>([]);
+    
+    const bringPanelToFront = useCallback((panelId: string) => {
+        setPanelStack(prev => [panelId, ...prev.filter(p => p !== panelId)]);
+    }, []);
+
+    const removePanelFromStack = useCallback((panelId: string) => {
+        setPanelStack(prev => prev.filter(p => p !== panelId));
+    }, []);
     
     const activeNav = getActiveNav(view);
     const isCharacterLoaded = activeCharacterData !== null;
@@ -82,42 +96,57 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const openDiceRoller = useCallback((check: { type: 'stat' | 'save', name: string } | null = null) => {
         setActiveDiceCheck(check);
         setIsDiceRollerOpen(true);
-    }, []);
+        bringPanelToFront('dice-roller');
+    }, [bringPanelToFront]);
     const closeDiceRoller = useCallback(() => {
         setIsDiceRollerOpen(false);
         setActiveDiceCheck(null);
-    }, []);
+        removePanelFromStack('dice-roller');
+    }, [removePanelFromStack]);
 
     const clearActiveDiceCheck = useCallback(() => {
         setActiveDiceCheck(null);
     }, []);
 
     const openCharacterSheet = useCallback(() => {
-        if (isCharacterLoaded) setIsCharacterSheetOpen(true);
-    }, [isCharacterLoaded]);
-    const closeCharacterSheet = useCallback(() => setIsCharacterSheetOpen(false), []);
+        if (isCharacterLoaded) {
+            setIsCharacterSheetOpen(true);
+            bringPanelToFront('character-sheet');
+        }
+    }, [isCharacterLoaded, bringPanelToFront]);
+    const closeCharacterSheet = useCallback(() => {
+        setIsCharacterSheetOpen(false);
+        removePanelFromStack('character-sheet');
+    }, [removePanelFromStack]);
 
     const openShipManifest = useCallback(() => {
-        if (isShipManifestLoaded) setIsShipManifestOpen(true);
-    }, [isShipManifestLoaded]);
-    const closeShipManifest = useCallback(() => setIsShipManifestOpen(false), []);
+        if (isShipManifestLoaded) {
+            setIsShipManifestOpen(true);
+            bringPanelToFront('ship-manifest');
+        }
+    }, [isShipManifestLoaded, bringPanelToFront]);
+    const closeShipManifest = useCallback(() => {
+        setIsShipManifestOpen(false);
+        removePanelFromStack('ship-manifest');
+    }, [removePanelFromStack]);
 
     const handleSetView = useCallback((targetView: NavigationView | 'dice-roller' | 'character-sheet' | 'ship-manifest') => {
         if (targetView === 'dice-roller') {
-            setIsDiceRollerOpen(prev => !prev);
+            isDiceRollerOpen ? closeDiceRoller() : openDiceRoller();
             return;
         }
         if (targetView === 'character-sheet') {
-            if (isCharacterLoaded) setIsCharacterSheetOpen(prev => !prev);
+            if (isCharacterLoaded) isCharacterSheetOpen ? closeCharacterSheet() : openCharacterSheet();
             return;
         }
         if (targetView === 'ship-manifest') {
-            if(isShipManifestLoaded) setIsShipManifestOpen(prev => !prev);
+            if(isShipManifestLoaded) isShipManifestOpen ? closeShipManifest() : openShipManifest();
             return;
         }
         if (targetView === 'tools') return; // "Tools" is a category, not a view itself.
         setView(targetView as View);
-    }, [isCharacterLoaded, isShipManifestLoaded]);
+    }, [isCharacterLoaded, isShipManifestLoaded, isDiceRollerOpen, closeDiceRoller, openDiceRoller, isCharacterSheetOpen, closeCharacterSheet, openCharacterSheet, isShipManifestOpen, closeShipManifest, openShipManifest]);
+
 
     const handleCharacterUpdate = useCallback((updatedCharacter: Character) => {
         setActiveCharacterData(prevData => {
@@ -146,8 +175,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         };
 
         setActiveShipManifest(newManifest);
-        setIsShipManifestOpen(true);
-    }, []);
+        openShipManifest();
+    }, [openShipManifest]);
 
     const handleOpenShipyardManifest = useCallback((shipData: ShipData) => {
         const newManifest: ShipManifestData = {
@@ -162,8 +191,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             cargo: '', repairs: { minor: shipData.notes || '', major: '' }, crew: { current: 0, max: shipData.crew, list: '' }
         };
         setActiveShipManifest(newManifest);
-        setIsShipManifestOpen(true);
-    }, []);
+        openShipManifest();
+    }, [openShipManifest]);
 
     const value = {
         view, setView, activeNav,
@@ -171,7 +200,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         isDiceRollerOpen, openDiceRoller, closeDiceRoller, clearActiveDiceCheck, activeDiceCheck,
         isCharacterSheetOpen, openCharacterSheet, closeCharacterSheet, activeCharacterData, setActiveCharacterData, handleCharacterUpdate, isCharacterLoaded,
         isShipManifestOpen, openShipManifest, closeShipManifest, activeShipManifest, setActiveShipManifest, handleOpenDerelictManifest, handleOpenShipyardManifest, isShipManifestLoaded,
-        handleSetView
+        handleSetView,
+        panelStack, bringPanelToFront,
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

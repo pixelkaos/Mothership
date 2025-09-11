@@ -1,6 +1,8 @@
-import React, { useState, useRef, ReactNode } from 'react';
+
+import React, { useState, useRef, ReactNode, useCallback } from 'react';
 import { useDraggable } from '../hooks/useDraggable';
 import { Button } from './Button';
+import { useAppContext } from '../context/AppContext';
 
 interface DockablePanelProps {
     title: string;
@@ -9,6 +11,7 @@ interface DockablePanelProps {
     onClose: () => void;
     initialPosition: { x: number; y: number };
     className?: string;
+    panelId: string;
 }
 
 export const DockablePanel: React.FC<DockablePanelProps> = ({
@@ -17,11 +20,20 @@ export const DockablePanel: React.FC<DockablePanelProps> = ({
     isVisible,
     onClose,
     initialPosition,
-    className = ''
+    className = '',
+    panelId,
 }) => {
     const [isMinimized, setIsMinimized] = useState(false);
     const panelRef = useRef<HTMLDivElement>(null);
-    const { position, handleMouseDown, isDragging } = useDraggable(initialPosition, panelRef);
+    const { position, handleMouseDown: handleDragMouseDown, isDragging } = useDraggable(initialPosition, panelRef);
+    const { panelStack, bringPanelToFront } = useAppContext();
+
+    const handleMouseDown = useCallback((e: React.MouseEvent<HTMLElement>) => {
+        bringPanelToFront(panelId);
+        handleDragMouseDown(e);
+    }, [bringPanelToFront, panelId, handleDragMouseDown]);
+
+    const zIndex = 40 + panelStack.indexOf(panelId);
     
     if (!isVisible) {
         return null;
@@ -30,11 +42,12 @@ export const DockablePanel: React.FC<DockablePanelProps> = ({
     return (
         <div
             ref={panelRef}
-            className={`fixed bg-background border border-primary/80 shadow-2xl shadow-primary/20 z-40 ${className}`}
+            className={`fixed bg-background border border-primary/80 shadow-2xl shadow-primary/20 flex flex-col ${className}`}
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,
                 userSelect: isDragging ? 'none' : 'auto',
+                zIndex: zIndex,
             }}
             role="dialog"
             aria-modal="true"
@@ -62,7 +75,7 @@ export const DockablePanel: React.FC<DockablePanelProps> = ({
             </header>
             
             {!isMinimized && (
-                <div className="bg-black/30">
+                <div className="bg-black/30 overflow-y-auto">
                     {children}
                 </div>
             )}
