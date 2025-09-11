@@ -13,7 +13,7 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ title, description, visualContent, action, onClick, className }) => (
     <div
-        className={`group transition-all duration-300 hover:-translate-y-1 ${onClick ? 'cursor-pointer' : ''} ${className}`}
+        className={`group transition-all duration-normal hover:-translate-y-space-1 ${onClick ? 'cursor-pointer' : ''} ${className}`}
         onClick={onClick}
     >
         <Panel className="flex flex-col h-full text-left group-hover:bg-primary/10 group-hover:shadow-2xl group-hover:shadow-primary/20">

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import type { RollResult } from '../../types';
-import { Button } from '../Button';
+import { IconButton } from '../ui/IconButton';
 
 interface HistoryEntry extends RollResult {
     name: string;
@@ -19,11 +19,11 @@ interface ResultDisplayProps {
 export const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onClear }) => (
     <div className="relative flex-1 flex flex-col items-center justify-center p-4 border border-primary/50 min-h-[240px]">
         {result && (
-            <Button variant="ghost" size="sm" onClick={onClear} className="absolute top-2 right-2" aria-label="Clear Result">
+            <IconButton onClick={onClear} className="absolute top-space-2 right-space-2" aria-label="Clear Result">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-            </Button>
+            </IconButton>
         )}
         {result ? (
             <>

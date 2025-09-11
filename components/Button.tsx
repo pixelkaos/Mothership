@@ -12,9 +12,9 @@ const variants = {
 };
 
 const sizes = {
-  sm: 'px-3 py-2 text-xs',
-  md: 'px-4 py-3 text-sm',
-  lg: 'px-6 py-4 text-base',
+  sm: 'px-space-3 py-space-2 text-xs',
+  md: 'px-space-4 py-space-3 text-sm',
+  lg: 'px-space-6 py-space-4 text-base',
 };
 
 type ButtonOwnProps<E extends ElementType = ElementType> = {

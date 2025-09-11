@@ -1,7 +1,7 @@
 
 import React, { useRef, ReactNode, useCallback, useEffect } from 'react';
 import { useDraggable } from '../hooks/useDraggable';
-import { Button } from './Button';
+import { IconButton } from './ui/IconButton';
 import { useDockablePanel } from '../hooks/useDockablePanel';
 import type { PanelId } from '../context/PanelsContext';
 
@@ -59,16 +59,16 @@ export const DockablePanel: React.FC<DockablePanelProps> = ({
                     {title}
                 </h2>
                 <div className="flex items-center space-x-1">
-                    <Button variant="ghost" size="sm" onClick={() => (state.isMinimized ? restore() : minimize())} aria-label={state.isMinimized ? "Expand" : "Minimize"}>
+                    <IconButton size="sm" onClick={() => (state.isMinimized ? restore() : minimize())} aria-label={state.isMinimized ? "Expand" : "Minimize"}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            {state.isMinimized ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4h4m12 4V4h-4M4 16v4h4m12-4v4h-4" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />}
                         </svg>
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={close} aria-label="Close">
+                    </IconButton>
+                    <IconButton size="sm" onClick={close} aria-label="Close">
                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                    </Button>
+                    </IconButton>
                 </div>
             </header>
             
