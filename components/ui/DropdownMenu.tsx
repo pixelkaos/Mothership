@@ -59,7 +59,8 @@ const Trigger: React.FC<{ children: React.ReactElement, asChild?: boolean }> = (
         return React.cloneElement(children as any, {
             ref: triggerRef,
             onClick: (e: React.MouseEvent) => {
-                children.props.onClick?.(e);
+                // FIX: Cast children.props to any to access onClick, as its type is inferred as unknown.
+                (children.props as any).onClick?.(e);
                 handleToggle();
             },
             'aria-haspopup': 'menu',
