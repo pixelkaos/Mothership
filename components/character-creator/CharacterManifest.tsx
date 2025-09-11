@@ -8,6 +8,9 @@ import { CharacterRoller } from '../CharacterRoller';
 import { generateCharacterPortrait, generateCharacterBackstory } from '../../services/geminiService';
 import { Button } from '../Button';
 import { Panel } from '../ui/Panel';
+import { Input } from '../ui/Input';
+import { Textarea } from '../ui/Textarea';
+import { Field } from '../ui/Field';
 
 
 const STAT_DESCRIPTIONS: { [key: string]: React.ReactNode } = {
@@ -227,14 +230,14 @@ const ShopAndInventory: React.FC<{
 
     if (!isOpen) {
         return (
-            <Panel title="Shop & Inventory" titleAddon={<span className="text-xs">[Click to Open]</span>} className="cursor-pointer" >
+            <Panel title="Shop & Inventory" actions={<span className="text-xs text-muted">[Click to Open]</span>} className="cursor-pointer" >
                 <div onClick={() => setIsOpen(true)} className="h-0"></div>
             </Panel>
         );
     }
     
     return (
-        <Panel title="Shop & Inventory" titleAddon={<span className="text-xs">[Click to Close]</span>} className="cursor-pointer">
+        <Panel title="Shop & Inventory" actions={<span className="text-xs text-muted">[Click to Close]</span>} className="cursor-pointer">
             <div onClick={() => setIsOpen(false)} className="absolute inset-0 top-12"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Inventory */}
@@ -583,28 +586,34 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                         </Button>
                     </div>
                     <div className="md:col-span-2 flex flex-col gap-4">
-                         <input type="text" placeholder="Name" className="bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" onChange={e => onCharacterUpdate({...characterData, character: {...char, name: e.target.value}})} value={char.name} />
-                         <div className="flex gap-2">
-                            <select className={`bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary transition-all duration-200 ${isCustomPronoun ? 'w-1/2' : 'w-full'}`} value={isCustomPronoun ? 'custom' : char.pronouns} onChange={(e) => { e.target.value === 'custom' ? (setIsCustomPronoun(true), onCharacterUpdate({...characterData, character: {...char, pronouns: ''}})) : (setIsCustomPronoun(false), onCharacterUpdate({...characterData, character: {...char, pronouns: e.target.value}})) }}>
-                                <option value="" disabled>Select Pronouns</option>
-                                {PRONOUNS.map(p => <option key={p} value={p}>{p}</option>)}
-                                <option value="custom">Custom...</option>
-                            </select>
-                            {isCustomPronoun && <input type="text" placeholder="Enter pronouns" className="w-1/2 bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" value={char.pronouns} onChange={e => onCharacterUpdate({...characterData, character: {...char, pronouns: e.target.value}})} aria-label="Custom pronouns" />}
-                        </div>
-                        <div className="flex-grow bg-black/50 border border-muted p-2 focus-within:border-primary min-h-[100px] resize-y overflow-auto relative transition-colors">
-                            {char.backstory && !isEditingBackstory ? (
-                                <>
-                                    <FormattedBackstory text={char.backstory} />
-                                    <Button variant="ghost" size="sm" onClick={() => setIsEditingBackstory(true)} className="absolute top-1 right-1" aria-label="Edit backstory">Edit</Button>
-                                </>
-                            ) : (
-                                <>
-                                    <textarea placeholder="Character Story" className="w-full h-full bg-transparent border-none focus:ring-0 focus:outline-none resize-none" onChange={e => onCharacterUpdate({...characterData, character: {...char, backstory: e.target.value}})} value={char.backstory} />
-                                    {isEditingBackstory && <Button size="sm" onClick={() => setIsEditingBackstory(false)} className="absolute top-1 right-1" aria-label="Save backstory">Save</Button>}
-                                </>
-                            )}
-                        </div>
+                        <Field label="Name">
+                            <Input type="text" placeholder="Name" onChange={e => onCharacterUpdate({...characterData, character: {...char, name: e.target.value}})} value={char.name} />
+                        </Field>
+                        <Field label="Pronouns">
+                            <div className="flex gap-2">
+                                <select className={`bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary transition-all duration-200 ${isCustomPronoun ? 'w-1/2' : 'w-full'}`} value={isCustomPronoun ? 'custom' : char.pronouns} onChange={(e) => { e.target.value === 'custom' ? (setIsCustomPronoun(true), onCharacterUpdate({...characterData, character: {...char, pronouns: ''}})) : (setIsCustomPronoun(false), onCharacterUpdate({...characterData, character: {...char, pronouns: e.target.value}})) }}>
+                                    <option value="" disabled>Select Pronouns</option>
+                                    {PRONOUNS.map(p => <option key={p} value={p}>{p}</option>)}
+                                    <option value="custom">Custom...</option>
+                                </select>
+                                {isCustomPronoun && <Input type="text" placeholder="Enter pronouns" className="w-1/2" value={char.pronouns} onChange={e => onCharacterUpdate({...characterData, character: {...char, pronouns: e.target.value}})} aria-label="Custom pronouns" />}
+                            </div>
+                        </Field>
+                        <Field label="Backstory">
+                            <div className="flex-grow bg-black/50 border border-muted p-2 focus-within:border-primary min-h-[100px] resize-y overflow-auto relative transition-colors">
+                                {char.backstory && !isEditingBackstory ? (
+                                    <>
+                                        <FormattedBackstory text={char.backstory} />
+                                        <Button variant="ghost" size="sm" onClick={() => setIsEditingBackstory(true)} className="absolute top-1 right-1" aria-label="Edit backstory">Edit</Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Textarea placeholder="Character Story" className="w-full h-full bg-transparent border-none focus:ring-0 focus:outline-none resize-none" onChange={e => onCharacterUpdate({...characterData, character: {...char, backstory: e.target.value}})} value={char.backstory} />
+                                        {isEditingBackstory && <Button size="sm" onClick={() => setIsEditingBackstory(false)} className="absolute top-1 right-1" aria-label="Save backstory">Save</Button>}
+                                    </>
+                                )}
+                            </div>
+                        </Field>
                     </div>
                 </div>
 
@@ -700,10 +709,9 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
                         <p><strong className="text-primary/80">Loadout:</strong> {char.equipment.loadout || '...'}</p>
                         <p><strong className="text-primary/80">Trinket:</strong> {char.equipment.trinket || '...'}</p>
                         <p><strong className="text-primary/80">Patch:</strong> {char.equipment.patch || '...'}</p>
-                        <div className="flex items-center gap-2">
-                            <strong className="text-primary/80">Credits:</strong>
-                            <input type="number" className="bg-black/50 border border-muted p-1 w-24 focus:ring-0 focus:outline-none focus:border-primary" value={char.credits || ''} onChange={e => handleFieldChange('credits', e.target.value)} placeholder="0" />
-                        </div>
+                         <Field label="Credits">
+                            <Input type="number" className="w-24" value={char.credits || ''} onChange={e => handleFieldChange('credits', e.target.value)} placeholder="0" />
+                        </Field>
                     </div>
                 </Panel>
                 <ShopAndInventory characterData={characterData} onCharacterUpdate={onCharacterUpdate} />

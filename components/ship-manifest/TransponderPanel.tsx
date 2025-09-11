@@ -1,4 +1,6 @@
 import React from 'react';
+import { Input } from '../ui/Input';
+import { Textarea } from '../ui/Textarea';
 
 interface TransponderPanelProps {
     identifier: string;
@@ -26,9 +28,9 @@ export const TransponderPanel: React.FC<TransponderPanelProps> = ({
                     <input type="radio" id="transponder-off" name="transponder" checked={!transponderOn} onChange={() => onUpdate('transponderOn', false)} className="hidden"/>
                 </div>
             </div>
-            <input value={identifier} onChange={e => onUpdate('identifier', e.target.value)} placeholder="Ship Identifier" className="bg-white text-black p-2"/>
-            <input value={captain} onChange={e => onUpdate('captain', e.target.value)} placeholder="Captain" className="bg-white text-black p-2"/>
-            <textarea value={modelInfo} onChange={e => onUpdate('modelInfo', e.target.value)} placeholder="Make / Model / Jump / Class / Type" rows={3} className="bg-white text-black p-2"/>
+            <Input value={identifier} onChange={e => onUpdate('identifier', e.target.value)} placeholder="Ship Identifier" className="bg-white text-black p-2"/>
+            <Input value={captain} onChange={e => onUpdate('captain', e.target.value)} placeholder="Captain" className="bg-white text-black p-2"/>
+            <Textarea value={modelInfo} onChange={e => onUpdate('modelInfo', e.target.value)} placeholder="Make / Model / Jump / Class / Type" rows={3} className="bg-white text-black p-2"/>
         </div>
     );
 };

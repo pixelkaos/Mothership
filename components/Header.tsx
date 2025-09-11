@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import { Button } from './Button';
+import { DropdownMenu } from './ui/DropdownMenu';
 
 const NavButton: React.FC<{
     label: string;
@@ -22,7 +23,6 @@ const NavButton: React.FC<{
 
 export const Header: React.FC = () => {
     const { activeNav, handleSetView, openTutorial, isCharacterLoaded, isShipManifestLoaded, isDiceRollerOpen, isCharacterSheetOpen, isShipManifestOpen } = useAppContext();
-    const [isToolsOpen, setIsToolsOpen] = useState(false);
     
     const activeView = isDiceRollerOpen || isCharacterSheetOpen || isShipManifestOpen ? 'tools' : activeNav;
 
@@ -46,43 +46,22 @@ export const Header: React.FC = () => {
             <NavButton label="Shipyard" isActive={activeView === 'shipyard'} onClick={() => handleSetView('shipyard')} />
             <NavButton label="Character Hangar" isActive={activeView === 'character'} onClick={() => handleSetView('character')} />
             <NavButton label="Rules" isActive={activeView === 'rules'} onClick={() => handleSetView('rules')} />
-            <div 
-                className="relative"
-                onMouseEnter={() => setIsToolsOpen(true)}
-                onMouseLeave={() => setIsToolsOpen(false)}
-            >
-                <NavButton label="Tools" isActive={activeView === 'tools'} onClick={() => {}} />
-                {isToolsOpen && (
-                    <div className="absolute top-full left-0 w-full bg-background border border-t-0 border-secondary/50 shadow-lg z-20 animate-fadeIn">
-                        <Button 
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleSetView('dice-roller')}
-                            className="block w-full text-left justify-start px-4 text-secondary hover:bg-secondary hover:text-background rounded-none"
-                        >
-                            Dice Roller
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleSetView('character-sheet')}
-                            disabled={!isCharacterLoaded}
-                            className="block w-full text-left justify-start px-4 text-secondary hover:bg-secondary hover:text-background disabled:text-muted disabled:bg-black/20 rounded-none"
-                        >
-                            Character Sheet
-                        </Button>
-                         <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleSetView('ship-manifest')}
-                            disabled={!isShipManifestLoaded}
-                            className="block w-full text-left justify-start px-4 text-secondary hover:bg-secondary hover:text-background disabled:text-muted disabled:bg-black/20 rounded-none"
-                        >
-                            Ship Manifest
-                        </Button>
-                    </div>
-                )}
-            </div>
+            <DropdownMenu>
+                <DropdownMenu.Trigger asChild>
+                    <NavButton label="Tools" isActive={activeView === 'tools'} onClick={() => {}} />
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                    <DropdownMenu.Item onSelect={() => handleSetView('dice-roller')}>
+                        Dice Roller
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item onSelect={() => handleSetView('character-sheet')} disabled={!isCharacterLoaded}>
+                        Character Sheet
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item onSelect={() => handleSetView('ship-manifest')} disabled={!isShipManifestLoaded}>
+                        Ship Manifest
+                    </DropdownMenu.Item>
+                </DropdownMenu.Content>
+            </DropdownMenu>
         </div>
 
         <Button

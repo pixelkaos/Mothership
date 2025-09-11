@@ -2,10 +2,12 @@ import React, { useMemo, useCallback } from 'react';
 import type { Character, CharacterSaveData } from '../types';
 import { DockablePanel } from './DockablePanel';
 import { Panel } from './ui/Panel';
-import { LabeledInput } from './ui/LabeledInput';
+import { Field } from './ui/Field';
+import { Input } from './ui/Input';
 import { VitalDisplay } from './character-sheet/VitalDisplay';
 import { StatDisplay } from './character-sheet/StatDisplay';
 import { EquipmentItem } from './character-sheet/EquipmentItem';
+import { Textarea } from './ui/Textarea';
 
 interface FloatingCharacterSheetProps {
     isVisible: boolean;
@@ -14,6 +16,12 @@ interface FloatingCharacterSheetProps {
     onCharacterUpdate: (character: Character) => void;
     onRollRequest: (type: 'stat' | 'save', name: string) => void;
 }
+
+const ReadOnlyField: React.FC<{ label: string; value: string | number }> = ({ label, value }) => (
+    <Field label={label}>
+        <Input readOnly value={value} />
+    </Field>
+);
 
 export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ isVisible, onClose, characterData, onCharacterUpdate, onRollRequest }) => {
     const character = characterData?.character ?? null;
@@ -90,9 +98,9 @@ export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ 
                                  {character.portrait ? <img src={character.portrait} alt="Portrait" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-black/50 flex items-center justify-center text-muted text-xs">NO SIGNAL</div>}
                             </div>
                             <div className="flex-grow grid grid-cols-2 gap-x-4 gap-y-2 content-start">
-                                <div className="col-span-2"><LabeledInput label="Name" value={character.name} /></div>
-                                <LabeledInput label="Pronouns" value={character.pronouns} />
-                                <LabeledInput label="Class" value={character.class?.name || 'N/A'} />
+                                <div className="col-span-2"><ReadOnlyField label="Name" value={character.name} /></div>
+                                <ReadOnlyField label="Pronouns" value={character.pronouns} />
+                                <ReadOnlyField label="Class" value={character.class?.name || 'N/A'} />
                             </div>
                         </div>
                         
@@ -146,12 +154,12 @@ export const FloatingCharacterSheet: React.FC<FloatingCharacterSheetProps> = ({ 
                         </div>
 
                          <Panel title="Notes">
-                            <textarea 
-                                className="w-full h-24 bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary text-foreground resize-y" 
+                            <Textarea 
+                                className="w-full h-24 resize-y" 
                                 value={character.notes}
                                 onChange={handleNotesChange}
                                 placeholder="Session notes, character thoughts, etc."
-                            ></textarea>
+                            ></Textarea>
                         </Panel>
                     </>
                 )}

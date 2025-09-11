@@ -3,58 +3,14 @@ import type { CharacterSaveData } from '../../types';
 import { generateRandomRecruit } from '../../utils/character';
 import { PREGENERATED_CHARACTERS } from './pregeneratedCharacters';
 import { Button } from '../Button';
+import { Card } from '../ui/Card';
+import { Input } from '../ui/Input';
 
+// FIX: Add missing interface definition for component props
 interface CharacterHangarProps {
     onStartNew: () => void;
     onCharacterReady: (data: CharacterSaveData) => void;
 }
-
-const SmallHangarCard: React.FC<{
-    visualContent: React.ReactNode;
-    title: React.ReactNode;
-    description: React.ReactNode;
-    buttonText: string;
-    onButtonClick: () => void;
-    isButtonDisabled?: boolean;
-    isButtonALabel?: boolean;
-    children?: React.ReactNode;
-}> = ({ visualContent, title, description, buttonText, onButtonClick, isButtonDisabled = false, isButtonALabel = false, children }) => {
-    
-    return (
-        <div className="border border-primary/50 flex flex-col bg-black/30 group overflow-hidden h-full">
-            <div className="w-full aspect-video bg-black/50 relative border-b border-muted/50 flex items-center justify-center overflow-hidden">
-                {visualContent}
-            </div>
-            <div className="p-6 flex flex-col text-left flex-grow">
-                <div className="flex-grow">
-                    {title}
-                    {description}
-                </div>
-                {/* FIX: Conditionally render Button as a <label> or <button> to avoid passing the `disabled` prop to a label, which is invalid and causes a TypeScript error. */}
-                {isButtonALabel ? (
-                    <Button
-                        as="label"
-                        onClick={onButtonClick}
-                        className="cursor-pointer text-center mt-auto w-full"
-                    >
-                        {buttonText}
-                        {children}
-                    </Button>
-                ) : (
-                    <Button
-                        onClick={onButtonClick}
-                        disabled={isButtonDisabled}
-                        className="cursor-pointer text-center mt-auto w-full"
-                    >
-                        {buttonText}
-                        {children}
-                    </Button>
-                )}
-            </div>
-        </div>
-    );
-};
-
 
 export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, onCharacterReady }) => {
     const [isGenerating, setIsGenerating] = useState(false);
@@ -116,37 +72,36 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
                 <div>
                     <h3 className="text-2xl font-bold text-secondary uppercase tracking-wider text-left mb-6">Build your own Character</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="md:col-span-2 border border-primary/50 flex flex-col bg-black/30 text-left overflow-hidden h-full">
-                           <div className="w-full aspect-video bg-black/50 border-b border-muted/50 flex items-center justify-center">
-                                <span className="text-muted text-lg tracking-widest">STEP-BY-STEP CREATION</span>
-                            </div>
-                            <div className="p-6 flex flex-col flex-grow">
-                                <div className="flex-grow">
-                                    <h4 className="text-xl font-bold text-primary uppercase tracking-wider">New Recruit</h4>
-                                    <p className="text-muted text-sm mt-2">Go through a guided process to build a character from the ground up, making every choice yourself.</p>
-                                </div>
-                                <Button onClick={onStartNew} className="mt-auto w-full">Start Fresh Character</Button>
-                            </div>
+                        <div className="md:col-span-2">
+                            <Card
+                                visualContent={<span className="text-muted text-lg tracking-widest">STEP-BY-STEP CREATION</span>}
+                                title="New Recruit"
+                                description="Go through a guided process to build a character from the ground up, making every choice yourself."
+                                action={<Button onClick={onStartNew} className="mt-auto w-full">Start Fresh Character</Button>}
+                            />
                         </div>
 
-                        <SmallHangarCard
+                        <Card
                             visualContent={<span className="text-muted text-lg tracking-widest">LOAD FROM FILE</span>}
-                            title={<h4 className="text-xl font-bold text-primary uppercase tracking-wider">Load Manifest</h4>}
-                            description={<p className="text-muted text-sm mt-2">Import a previously saved character file (.json) to continue your session or make edits.</p>}
-                            buttonText="Load Saved Character"
-                            onButtonClick={() => fileInputRef.current?.click()}
-                            isButtonALabel={true}
-                        >
-                            <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleLoadCharacter} />
-                        </SmallHangarCard>
+                            title="Load Manifest"
+                            description="Import a previously saved character file (.json) to continue your session or make edits."
+                            action={
+                                <Button as="label" onClick={() => fileInputRef.current?.click()} className="cursor-pointer text-center mt-auto w-full">
+                                    Load Saved Character
+                                    <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleLoadCharacter} />
+                                </Button>
+                            }
+                        />
 
-                        <SmallHangarCard
+                        <Card
                             visualContent={<span className="text-muted text-lg tracking-widest">AI-ASSISTED RANDOM</span>}
-                            title={<h4 className="text-xl font-bold text-primary uppercase tracking-wider">Random Recruit</h4>}
-                            description={<p className="text-muted text-sm mt-2">Instantly generate a complete, ready-to-play character with random stats, gear, and an AI-generated portrait and backstory.</p>}
-                            buttonText={isGenerating ? 'Generating...' : 'Generate Random'}
-                            onButtonClick={handleGenerateRandom}
-                            isButtonDisabled={isGenerating}
+                            title="Random Recruit"
+                            description="Instantly generate a complete, ready-to-play character with random stats, gear, and an AI-generated portrait and backstory."
+                            action={
+                                <Button onClick={handleGenerateRandom} disabled={isGenerating} className="cursor-pointer text-center mt-auto w-full">
+                                    {isGenerating ? 'Generating...' : 'Generate Random'}
+                                </Button>
+                            }
                         />
                     </div>
                 </div>
@@ -163,23 +118,23 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
                     <h3 className="text-2xl font-bold text-secondary uppercase tracking-wider text-left mb-6">Choose a Pre-Generated Recruit</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {PREGENERATED_CHARACTERS.map((charInfo) => (
-                           <SmallHangarCard
+                           <Card
                                 key={charInfo.data.character.name}
                                 visualContent={
                                     <img src={charInfo.data.character.portrait} alt={`${charInfo.data.character.name} portrait`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                 }
-                                title={
-                                    <h3 className="text-xl font-bold text-primary uppercase tracking-wider">{charInfo.data.character.name}</h3>
-                                }
+                                title={charInfo.data.character.name}
                                 description={
                                     <>
                                         <p className="text-sm text-secondary">{charInfo.data.character.class?.name}</p>
-
                                         <p className="text-muted text-sm mt-2">{charInfo.shortDescription}</p>
                                     </>
                                 }
-                                buttonText="Load This Character"
-                                onButtonClick={() => onCharacterReady(charInfo.data)}
+                                action={
+                                    <Button onClick={() => onCharacterReady(charInfo.data)} className="w-full">
+                                        Load This Character
+                                    </Button>
+                                }
                             />
                         ))}
                     </div>

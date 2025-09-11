@@ -10,6 +10,9 @@ import { generateCharacterBackstory, generateCharacterPortrait } from '../../ser
 import { CharacterRoller } from '../CharacterRoller';
 import { Button } from '../Button';
 import { Panel } from '../ui/Panel';
+import { Input } from '../ui/Input';
+import { Textarea } from '../ui/Textarea';
+import { Field } from '../ui/Field';
 
 const STEPS = [
     { id: 1, name: 'Stats & Saves' },
@@ -631,12 +634,18 @@ const Step6Style: React.FC<StepProps> = ({ saveData, onUpdate }) => {
                             {isGeneratingIdentity ? 'Generating...' : 'Randomize Identity'}
                         </Button>
                     </div>
-                    <input type="text" placeholder="Name" className="w-full bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" value={character.name} onChange={e => onUpdate('character.name', e.target.value)} />
-                    <select className="w-full bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" value={character.pronouns} onChange={e => onUpdate('character.pronouns', e.target.value)}>
-                        <option value="" disabled>Select Pronouns</option>
-                        {PRONOUNS.map(p => <option key={p} value={p}>{p}</option>)}
-                    </select>
-                    <textarea placeholder="Backstory (or let the AI write one!)" rows={8} className="w-full bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" value={character.backstory} onChange={e => onUpdate('character.backstory', e.target.value)} />
+                    <Field label="Name">
+                        <Input type="text" placeholder="Name" value={character.name} onChange={e => onUpdate('character.name', e.target.value)} />
+                    </Field>
+                    <Field label="Pronouns">
+                        <select className="w-full bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary" value={character.pronouns} onChange={e => onUpdate('character.pronouns', e.target.value)}>
+                            <option value="" disabled>Select Pronouns</option>
+                            {PRONOUNS.map(p => <option key={p} value={p}>{p}</option>)}
+                        </select>
+                    </Field>
+                    <Field label="Backstory">
+                        <Textarea placeholder="Backstory (or let the AI write one!)" rows={8} value={character.backstory} onChange={e => onUpdate('character.backstory', e.target.value)} />
+                    </Field>
                 </div>
                 <div className="flex flex-col items-center gap-4">
                     <div className="aspect-square w-48 bg-black/50 border border-muted flex items-center justify-center relative overflow-hidden">

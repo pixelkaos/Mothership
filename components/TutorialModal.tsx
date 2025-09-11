@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { QuizQuestion } from '../types';
 import { Button } from './Button';
+import { Modal } from './ui/Modal';
 
 interface TutorialModalProps {
     onClose: () => void;
@@ -141,42 +142,42 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
         }
     };
 
+    const modalFooter = (
+        <div className="flex justify-between items-center w-full">
+            <Button
+                variant="tertiary"
+                size="sm"
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+            >
+                Prev
+            </Button>
+            <span className="text-muted">Page {page} of {TUTORIAL_PAGES}</span>
+            {page < TUTORIAL_PAGES ? (
+                <Button
+                    variant="tertiary"
+                    size="sm"
+                    onClick={() => setPage(p => Math.min(TUTORIAL_PAGES, p + 1))}
+                >
+                    Next
+                </Button>
+            ) : (
+                 <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={onClose}
+                 >
+                    Close
+                </Button>
+            )}
+        </div>
+    );
 
     return (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
-            <div className="w-full max-w-4xl max-h-[90vh] bg-background border border-primary shadow-2xl shadow-primary/20 flex flex-col" onClick={e => e.stopPropagation()}>
-                <div className="p-6 border-b border-primary/50 overflow-y-auto">
-                    {renderPageContent()}
-                </div>
-                <div className="flex justify-between items-center p-4 bg-black/50">
-                    <Button
-                        variant="tertiary"
-                        size="sm"
-                        onClick={() => setPage(p => Math.max(1, p - 1))}
-                        disabled={page === 1}
-                    >
-                        Prev
-                    </Button>
-                    <span className="text-muted">Page {page} of {TUTORIAL_PAGES}</span>
-                    {page < TUTORIAL_PAGES ? (
-                        <Button
-                            variant="tertiary"
-                            size="sm"
-                            onClick={() => setPage(p => Math.min(TUTORIAL_PAGES, p + 1))}
-                        >
-                            Next
-                        </Button>
-                    ) : (
-                         <Button
-                            variant="primary"
-                            size="sm"
-                            onClick={onClose}
-                         >
-                            Close
-                        </Button>
-                    )}
-                </div>
+        <Modal isOpen={true} onClose={onClose} footer={modalFooter} className="w-full max-w-4xl">
+             <div className="p-6 border-b border-primary/50 max-h-[70vh] overflow-y-auto">
+                {renderPageContent()}
             </div>
-        </div>
+        </Modal>
     );
 };

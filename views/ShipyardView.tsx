@@ -4,8 +4,7 @@ import type { ShipData, ShipUpgrade, ShipWeapon } from '../types';
 import { useAppContext } from '../context/AppContext';
 import { Button } from '../components/Button';
 import { Panel } from '../components/ui/Panel';
-
-type ShipyardTab = 'ships' | 'upgrades' | 'weapons';
+import { Tabs } from '../components/ui/Tabs';
 
 const StatBox: React.FC<{ label: string; value: string | number }> = ({ label, value }) => (
     <div className="flex-1 flex flex-col items-center justify-center p-2 bg-black/30 border border-muted/50 text-center">
@@ -74,22 +73,7 @@ const WeaponsTable: React.FC<{ weapons: ShipWeapon[] }> = ({ weapons }) => (
 
 export const ShipyardView: React.FC = () => {
     const { handleOpenShipyardManifest } = useAppContext();
-    const [activeTab, setActiveTab] = useState<ShipyardTab>('ships');
     const [selectedShip, setSelectedShip] = useState<ShipData>(SHIP_DATA[0]);
-
-    const TabButton: React.FC<{ tab: ShipyardTab, label: string }> = ({ tab, label }) => {
-        const isActive = activeTab === tab;
-        return (
-            <Button
-                variant="secondary"
-                size="md"
-                onClick={() => setActiveTab(tab)}
-                className={`flex-1 rounded-b-none border-b-0 ${isActive ? 'bg-secondary text-background' : 'bg-transparent text-secondary hover:bg-secondary/20'}`}
-            >
-                {label}
-            </Button>
-        );
-    };
 
     return (
         <div className="max-w-7xl mx-auto">
@@ -98,88 +82,89 @@ export const ShipyardView: React.FC = () => {
                 <p className="text-muted text-sm mt-2">Database of vessels, upgrades, and weapons from the Shipbreaker's Toolkit.</p>
             </div>
 
-            <div className="flex border-b border-secondary/50 mb-8">
-                <TabButton tab="ships" label="Vessel Manifests" />
-                <TabButton tab="upgrades" label="Upgrades" />
-                <TabButton tab="weapons" label="Weapons" />
-            </div>
+            <Tabs defaultValue="ships">
+                <Tabs.List>
+                    <Tabs.Trigger value="ships">Vessel Manifests</Tabs.Trigger>
+                    <Tabs.Trigger value="upgrades">Upgrades</Tabs.Trigger>
+                    <Tabs.Trigger value="weapons">Weapons</Tabs.Trigger>
+                </Tabs.List>
 
-            {activeTab === 'ships' && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <aside className="lg:col-span-1 max-h-[80vh] overflow-y-auto pr-2">
-                        <ul className="space-y-2">
-                            {SHIP_DATA.map(ship => (
-                                <li key={ship.name}>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => setSelectedShip(ship)}
-                                        className={`w-full text-left p-3 border normal-case justify-start ${selectedShip.name === ship.name ? 'bg-primary/20 border-primary' : 'bg-black/30 border-muted/50 hover:bg-muted/20 hover:border-muted'}`}
-                                    >
-                                        <div>
-                                            <h4 className="font-bold text-primary">{ship.name}</h4>
-                                            <p className="text-xs text-muted">{ship.modelCode}</p>
-                                        </div>
-                                    </Button>
-                                </li>
-                            ))}
-                        </ul>
-                    </aside>
-                    <main className="lg:col-span-2">
-                        {selectedShip && (
-                            <Panel title={selectedShip.name} className="!p-6">
-                                <div className="flex justify-between items-start gap-4 -mt-4 mb-4">
-                                     <p className="text-secondary tracking-widest">{selectedShip.modelCode}</p>
-                                    <Button
-                                        size="sm"
-                                        onClick={() => handleOpenShipyardManifest(selectedShip)}
-                                        className="whitespace-nowrap"
-                                    >
-                                        Open in Manifest
-                                    </Button>
-                                </div>
+                <Tabs.Content value="ships">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+                        <aside className="lg:col-span-1 max-h-[80vh] overflow-y-auto pr-2">
+                            <ul className="space-y-2">
+                                {SHIP_DATA.map(ship => (
+                                    <li key={ship.name}>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setSelectedShip(ship)}
+                                            className={`w-full text-left p-3 border normal-case justify-start ${selectedShip.name === ship.name ? 'bg-primary/20 border-primary' : 'bg-black/30 border-muted/50 hover:bg-muted/20 hover:border-muted'}`}
+                                        >
+                                            <div>
+                                                <h4 className="font-bold text-primary">{ship.name}</h4>
+                                                <p className="text-xs text-muted">{ship.modelCode}</p>
+                                            </div>
+                                        </Button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </aside>
+                        <main className="lg:col-span-2">
+                            {selectedShip && (
+                                <Panel
+                                    title={selectedShip.name}
+                                    actions={
+                                        <Button
+                                            size="sm"
+                                            onClick={() => handleOpenShipyardManifest(selectedShip)}
+                                            className="whitespace-nowrap"
+                                        >
+                                            Open in Manifest
+                                        </Button>
+                                    }
+                                >
+                                    <p className="text-secondary tracking-widest">{selectedShip.modelCode}</p>
 
-                                <p className="text-sm text-foreground mb-6">{selectedShip.description}</p>
-                                
-                                <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                                    <StatBox label="Thrusters" value={selectedShip.stats.thrusters} />
-                                    <StatBox label="Systems" value={selectedShip.stats.systems} />
-                                    <StatBox label="Weapons" value={selectedShip.stats.weapons} />
-                                </div>
+                                    <p className="text-sm text-foreground my-6">{selectedShip.description}</p>
+                                    
+                                    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                                        <StatBox label="Thrusters" value={selectedShip.stats.thrusters} />
+                                        <StatBox label="Systems" value={selectedShip.stats.systems} />
+                                        <StatBox label="Weapons" value={selectedShip.stats.weapons} />
+                                    </div>
 
-                                <dl>
-                                    <DetailRow label="Cost" value={selectedShip.cost} />
-                                    <DetailRow label="Crew" value={selectedShip.crew} />
-                                    <DetailRow label="Cryopods" value={selectedShip.cryopods} />
-                                    <DetailRow label="Fuel Capacity" value={selectedShip.fuel} />
-                                    <DetailRow label="Escape Pods" value={selectedShip.escape_pods} />
-                                    <DetailRow label="Hardpoints" value={selectedShip.hardpoints} />
-                                    <DetailRow label="Megadamage" value={selectedShip.megadamage} />
-                                    <DetailRow label="Upgrades" value={selectedShip.upgrades} />
-                                    {selectedShip.notes && <DetailRow label="Notes" value={selectedShip.notes} />}
-                                </dl>
-                            </Panel>
-                        )}
-                    </main>
-                </div>
-            )}
-
-            {activeTab === 'upgrades' && (
-                <div>
-                    <h3 className="text-2xl font-bold text-primary mb-4">Minor Upgrades</h3>
-                    <UpgradesTable upgrades={SHIP_UPGRADES.filter(u => u.type === 'Minor')} />
-                    <h3 className="text-2xl font-bold text-primary mt-8 mb-4">Major Upgrades</h3>
-                    <UpgradesTable upgrades={SHIP_UPGRADES.filter(u => u.type === 'Major')} />
-                </div>
-            )}
-            
-            {activeTab === 'weapons' && (
-                <div>
-                     <h3 className="text-2xl font-bold text-primary mb-4">Ship-to-Ship Weapon Systems</h3>
-                    <WeaponsTable weapons={SHIP_WEAPONS} />
-                </div>
-            )}
-
+                                    <dl>
+                                        <DetailRow label="Cost" value={selectedShip.cost} />
+                                        <DetailRow label="Crew" value={selectedShip.crew} />
+                                        <DetailRow label="Cryopods" value={selectedShip.cryopods} />
+                                        <DetailRow label="Fuel Capacity" value={selectedShip.fuel} />
+                                        <DetailRow label="Escape Pods" value={selectedShip.escape_pods} />
+                                        <DetailRow label="Hardpoints" value={selectedShip.hardpoints} />
+                                        <DetailRow label="Megadamage" value={selectedShip.megadamage} />
+                                        <DetailRow label="Upgrades" value={selectedShip.upgrades} />
+                                        {selectedShip.notes && <DetailRow label="Notes" value={selectedShip.notes} />}
+                                    </dl>
+                                </Panel>
+                            )}
+                        </main>
+                    </div>
+                </Tabs.Content>
+                <Tabs.Content value="upgrades">
+                    <div className="mt-8">
+                        <h3 className="text-2xl font-bold text-primary mb-4">Minor Upgrades</h3>
+                        <UpgradesTable upgrades={SHIP_UPGRADES.filter(u => u.type === 'Minor')} />
+                        <h3 className="text-2xl font-bold text-primary mt-8 mb-4">Major Upgrades</h3>
+                        <UpgradesTable upgrades={SHIP_UPGRADES.filter(u => u.type === 'Major')} />
+                    </div>
+                </Tabs.Content>
+                 <Tabs.Content value="weapons">
+                    <div className="mt-8">
+                         <h3 className="text-2xl font-bold text-primary mb-4">Ship-to-Ship Weapon Systems</h3>
+                        <WeaponsTable weapons={SHIP_WEAPONS} />
+                    </div>
+                </Tabs.Content>
+            </Tabs>
         </div>
     );
 };
