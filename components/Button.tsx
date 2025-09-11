@@ -1,20 +1,20 @@
 import React from 'react';
 import type { ComponentProps, ElementType, ReactNode } from 'react';
 
-// Using a simple object-based approach for variants and sizes.
-const baseClasses = 'inline-flex items-center justify-center uppercase tracking-widest transition-colors duration-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus disabled:cursor-not-allowed rounded-md';
+const baseClasses = 'inline-flex items-center justify-center uppercase tracking-widest transition-colors focus:outline-none focus-visible:[box-shadow:var(--ring-outline)] disabled:cursor-not-allowed disabled:opacity-60 rounded-[var(--radius-md)] duration-[var(--duration-1)] ease-standard font-semibold';
 
 const variants = {
-  primary: 'bg-primary text-background hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary/50 disabled:text-background/70',
-  secondary: 'bg-transparent border border-secondary text-secondary hover:bg-secondary hover:text-background active:bg-secondary-pressed active:border-secondary-pressed disabled:border-secondary/50 disabled:text-secondary/50',
-  tertiary: 'bg-transparent border border-tertiary text-tertiary hover:bg-tertiary hover:text-background active:bg-tertiary-pressed active:border-tertiary-pressed disabled:border-tertiary/50 disabled:text-tertiary/50',
-  ghost: 'bg-transparent text-muted hover:text-primary hover:bg-primary/10 active:bg-primary/20 disabled:text-muted/50',
+  primary: 'bg-[var(--color-primary)] text-[var(--color-bg)] hover:opacity-90 active:opacity-80',
+  secondary: 'bg-transparent border border-[var(--color-secondary)] text-[var(--color-secondary)] hover:bg-[var(--color-secondary)]/20 active:bg-[var(--color-secondary)]/30',
+  tertiary: 'bg-transparent border border-[var(--color-tertiary)] text-[var(--color-tertiary)] hover:bg-[var(--color-tertiary)]/10 active:bg-[var(--color-tertiary)]/20',
+  ghost: 'bg-transparent text-[var(--color-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 active:bg-[var(--color-primary)]/20',
+  destructive: 'bg-[var(--color-danger)] text-[var(--color-fg)] hover:opacity-90 active:opacity-80',
 };
 
 const sizes = {
-  sm: 'px-space-3 py-space-2 text-xs',
-  md: 'px-space-4 py-space-3 text-sm',
-  lg: 'px-space-6 py-space-4 text-base',
+  sm: 'px-[var(--space-3)] text-[var(--text-xs)] h-[var(--space-6)]',
+  md: 'px-[var(--space-4)] text-[var(--text-sm)] h-[var(--space-7)]',
+  lg: 'px-[var(--space-5)] text-[var(--text-md)] h-[var(--space-8)]',
 };
 
 type ButtonOwnProps<E extends ElementType = ElementType> = {

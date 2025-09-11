@@ -12,7 +12,7 @@ export const Field: React.FC<FieldProps> = ({ label, children, className }) => {
     
     return (
         <div className={className}>
-            <label htmlFor={id} className="text-xs uppercase text-muted tracking-wider block mb-1">{label}</label>
+            <label htmlFor={id} className="text-[var(--text-sm)] text-[var(--color-muted)] block mb-[var(--space-1)]">{label}</label>
             {childWithId}
         </div>
     );

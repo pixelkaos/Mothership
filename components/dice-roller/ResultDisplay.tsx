@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import type { RollResult } from '../../types';
 import { IconButton } from '../ui/IconButton';
@@ -35,7 +36,7 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onClear })
                         {result.success ? 'Success' : 'Failure'}
                     </span>
                 )}
-                <span className="text-sm text-muted mt-2">
+                <span className="text-sm text-muted mt-2 font-mono">
                     {result.name}
                     {result.target !== undefined && ` vs ${result.target}`}
                      ({result.rolls.join(', ')})

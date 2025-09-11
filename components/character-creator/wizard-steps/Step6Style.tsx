@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { StepProps } from './Step1Stats';
 import { FIRST_NAMES, LAST_NAMES, PRONOUNS } from '../../../constants';
@@ -61,7 +62,7 @@ export const Step6Style: React.FC<StepProps> = ({ saveData, onUpdate }) => {
 
     return (
         <div className="space-y-6">
-            <div className="text-center"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Character Style</h2><p className="text-muted mt-2">Define your character's identity. Use the AI to generate a portrait and backstory based on your choices.</p></div>
+            <div className="text-center"><h2 className="text-2xl font-semibold text-primary uppercase tracking-wider">Character Style</h2><p className="text-sm text-muted mt-2">Define your character's identity. Use the AI to generate a portrait and backstory based on your choices.</p></div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                 <div className="space-y-4">
                     <div className="text-right -mb-2">

@@ -51,11 +51,11 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
             case 1:
                 return (
                     <div>
-                        <h3 className="text-2xl font-bold text-primary mb-4 uppercase tracking-wider">Welcome to Mothership</h3>
+                        <h3 className="text-2xl font-semibold text-primary mb-4 uppercase tracking-wider">Welcome to Mothership</h3>
                         <p className="mb-4 text-foreground leading-relaxed">
                             Mothership is a sci-fi horror RPG where you and your crew try to survive in the most inhospitable environment in the universe: outer space. You'll excavate dangerous derelict spacecraft, explore strange unknown worlds, and examine the horrors that encroach upon your every move. This tool helps you generate derelict ships and create story hooks for your adventures.
                         </p>
-                        <h4 className="text-xl font-bold text-primary mb-2 uppercase">Character Creation Basics</h4>
+                        <h4 className="text-xl font-semibold text-primary mb-2 uppercase">Character Creation Basics</h4>
                         <ol className="list-decimal list-inside text-foreground space-y-2">
                             <li><strong className="text-primary">Stats:</strong> Roll 2d10+25 for your four Stats: Strength, Speed, Intellect, and Combat.</li>
                             <li><strong className="text-primary">Saves:</strong> Roll 2d10+10 for your Saves: Sanity, Fear, and Body.</li>
@@ -68,22 +68,22 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
             case 2:
                 return (
                     <div>
-                        <h3 className="text-2xl font-bold text-primary mb-4 uppercase tracking-wider">Playing Mothership</h3>
+                        <h3 className="text-2xl font-semibold text-primary mb-4 uppercase tracking-wider">Playing Mothership</h3>
                         <div className="space-y-4 text-foreground leading-relaxed">
                             <div>
-                                <h4 className="text-xl font-bold text-primary mb-1 uppercase">Checks & Saves</h4>
+                                <h4 className="text-xl font-semibold text-primary mb-1 uppercase">Checks & Saves</h4>
                                 <p>When the outcome of an action is uncertain, you make a **Stat Check**. To succeed, roll a d100 (two d10s, for a result of 00-99) and get a result **equal to or less than** your Stat. **Saves** work the same way to resist danger. A roll of 90-99 is always a failure.</p>
                             </div>
                             <div>
-                                <h4 className="text-xl font-bold text-primary mb-1 uppercase">Advantage & Disadvantage</h4>
+                                <h4 className="text-xl font-semibold text-primary mb-1 uppercase">Advantage & Disadvantage</h4>
                                 <p>**Advantage (+):** Roll d100 twice and take the better (lower) result. **Disadvantage (-):** Roll d100 twice and take the worse (higher) result.</p>
                             </div>
                              <div>
-                                <h4 className="text-xl font-bold text-primary mb-1 uppercase">Criticals</h4>
+                                <h4 className="text-xl font-semibold text-primary mb-1 uppercase">Criticals</h4>
                                 <p>Rolling doubles (11, 22, 33, etc.) on a d100 is a **Critical**. A successful Critical is a Critical Success. A failed Critical is a Critical Failure, and you must make a Panic Check. A roll of 00 is always a Critical Success, and 99 is always a Critical Failure.</p>
                             </div>
                             <div>
-                                <h4 className="text-xl font-bold text-primary mb-1 uppercase">Stress & Panic</h4>
+                                <h4 className="text-xl font-semibold text-primary mb-1 uppercase">Stress & Panic</h4>
                                 <p>Failing saves and witnessing horrors increases your **Stress**. When the Warden calls for a **Panic Check**, you roll a **1d20 (the Panic Die)**. If the roll is **greater than** your current Stress, you keep your cool. If it's **less than or equal to** your Stress, you panic and consult the Panic Effect Table.</p>
                             </div>
                         </div>
@@ -92,7 +92,7 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ onClose }) => {
             case 3:
                 return (
                     <div>
-                        <h3 className="text-2xl font-bold text-primary mb-4 uppercase tracking-wider">Basic Training Test</h3>
+                        <h3 className="text-2xl font-semibold text-primary mb-4 uppercase tracking-wider">Basic Training Test</h3>
                         <div className="space-y-6">
                             {QUIZ_QUESTIONS.map((q, i) => (
                                 <div key={i}>

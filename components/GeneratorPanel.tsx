@@ -14,7 +14,7 @@ interface GeneratorPanelProps {
 const ShipDataRow: React.FC<{ label: string; value: string | undefined }> = ({ label, value }) => (
     <div className="py-2 grid grid-cols-3 gap-4">
         <dt className="text-sm font-medium text-primary/80 col-span-1">{label}</dt>
-        <dd className="mt-1 text-sm text-foreground sm:mt-0 col-span-2">{value || '...'}</dd>
+        <dd className="mt-1 text-sm text-foreground sm:mt-0 col-span-2 font-mono">{value || '...'}</dd>
     </div>
 );
 

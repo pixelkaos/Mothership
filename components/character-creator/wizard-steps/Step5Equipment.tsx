@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { StepProps } from './Step1Stats';
 import { STARTING_EQUIPMENT_TABLES, TRINKETS, PATCHES } from '../../../constants';
@@ -41,7 +42,7 @@ export const Step5Equipment: React.FC<StepProps> = ({ saveData, onUpdate }) => {
     if (equipment.loadout) {
         return (
             <div className="space-y-6 text-center">
-                 <h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Equipment Manifest</h2>
+                 <h2 className="text-2xl font-semibold text-primary uppercase tracking-wider">Equipment Manifest</h2>
                  <div className="text-center border border-primary/50 pt-6 mt-6 space-y-2 text-sm bg-black/30 p-4">
                     <p className="text-lg text-foreground">{equipment.loadout}</p>
                     <div className="pt-4 mt-4 border-t border-muted/50 flex flex-col sm:flex-row justify-around gap-2">
@@ -60,8 +61,8 @@ export const Step5Equipment: React.FC<StepProps> = ({ saveData, onUpdate }) => {
     return (
         <div className="space-y-6">
             <div className="text-center">
-                <h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Starting Equipment</h2>
-                <p className="text-muted mt-2 max-w-2xl mx-auto">Choose how to equip your character. You can either take a pre-rolled package with some pocket money, or a larger starting fund to buy your own gear from the ship's store later.</p>
+                <h2 className="text-2xl font-semibold text-primary uppercase tracking-wider">Starting Equipment</h2>
+                <p className="text-sm text-muted mt-2 max-w-2xl mx-auto">Choose how to equip your character. You can either take a pre-rolled package with some pocket money, or a larger starting fund to buy your own gear from the ship's store later.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Panel title="Option 1: Roll for Loadout" className="text-center flex flex-col">

@@ -1,4 +1,5 @@
 
+
 import React, { useMemo } from 'react';
 import type { CharacterSaveData, CharacterStats, CharacterSaves } from '../../../types';
 import { Button } from '../../Button';
@@ -43,7 +44,7 @@ export const Step7Manifest: React.FC<Step7ManifestProps> = ({ saveData, onGoToSt
     
     return (
         <div>
-            <div className="text-center mb-6"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Final Manifest</h2><p className="text-muted mt-2">Review your character. You can go back to any previous step to make changes.</p></div>
+            <div className="text-center mb-6"><h2 className="text-2xl font-semibold text-primary uppercase tracking-wider">Final Manifest</h2><p className="text-sm text-muted mt-2">Review your character. You can go back to any previous step to make changes.</p></div>
             <dl className="divide-y divide-primary/50 bg-black/30 p-4 text-sm">
                 <div className="py-2 grid grid-cols-3 gap-4"><dt className="font-bold text-primary/80">Name</dt><dd className="col-span-2">{character.name || 'N/A'} ({character.pronouns || 'N/A'}) <EditButton step={6} /></dd></div>
                 <div className="py-2 grid grid-cols-3 gap-4"><dt className="font-bold text-primary/80">Class</dt><dd className="col-span-2">{character.class?.name || 'N/A'} <EditButton step={2} /></dd></div>

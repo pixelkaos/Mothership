@@ -78,7 +78,7 @@ export const ShipyardView: React.FC = () => {
     return (
         <div className="max-w-7xl mx-auto">
             <div className="text-left mb-8">
-                <h2 className="text-4xl font-bold text-primary uppercase tracking-wider">Shipyard</h2>
+                <h2 className="text-4xl font-bold leading-tight text-primary uppercase tracking-wider">Shipyard</h2>
                 <p className="text-muted text-sm mt-2">Database of vessels, upgrades, and weapons from the Shipbreaker's Toolkit.</p>
             </div>
 
@@ -152,15 +152,15 @@ export const ShipyardView: React.FC = () => {
                 </Tabs.Content>
                 <Tabs.Content value="upgrades">
                     <div className="mt-8">
-                        <h3 className="text-2xl font-bold text-primary mb-4">Minor Upgrades</h3>
+                        <h3 className="text-2xl font-semibold text-primary mb-4">Minor Upgrades</h3>
                         <UpgradesTable upgrades={SHIP_UPGRADES.filter(u => u.type === 'Minor')} />
-                        <h3 className="text-2xl font-bold text-primary mt-8 mb-4">Major Upgrades</h3>
+                        <h3 className="text-2xl font-semibold text-primary mt-8 mb-4">Major Upgrades</h3>
                         <UpgradesTable upgrades={SHIP_UPGRADES.filter(u => u.type === 'Major')} />
                     </div>
                 </Tabs.Content>
                  <Tabs.Content value="weapons">
                     <div className="mt-8">
-                         <h3 className="text-2xl font-bold text-primary mb-4">Ship-to-Ship Weapon Systems</h3>
+                         <h3 className="text-2xl font-semibold text-primary mb-4">Ship-to-Ship Weapon Systems</h3>
                         <WeaponsTable weapons={SHIP_WEAPONS} />
                     </div>
                 </Tabs.Content>

@@ -25,7 +25,7 @@ const TabsComponent: React.FC<{ children: ReactNode; defaultValue: string }> = (
 };
 
 const List: React.FC<{ children: ReactNode }> = ({ children }) => (
-    <div className="flex border-b border-secondary/50" role="tablist">
+    <div className="flex border-b border-[var(--color-secondary)]/50" role="tablist">
         {children}
     </div>
 );
@@ -38,7 +38,7 @@ const Trigger: React.FC<{ children: ReactNode; value: string }> = ({ children, v
             variant="secondary"
             size="md"
             onClick={() => setActiveValue(value)}
-            className={`flex-1 rounded-b-none border-b-0 ${isActive ? 'bg-secondary text-background' : 'bg-transparent text-secondary hover:bg-secondary/20'}`}
+            className={`flex-1 rounded-b-none border-b-0 ${isActive ? 'bg-[var(--color-secondary)] !text-[var(--color-bg)]' : 'bg-transparent hover:bg-[var(--color-secondary)]/20'}`}
             role="tab"
             aria-selected={isActive}
             aria-controls={`tab-content-${value}`}

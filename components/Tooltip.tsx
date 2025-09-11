@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, ReactNode, useRef, useCallback } from 'react';
 
 // --- Context Definition ---
@@ -44,8 +43,11 @@ export const TooltipProvider: React.FC<{ children: ReactNode }> = ({ children })
             let x = clientX + margin;
             let y = clientY + margin;
 
-            if (x + 320 > window.innerWidth) { // Assumes max-w-xs (320px)
-                x = clientX - 320 - margin;
+            // Using a fixed size from tokens for calculation
+            const tooltipWidth = 320; // Corresponds to --size-xs
+
+            if (x + tooltipWidth > window.innerWidth) {
+                x = clientX - tooltipWidth - margin;
             }
             if (y + 200 > window.innerHeight) { // Assumes max height
                 y = clientY - 200 - margin;
@@ -87,7 +89,7 @@ const TooltipDisplay: React.FC<TooltipState> = ({ isVisible, content, position }
 
     return (
         <div
-            className="fixed z-[999] p-3 bg-background border border-primary text-foreground text-sm shadow-lg shadow-primary/20 max-w-xs pointer-events-none transition-opacity duration-normal rounded-md"
+            className="fixed z-[var(--z-toast)] p-[var(--space-3)] bg-[var(--color-bg)] border border-[var(--color-primary)] text-[var(--color-fg)] text-[var(--text-sm)] shadow-[var(--shadow-elev-1)] shadow-[var(--color-primary)]/20 max-w-[var(--size-xs)] pointer-events-none transition-opacity duration-[var(--duration-2)] rounded-[var(--radius-md)]"
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,

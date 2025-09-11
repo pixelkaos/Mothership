@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { useTooltip } from '../Tooltip';
 
@@ -29,7 +28,7 @@ export const StatInput: React.FC<{
         );
     }, [tooltipContent, baseValue, value, onRollRequest]);
 
-    const commonClasses = `w-20 h-12 bg-transparent border border-muted text-center text-2xl font-bold text-foreground mt-1 focus:ring-0 focus:outline-none focus:border-primary appearance-none transition-colors group-hover:border-primary`;
+    const commonClasses = `w-[var(--space-12)] h-[var(--space-8)] bg-transparent border border-[var(--color-muted)] text-center text-[var(--text-2xl)] font-bold text-[var(--color-fg)] mt-[var(--space-1)] focus:ring-0 focus:outline-none focus:border-[var(--color-primary)] appearance-none transition-colors group-hover:border-[var(--color-primary)]`;
 
     return (
         <div 
@@ -38,7 +37,7 @@ export const StatInput: React.FC<{
             onMouseLeave={hideTooltip}
             onClick={onRollRequest}
         >
-            <span id={`${id}-label`} className="text-xs uppercase text-muted">{label}</span>
+            <span id={`${id}-label`} className="text-[var(--text-xs)] uppercase text-[var(--color-muted)]">{label}</span>
             <div className="relative">
                  <input
                     id={id}
@@ -51,12 +50,12 @@ export const StatInput: React.FC<{
                     onClick={(e) => { e.stopPropagation(); onRollRequest?.(); }}
                 />
                  {(!value || value === 0) && onRollRequest && (
-                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="absolute inset-0 m-auto h-6 w-6 text-primary/50 pointer-events-none group-hover:text-primary transition-colors">
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="absolute inset-0 m-auto h-6 w-6 text-[var(--color-primary)]/50 pointer-events-none group-hover:text-[var(--color-primary)] transition-colors">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                 )}
                  {baseValue !== undefined && value !== baseValue && baseValue !== 0 && (
-                    <span className={`absolute -bottom-3 left-1/2 -translate-x-1/2 text-xs mt-1 ${value > baseValue ? 'text-positive' : 'text-negative'}`}>
+                    <span className={`absolute -bottom-3 left-1/2 -translate-x-1/2 text-[var(--text-xs)] mt-1 ${value > baseValue ? 'text-positive' : 'text-negative'}`}>
                         ({baseValue})
                     </span>
                 )}

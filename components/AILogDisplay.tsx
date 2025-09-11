@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 
 interface AILogDisplayProps {
@@ -38,7 +39,7 @@ const TypingEffect: React.FC<{ text: string }> = ({ text }) => {
 export const AILogDisplay: React.FC<AILogDisplayProps> = ({ description, isLoading, error }) => {
     return (
         <div className="border border-primary/50 p-6 flex flex-col bg-black/30">
-            <h3 className="text-2xl font-bold text-primary mb-4 uppercase tracking-wider">AI Gamemaster Report</h3>
+            <h3 className="text-2xl font-semibold text-primary mb-4 uppercase tracking-wider">AI Gamemaster Report</h3>
             <div className="flex-grow overflow-y-auto p-2 bg-black/30">
                 {isLoading && (
                      <div className="flex items-center justify-center h-full">

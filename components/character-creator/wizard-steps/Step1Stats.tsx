@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import type { CharacterSaveData } from '../../../types';
 import { rollDice } from '../../../utils/dice';
@@ -25,8 +26,8 @@ export const Step1Stats: React.FC<StepProps> = ({ saveData, onUpdate, onRollRequ
     return (
         <div className="space-y-8">
             <div className="text-center">
-                <h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Stats & Saves</h2>
-                <p className="text-muted mt-2">Roll your base stats and saves. These will be modified by your class later.</p>
+                <h2 className="text-2xl font-semibold text-primary uppercase tracking-wider">Stats & Saves</h2>
+                <p className="text-sm text-muted mt-2">Roll your base stats and saves. These will be modified by your class later.</p>
                 <Button variant="secondary" size="sm" onClick={handleRollAll} className="mt-4">Roll All</Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

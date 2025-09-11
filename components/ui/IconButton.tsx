@@ -1,16 +1,16 @@
 import React from 'react';
 import type { ComponentProps } from 'react';
 
-const baseClasses = 'inline-flex items-center justify-center transition-colors duration-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus disabled:cursor-not-allowed rounded-md';
+const baseClasses = 'inline-flex items-center justify-center transition-colors focus:outline-none focus-visible:[box-shadow:var(--ring-outline)] disabled:cursor-not-allowed disabled:opacity-60 rounded-[var(--radius-md)] duration-[var(--duration-1)] ease-standard';
 
 const variants = {
-  ghost: 'bg-transparent text-muted hover:text-primary hover:bg-primary/10 active:bg-primary/20 disabled:text-muted/50',
+  ghost: 'bg-transparent text-[var(--color-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 active:bg-[var(--color-primary)]/20',
 };
 
 const sizes = {
-  sm: 'w-space-8 h-space-8',
-  md: 'w-space-10 h-space-10',
-  lg: 'w-space-12 h-space-12',
+  sm: 'w-[var(--space-6)] h-[var(--space-6)]',
+  md: 'w-[var(--space-7)] h-[var(--space-7)]',
+  lg: 'w-[var(--space-8)] h-[var(--space-8)]',
 };
 
 type IconButtonProps = Omit<ComponentProps<'button'>, 'children'> & {

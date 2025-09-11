@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { StepProps } from './Step1Stats';
 import { SkillSelector } from '../../SkillSelector';
@@ -27,7 +28,7 @@ export const Step4Skills: React.FC<StepProps> = ({ saveData, onUpdate }) => {
 
     return (
         <div>
-            <div className="text-center mb-6"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Skill Selection</h2><p className="text-muted mt-2">Spend your skill points based on your chosen class.</p></div>
+            <div className="text-center mb-6"><h2 className="text-2xl font-semibold text-primary uppercase tracking-wider">Skill Selection</h2><p className="text-sm text-muted mt-2">Spend your skill points based on your chosen class.</p></div>
             <SkillSelector 
                 characterClass={character.class} 
                 selectedSkills={character.skills} 

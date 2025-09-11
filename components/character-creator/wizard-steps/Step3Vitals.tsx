@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { StepProps } from './Step1Stats';
 import { SplitStatInput } from '../../ui/SplitStatInput';
@@ -10,7 +11,7 @@ export const Step3Vitals: React.FC<StepProps> = ({ saveData, onUpdate, onRollReq
     
     return (
         <div className="space-y-6">
-            <div className="text-center"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Vitals & Condition</h2><p className="text-muted mt-2">Determine your starting health and condition. You can roll for max health or enter a value.</p></div>
+            <div className="text-center"><h2 className="text-2xl font-semibold text-primary uppercase tracking-wider">Vitals & Condition</h2><p className="text-sm text-muted mt-2">Determine your starting health and condition. You can roll for max health or enter a value.</p></div>
             <div className="flex flex-col md:flex-row justify-around items-center gap-8">
                  <StatInput
                     id="health.max"

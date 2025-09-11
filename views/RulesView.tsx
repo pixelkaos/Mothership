@@ -3,7 +3,7 @@ import { STARTING_EQUIPMENT_TABLES, TRINKETS, PATCHES, SHOP_ITEMS, ARMOR_ITEMS, 
 
 const RuleSection: React.FC<{ id: string; title: string; children: React.ReactNode }> = ({ id, title, children }) => (
     <section id={id} className="mb-12 scroll-mt-24">
-        <h2 className="text-3xl font-bold text-primary tracking-wider uppercase border-b-2 border-primary/30 pb-2 mb-4">{title}</h2>
+        <h2 className="text-3xl font-bold leading-tight text-primary tracking-wider uppercase border-b-2 border-primary/30 pb-2 mb-4">{title}</h2>
         <div className="prose prose-invert max-w-none text-foreground leading-relaxed space-y-4">
             {children}
         </div>
@@ -20,7 +20,7 @@ const AccordionSection: React.FC<{
         <div className="border-b last:border-b-0 border-muted/30">
             <button
                 onClick={onToggle}
-                className="w-full flex justify-between items-center text-left py-4 px-2 text-xl font-bold text-secondary tracking-wide uppercase hover:bg-secondary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-focus"
+                className="w-full flex justify-between items-center text-left py-4 px-2 text-xl font-semibold text-secondary tracking-wide uppercase hover:bg-secondary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-focus"
                 aria-expanded={isOpen}
             >
                 <span>{title}</span>
@@ -46,7 +46,7 @@ const AccordionSection: React.FC<{
 
 const Highlight: React.FC<{ children: React.ReactNode }> = ({ children }) => <strong className="text-primary font-bold">{children}</strong>;
 const KeyTerm: React.FC<{ children: React.ReactNode }> = ({ children }) => <em className="text-secondary not-italic font-semibold">{children}</em>;
-const Dice: React.FC<{ children: React.ReactNode }> = ({ children }) => <code className="bg-black/50 text-secondary px-1.5 py-0.5 rounded-sm text-sm">{children}</code>;
+const Dice: React.FC<{ children: React.ReactNode }> = ({ children }) => <code className="bg-black/50 text-secondary px-1.5 py-0.5 rounded-sm text-sm font-mono">{children}</code>;
 
 const RulesTable: React.FC<{ data: string[], dice: 'd10' | 'd100' }> = ({ data, dice }) => (
     <div className="overflow-x-auto">

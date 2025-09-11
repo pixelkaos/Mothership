@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import type { CharacterSaveData, CharacterClass, CharacterStats, CharacterSaves } from '../../../types';
 import { CLASSES_DATA } from '../../../constants';
@@ -52,7 +53,7 @@ export const Step2Class: React.FC<StepProps> = ({ saveData, onUpdate }) => {
     
     return (
         <div className="space-y-6">
-            <div className="text-center"><h2 className="text-2xl font-bold text-primary uppercase tracking-wider">Class Selection</h2><p className="text-muted mt-2">Your class determines your role, special abilities, and how you handle trauma.</p></div>
+            <div className="text-center"><h2 className="text-2xl font-semibold text-primary uppercase tracking-wider">Class Selection</h2><p className="text-sm text-muted mt-2">Your class determines your role, special abilities, and how you handle trauma.</p></div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {CLASSES_DATA.map(classData => {
                     const isSelected = saveData.character.class?.name === classData.name;

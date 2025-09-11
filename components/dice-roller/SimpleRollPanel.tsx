@@ -26,7 +26,7 @@ export const SimpleRollPanel: React.FC<SimpleRollPanelProps> = ({ title, buttons
                         onClick={() => onRoll(name, formula, advantage)}
                         className="w-full"
                     >
-                        {name} <span className="font-normal normal-case text-primary">({formula})</span>
+                        {name} <span className="font-normal normal-case text-primary font-mono">({formula})</span>
                     </Button>
                 ))}
             </div>

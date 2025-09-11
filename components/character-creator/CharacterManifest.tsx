@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, Stat, ShopItem } from '../../types';
 import { ALL_SKILLS, CLASSES_DATA, TRINKETS, PATCHES, PRONOUNS, SHOP_ITEMS } from '../../constants';
@@ -39,7 +40,7 @@ const FormattedBackstory: React.FC<{ text: string }> = ({ text }) => {
     const parts = text.split('\n').map((line, index) => {
         const trimmedLine = line.trim();
         if (trimmedLine.startsWith('### ')) {
-            return <h3 key={index} className="text-xl font-bold text-secondary tracking-wide uppercase mt-4 mb-2">{trimmedLine.substring(4)}</h3>;
+            return <h3 key={index} className="text-xl font-semibold text-secondary tracking-wide uppercase mt-4 mb-2">{trimmedLine.substring(4)}</h3>;
         }
         if (trimmedLine.startsWith('* ')) {
             const content = trimmedLine.substring(2);
@@ -114,7 +115,7 @@ const ShopAndInventory: React.FC<{
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Inventory */}
                 <div>
-                    <h4 className="text-lg font-bold text-secondary mb-2">Inventory</h4>
+                    <h4 className="text-xl font-semibold text-secondary mb-2">Inventory</h4>
                     <div className="bg-black/30 p-2 min-h-[200px] max-h-96 overflow-y-auto">
                         {character.equipment.inventory.length > 0 ? (
                             <ul className="space-y-1">
@@ -133,7 +134,7 @@ const ShopAndInventory: React.FC<{
 
                 {/* Shop */}
                 <div>
-                    <h4 className="text-lg font-bold text-secondary mb-2">Purchase Gear</h4>
+                    <h4 className="text-xl font-semibold text-secondary mb-2">Purchase Gear</h4>
                      <div className="bg-black/30 p-2 min-h-[200px] max-h-96 overflow-y-auto">
                         <ul className="space-y-1">
                             {SHOP_ITEMS.map(item => {
@@ -416,7 +417,7 @@ export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterD
         <div>
             <div className="border border-primary/50 p-6 bg-black/30 space-y-6 max-w-4xl mx-auto">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <h2 className="text-3xl font-bold text-primary uppercase tracking-wider">
+                    <h2 className="text-3xl font-bold leading-tight text-primary uppercase tracking-wider">
                         <span className="block">Character</span>
                         <span className="block">Manifest</span>
                     </h2>

@@ -59,8 +59,8 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
         <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-start mb-8 text-left">
                 <div>
-                    <h2 className="text-4xl font-bold text-primary uppercase tracking-wider">Character</h2>
-                    <h2 className="text-4xl font-bold text-primary uppercase tracking-wider">Hangar</h2>
+                    <h2 className="text-4xl font-bold leading-tight text-primary uppercase tracking-wider">Character</h2>
+                    <h2 className="text-4xl font-bold leading-tight text-primary uppercase tracking-wider">Hangar</h2>
                 </div>
                 <p className="text-muted text-sm max-w-xs text-right hidden sm:block mt-2">
                    Create, load, or generate a character for the Mothership Sci-Fi Horror RPG. Your life is cheap—make a new one.
@@ -70,7 +70,7 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
             <div className="space-y-12">
                 {/* Build Your Own Section */}
                 <div>
-                    <h3 className="text-2xl font-bold text-secondary uppercase tracking-wider text-left mb-6">Build your own Character</h3>
+                    <h3 className="text-2xl font-semibold text-secondary uppercase tracking-wider text-left mb-6">Build your own Character</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2">
                             <Card
@@ -115,7 +115,7 @@ export const CharacterHangar: React.FC<CharacterHangarProps> = ({ onStartNew, on
 
                 {/* Pre-Generated Section */}
                 <div>
-                    <h3 className="text-2xl font-bold text-secondary uppercase tracking-wider text-left mb-6">Choose a Pre-Generated Recruit</h3>
+                    <h3 className="text-2xl font-semibold text-secondary uppercase tracking-wider text-left mb-6">Choose a Pre-Generated Recruit</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {PREGENERATED_CHARACTERS.map((charInfo) => (
                            <Card

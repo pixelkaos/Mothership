@@ -32,7 +32,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({ history, onClear }) =>
                                     <li key={entry.timestamp} className="flex justify-between items-center bg-black/30 p-2">
                                         <div>
                                             <span className="font-bold text-foreground">{entry.name}</span>
-                                            <span className="text-muted ml-2">({entry.formula}) {entry.target && `vs ${entry.target}`}</span>
+                                            <span className="text-muted ml-2 font-mono">({entry.formula}) {entry.target && `vs ${entry.target}`}</span>
                                         </div>
                                         <span className={`text-lg font-bold ${entry.success === true ? 'text-positive' : entry.success === false ? 'text-negative' : 'text-foreground'}`}>{entry.total}</span>
                                     </li>

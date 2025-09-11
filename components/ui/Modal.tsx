@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useCallback, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '../Button';
+import { Panel } from './Panel';
 
 interface ModalProps {
     isOpen: boolean;
@@ -66,34 +67,35 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, 
 
     return createPortal(
         <div
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[var(--z-modal)] p-[var(--space-4)] animate-fadeIn"
             onClick={onClose}
             role="dialog"
             aria-modal="true"
             aria-labelledby={title ? "modal-title" : undefined}
         >
-            <div
+            <Panel
                 ref={modalRef}
-                className={`bg-background border border-primary shadow-2xl shadow-primary/20 flex flex-col rounded-lg overflow-hidden ${className}`}
+                tone="raised"
+                className={`flex flex-col max-h-[90vh] p-0 ${className}`}
                 onClick={e => e.stopPropagation()}
             >
                 {title && (
-                    <header className="p-4 border-b border-primary/50 flex justify-between items-center">
-                        <h2 id="modal-title" className="text-xl font-bold text-primary">{title}</h2>
+                    <header className="p-[var(--space-4)] border-b border-[var(--color-primary)]/50 flex justify-between items-center flex-shrink-0">
+                        <h2 id="modal-title" className="text-[var(--text-xl)] font-bold text-[var(--color-primary)]">{title}</h2>
                         <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close modal">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                         </Button>
                     </header>
                 )}
-                <div className="flex-grow overflow-y-auto">
+                <div className="flex-grow overflow-y-auto p-[var(--space-4)]">
                     {children}
                 </div>
                 {footer && (
-                    <footer className="flex justify-between items-center p-4 bg-black/50 border-t border-primary/50">
+                    <footer className="flex justify-between items-center p-[var(--space-4)] bg-black/50 border-t border-[var(--color-primary)]/50 flex-shrink-0">
                         {footer}
                     </footer>
                 )}
-            </div>
+            </Panel>
         </div>,
         document.body
     );
