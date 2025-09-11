@@ -1,15 +1,15 @@
 /* === Foundations === */
 :root {
   /* Color */
-  --color-bg-rgb: 10 10 10;
-  --color-fg-rgb: 234 234 234;
-  --color-muted-rgb: 85 85 85;
-  --color-primary-rgb: 27 242 221;
-  --color-secondary-rgb: 208 61 245;
-  --color-tertiary-rgb: 245 245 245;
+  --color-bg-rgb: 11 11 14;
+  --color-fg-rgb: 231 231 234;
+  --color-muted-rgb: 167 167 176;
+  --color-primary-rgb: 216 240 90;
+  --color-secondary-rgb: 108 111 127;
+  --color-tertiary-rgb: 231 231 234; /* Mapped to fg */
   --color-danger-rgb: 247 49 102;
   --color-positive-rgb: 7 224 112;
-  --color-focus-rgb: 29 5 242;
+  --color-focus-rgb: 216 240 90;
 
   --color-bg: rgb(var(--color-bg-rgb));
   --color-fg: rgb(var(--color-fg-rgb));
@@ -80,7 +80,7 @@
   --weight-bold: 700;
 
   /* Focus ring */
-  --ring-color: rgba(27, 242, 221, .6); /* primary color with opacity */
+  --ring-color: rgba(216, 240, 90, .6);
   --ring-outline: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--ring-color);
 
   /* Z-index layers */

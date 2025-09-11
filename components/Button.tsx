@@ -1,7 +1,7 @@
 import React from 'react';
 import type { ComponentProps, ElementType, ReactNode } from 'react';
 
-const baseClasses = 'inline-flex items-center justify-center uppercase tracking-widest transition-colors focus:outline-none focus-visible:shadow-ring disabled:cursor-not-allowed disabled:opacity-60 duration-1 ease-[var(--ease-standard)] font-semibold';
+const baseClasses = 'inline-flex items-center justify-center uppercase tracking-widest transition-colors focus:outline-none focus-visible:shadow-ring disabled:cursor-not-allowed disabled:opacity-60 duration-200 ease-standard font-semibold';
 
 const variants = {
   primary: 'bg-primary text-background hover:opacity-90 active:opacity-80 rounded-md',
@@ -14,9 +14,9 @@ const variants = {
 };
 
 const sizes = {
-  sm: 'px-3 text-xs h-6',
-  md: 'px-4 text-sm h-7',
-  lg: 'px-5 text-md h-8',
+  sm: 'h-[var(--space-6)] px-[var(--space-3)] text-xs',
+  md: 'h-[var(--space-8)] px-[var(--space-4)] text-sm',
+  lg: 'h-[var(--space-9)] px-[var(--space-5)] text-md',
 };
 
 type ButtonOwnProps<E extends ElementType = ElementType> = {
