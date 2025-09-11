@@ -31,16 +31,16 @@ export const Header: React.FC = () => {
     };
 
     return (
-    <header className="relative text-center pb-4 pt-4 sm:pt-6 md:pt-8 px-4 sm:px-6 md:px-8">
+    <header className="relative text-center pb-space-4 pt-space-4 sm:pt-space-6 md:pt-space-8 px-space-4 sm:px-space-6 md:px-space-8">
         <button
             onClick={() => setView('home')}
-            className="bg-transparent border-0 p-0 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus rounded-sm"
+            className="bg-transparent border-0 p-0 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-focus rounded-radius-sm"
             aria-label="Go to home page"
         >
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-widest uppercase text-primary transition-colors group-hover:text-primary-hover">
                 MOTHERSHIP
             </h1>
-            <h2 className="text-xl sm:text-2xl font-semibold text-foreground/80 tracking-[0.2em] mb-4 transition-colors group-hover:text-foreground">
+            <h2 className="text-xl sm:text-2xl font-semibold text-foreground/80 tracking-[0.2em] mb-space-4 transition-colors group-hover:text-foreground">
                 RPG COMPANION
             </h2>
         </button>
@@ -82,7 +82,7 @@ export const Header: React.FC = () => {
             variant="secondary"
             size="sm"
             onClick={openTutorial}
-            className="absolute top-2 right-2"
+            className="absolute top-space-2 right-space-2"
         >
             How to Play
         </Button>

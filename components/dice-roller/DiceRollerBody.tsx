@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { Character, CharacterSaveData } from '../../types';
 import { ResultDisplay } from './ResultDisplay';
@@ -34,10 +33,10 @@ export const DiceRollerBody: React.FC<DiceRollerBodyProps> = (props) => {
             case 'save':
                 if (!character) {
                     return (
-                        <div className="flex flex-col items-center justify-center h-full text-center p-8">
+                        <div className="flex flex-col items-center justify-center h-full text-center p-space-8">
                             <h3 className="text-lg text-primary">No Active Character</h3>
-                            <p className="text-muted mt-2 text-sm">Load a character in the Hangar to use character-specific rolls.</p>
-                            <button onClick={() => { setScreen('main'); resetCheckState(); }} className="mt-4 text-muted hover:text-primary">Back</button>
+                            <p className="text-muted mt-space-2 text-sm">Load a character in the Hangar to use character-specific rolls.</p>
+                            <button onClick={() => { setScreen('main'); resetCheckState(); }} className="mt-space-4 text-muted hover:text-primary">Back</button>
                         </div>
                     );
                 }
@@ -73,7 +72,7 @@ export const DiceRollerBody: React.FC<DiceRollerBodyProps> = (props) => {
             default:
                 return (
                     <div className="w-full">
-                        <div className="flex flex-col space-y-4">
+                        <div className="flex flex-col space-y-space-4">
                             <ResultDisplay result={result} onClear={clearResult} />
                             <ActionPanel onNavigate={setScreen} onSimpleRoll={handleBasicSimpleRoll} isCharacterLoaded={!!character} />
                         </div>
@@ -84,7 +83,7 @@ export const DiceRollerBody: React.FC<DiceRollerBodyProps> = (props) => {
     }
 
     return (
-        <div className="p-4">
+        <div className="p-space-4">
             {renderContent()}
         </div>
     );

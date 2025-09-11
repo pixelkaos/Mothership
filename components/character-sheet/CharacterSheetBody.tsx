@@ -1,4 +1,3 @@
-
 import React, { useCallback } from 'react';
 import type { Character, CharacterSaveData } from '../../types';
 import { CharacterSummary } from './CharacterSummary';
@@ -42,9 +41,9 @@ export const CharacterSheetBody: React.FC<CharacterSheetBodyProps> = ({ characte
     }, [character, onCharacterUpdate]);
 
     return (
-        <div className="p-4 text-foreground space-y-4">
+        <div className="p-space-4 text-foreground space-y-space-4">
             {!character ? (
-                <div className="p-8 text-center text-muted">
+                <div className="p-space-8 text-center text-muted">
                     <p className="font-bold">No Character Loaded</p>
                     <p className="text-sm">Please load or create a character from the Character Hangar.</p>
                 </div>

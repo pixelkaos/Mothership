@@ -12,7 +12,7 @@ interface GeneratorPanelProps {
 }
 
 const ShipDataRow: React.FC<{ label: string; value: string | undefined }> = ({ label, value }) => (
-    <div className="py-2 grid grid-cols-3 gap-4">
+    <div className="py-space-2 grid grid-cols-3 gap-space-4">
         <dt className="text-sm font-medium text-primary/80 col-span-1">{label}</dt>
         <dd className="mt-1 text-sm text-foreground sm:mt-0 col-span-2 font-mono">{value || '...'}</dd>
     </div>
@@ -34,7 +34,7 @@ export const GeneratorPanel: React.FC<GeneratorPanelProps> = ({ ship, onGenerate
                     <ShipDataRow label="SALVAGE" value={ship?.salvage} />
                 </dl>
             </div>
-            <div className="mt-6 space-y-4">
+            <div className="mt-space-6 space-y-space-4">
                  <Button
                     variant="secondary"
                     onClick={onOpenInManifest}
@@ -43,7 +43,7 @@ export const GeneratorPanel: React.FC<GeneratorPanelProps> = ({ ship, onGenerate
                 >
                     Open in Manifest
                 </Button>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-space-4">
                     <Button
                         variant="tertiary"
                         onClick={onGenerate}

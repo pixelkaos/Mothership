@@ -7,14 +7,14 @@ export const HomeView: React.FC = () => {
     const { setView } = useNavigation();
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-full py-10 px-4 sm:px-6 md:px-8">
+        <div className="flex flex-col items-center justify-center min-h-full py-space-10 px-space-4 sm:px-space-6 md:px-space-8">
             <div className="text-center mb-12 animate-fadeIn">
                  <p className="text-secondary tracking-widest animate-pulse">
                     // SURVIVAL IS NOT GUARANTEED //
                 </p>
             </div>
 
-            <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-space-8">
                 <div className="animate-slideInUp" style={{ animationDelay: '200ms' }}>
                     <Card
                         title="Derelict Generator"

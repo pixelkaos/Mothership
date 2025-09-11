@@ -13,87 +13,61 @@
       tailwind.config = {
         theme: {
           extend: {
-            fontFamily: {
-              'sans': 'var(--font-sans)',
-              'mono': 'var(--font-mono)',
-            },
-            fontSize: {
-              'xs': 'var(--text-xs)',
-              'sm': 'var(--text-sm)',
-              'md': 'var(--text-md)',
-              'lg': 'var(--text-lg)',
-              'xl': 'var(--text-xl)',
-              '2xl': 'var(--text-2xl)',
-              '3xl': 'var(--text-3xl)',
-              '4xl': 'var(--text-4xl)',
-              '5xl': 'var(--text-5xl)',
-            },
-            fontWeight: {
-              'regular': 'var(--weight-regular)',
-              'medium': 'var(--weight-medium)',
-              'semibold': 'var(--weight-semibold)',
-              'bold': 'var(--weight-bold)',
-            },
-            lineHeight: {
-              'tight': 'var(--leading-tight)',
-              'normal': 'var(--leading-normal)',
-            },
             colors: {
               background: 'rgb(var(--color-bg-rgb) / <alpha-value>)',
+              backgroundElev: 'rgb(var(--color-bg-elev-rgb) / <alpha-value>)',
               foreground: 'rgb(var(--color-fg-rgb) / <alpha-value>)',
               primary: 'rgb(var(--color-primary-rgb) / <alpha-value>)',
               secondary: 'rgb(var(--color-secondary-rgb) / <alpha-value>)',
               tertiary: 'rgb(var(--color-tertiary-rgb) / <alpha-value>)',
-              focus: 'rgb(var(--color-focus-rgb) / <alpha-value>)',
-              positive: 'rgb(var(--color-positive-rgb) / <alpha-value>)',
-              danger: 'rgb(var(--color-danger-rgb) / <alpha-value>)',
               muted: 'rgb(var(--color-muted-rgb) / <alpha-value>)',
+              positive: 'rgb(var(--color-positive-rgb) / <alpha-value>)',
+              warning: 'rgb(var(--color-warning-rgb) / <alpha-value>)',
+              danger: 'rgb(var(--color-danger-rgb) / <alpha-value>)',
+              acid: 'rgb(var(--accent-acid-rgb) / <alpha-value>)',
+              teal: 'rgb(var(--accent-teal-rgb) / <alpha-value>)',
+              orange: 'rgb(var(--accent-orange-rgb) / <alpha-value>)',
+              cyan: 'rgb(var(--accent-cyan-rgb) / <alpha-value>)',
+              pink: 'rgb(var(--accent-pink-rgb) / <alpha-value>)',
               'input-bg': 'rgb(var(--color-input-bg-rgb) / <alpha-value>)',
               'input-border': 'var(--color-input-border)',
             },
             spacing: {
-              '1': 'var(--space-1)',
-              '2': 'var(--space-2)',
-              '3': 'var(--space-3)',
-              '4': 'var(--space-4)',
-              '5': 'var(--space-5)',
-              '6': 'var(--space-6)',
-              '7': 'var(--space-7)',
-              '8': 'var(--space-8)',
-              '9': 'var(--space-9)',
-              '10': 'var(--space-10)',
-              '12': 'var(--space-12)',
-              '16': 'var(--space-16)',
-              '24': 'var(--space-24)',
+              'space-1': 'var(--space-1)', 'space-2': 'var(--space-2)',
+              'space-3': 'var(--space-3)', 'space-4': 'var(--space-4)',
+              'space-5': 'var(--space-5)', 'space-6': 'var(--space-6)',
+              'space-8': 'var(--space-8)', 'space-10': 'var(--space-10)',
             },
             borderRadius: {
-              'sm': 'var(--radius-sm)',
-              'md': 'var(--radius-md)',
-              'lg': 'var(--radius-lg)',
-              'full': 'var(--radius-full)',
+              'radius-sm': 'var(--radius-sm)',
+              'radius-md': 'var(--radius-md)',
+              'radius-lg': 'var(--radius-lg)',
             },
-            transitionDuration: {
-              '1': 'var(--duration-1)',
-              '2': 'var(--duration-2)',
-              'slow': 'var(--duration-slow)',
+            fontFamily: {
+              sans: 'var(--font-sans)',
+              mono: 'var(--font-mono)',
             },
-            transitionTimingFunction: {
-              'standard': 'var(--ease-standard)',
+            fontSize: {
+              xs: 'var(--text-xs)', sm: 'var(--text-sm)', md: 'var(--text-md)',
+              lg: 'var(--text-lg)', xl: 'var(--text-xl)', '2xl': 'var(--text-2xl)',
+              '3xl': 'var(--text-3xl)', '4xl': 'var(--text-4xl)',
             },
             boxShadow: {
-              'elev-1': 'var(--shadow-elev-1)',
-              'elev-2': 'var(--shadow-elev-2)',
-              'ring': 'var(--ring-outline)',
+              elev1: 'var(--elev-1)',
+              elev2: 'var(--elev-2)',
+              ring: 'var(--ring-outline)',
             },
-             maxWidth: {
+            transitionDuration: {
+              120: 'var(--duration-1)',
+              200: 'var(--duration-2)',
+              300: 'var(--duration-3)',
+            },
+            transitionTimingFunction: {
+              standard: 'var(--ease-standard)',
+            },
+            zIndex: { app: '0', panel: '20', menu: '30', modal: '40', toast: '50' },
+            maxWidth: {
                 'xs': 'var(--size-xs)',
-            },
-            zIndex: {
-                'app': 'var(--z-app)',
-                'panel': 'var(--z-panel)',
-                'menu': 'var(--z-menu)',
-                'modal': 'var(--z-modal)',
-                'toast': 'var(--z-toast)',
             },
             keyframes: {
               fadeIn: {
@@ -106,16 +80,36 @@
               },
             },
             animation: {
-              fadeIn: 'fadeIn var(--duration-slow) var(--ease-standard) forwards',
-              slideInUp: 'slideInUp var(--duration-slow) ease-out forwards',
+              fadeIn: 'fadeIn 300ms var(--ease-standard) forwards',
+              slideInUp: 'slideInUp 300ms ease-out forwards',
             }
           }
         }
       }
     </script>
     <style>
+      /* Neon border + glow */
+      .hud-border {
+        box-shadow:
+          inset 0 0 0 1px rgb(var(--accent-teal-rgb) / .5),
+          0 0 12px rgb(var(--accent-cyan-rgb) / .35);
+      }
+
+      /* Cyan scanline gradient (for panels) */
+      .hud-scanlines {
+        background-image:
+          linear-gradient(to bottom, transparent 0%, rgb(var(--accent-cyan-rgb) / .06) 50%, transparent 100%);
+        background-size: 100% 4px;
+      }
+
+      /* Acid-yellow focus ring helper if you need a class */
+      .focus-hud:focus-visible {
+        outline: none;
+        box-shadow: var(--ring-outline);
+      }
+
       body {
-        --text-shadow-val: 0 0 3px var(--color-primary);
+        --text-shadow-val: 0 0 3px rgb(var(--color-primary-rgb));
       }
       
       /* Apply text shadow and remove it on hover for better readability */
@@ -134,8 +128,8 @@
       }
 
       ::selection {
-        background-color: var(--color-primary);
-        color: var(--color-bg);
+        background-color: rgb(var(--color-primary-rgb));
+        color: rgb(var(--color-bg-rgb));
         text-shadow: none;
       }
       ::-webkit-scrollbar {
@@ -143,14 +137,14 @@
         height: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: var(--color-bg);
+        background: rgb(var(--color-bg-rgb));
       }
       ::-webkit-scrollbar-thumb {
-        background-color: var(--color-muted);
-        border: 2px solid var(--color-bg);
+        background-color: rgb(var(--color-muted-rgb));
+        border: 2px solid rgb(var(--color-bg-rgb));
       }
       ::-webkit-scrollbar-thumb:hover {
-        background-color: var(--color-primary);
+        background-color: rgb(var(--color-primary-rgb));
       }
        /* Disable number input spinners */
       input[type=number]::-webkit-inner-spin-button, 

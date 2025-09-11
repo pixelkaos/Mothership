@@ -14,10 +14,10 @@ export const StatInput: React.FC<{
     
     const fullTooltipContent = useMemo(() => {
         const baseRollInfo = (baseValue !== undefined && value !== baseValue && baseValue !== 0)
-            ? <p className="text-xs text-secondary mt-2 italic">The number in brackets is your base roll before class modifiers.</p>
+            ? <p className="text-xs text-secondary mt-space-2 italic">The number in brackets is your base roll before class modifiers.</p>
             : null;
 
-        const rollPrompt = onRollRequest ? <p className="text-xs text-primary mt-2 italic">Click anywhere on this component to open the dice roller.</p> : null;
+        const rollPrompt = onRollRequest ? <p className="text-xs text-primary mt-space-2 italic">Click anywhere on this component to open the dice roller.</p> : null;
 
         return (
             <>
@@ -28,7 +28,7 @@ export const StatInput: React.FC<{
         );
     }, [tooltipContent, baseValue, value, onRollRequest]);
 
-    const commonClasses = `w-12 h-8 bg-transparent border border-muted text-center text-2xl font-bold text-foreground mt-1 focus:ring-0 focus:outline-none focus:border-primary appearance-none transition-colors group-hover:border-primary`;
+    const commonClasses = `w-12 h-8 bg-transparent border border-muted text-center text-2xl font-bold text-foreground mt-space-1 focus:ring-0 focus:outline-none focus:border-primary appearance-none transition-colors group-hover:border-primary`;
 
     return (
         <div 
@@ -55,7 +55,7 @@ export const StatInput: React.FC<{
                     </svg>
                 )}
                  {baseValue !== undefined && value !== baseValue && baseValue !== 0 && (
-                    <span className={`absolute -bottom-3 left-1/2 -translate-x-1/2 text-xs mt-1 ${value > baseValue ? 'text-positive' : 'text-danger'}`}>
+                    <span className={`absolute -bottom-3 left-1/2 -translate-x-1/2 text-xs mt-space-1 ${value > baseValue ? 'text-positive' : 'text-danger'}`}>
                         ({baseValue})
                     </span>
                 )}

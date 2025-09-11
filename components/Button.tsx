@@ -1,7 +1,7 @@
 import React from 'react';
 import type { ComponentProps, ElementType, ReactNode } from 'react';
 
-const baseClasses = 'inline-flex items-center justify-center uppercase tracking-widest transition-colors focus:outline-none focus-visible:[box-shadow:var(--ring-outline)] disabled:cursor-not-allowed disabled:opacity-60 duration-200 ease-standard font-semibold rounded-md';
+const baseClasses = 'inline-flex items-center justify-center uppercase tracking-widest transition-colors focus:outline-none focus-visible:[box-shadow:var(--ring-outline)] disabled:cursor-not-allowed disabled:opacity-60 duration-200 ease-standard font-semibold rounded-radius-md';
 
 const variants = {
   primary: 'bg-primary text-background hover:opacity-90 active:opacity-80',

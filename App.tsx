@@ -50,7 +50,7 @@ const App: React.FC = () => {
                     onUpdate={setActiveShipManifest}
                 />
                 
-                <main className={`flex-grow ${view === 'home' ? '' : 'p-4 sm:p-6 md:p-8 mt-6'}`}>
+                <main className={`flex-grow ${view === 'home' ? '' : 'p-space-4 sm:p-space-6 md:p-space-8 mt-space-6'}`}>
                     {view === 'home' && <HomeView />}
                     {view === 'derelict' && <DerelictGeneratorView />}
                     {view === 'character' && <CharacterCreatorView />}
@@ -58,7 +58,7 @@ const App: React.FC = () => {
                     {view === 'shipyard' && <ShipyardView />}
                 </main>
                 
-                <footer className="text-center text-xs text-muted mt-8 p-4">
+                <footer className="text-center text-xs text-muted mt-space-8 p-space-4">
                     <p>Mothership Sci-Fi Horror RPG is a trademark of Tuesday Knight Games. This is an unofficial fan-made tool.</p>
                 </footer>
             </div>

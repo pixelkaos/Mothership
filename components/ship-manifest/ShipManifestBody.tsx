@@ -31,14 +31,14 @@ export const ShipManifestBody: React.FC<ShipManifestBodyProps> = ({ shipData, on
     }, [shipData, onUpdate]);
 
     return (
-        <div className="p-4 space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="p-space-4 space-y-space-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-space-4">
                 {/* Column 1 */}
-                <div className="space-y-4">
+                <div className="space-y-space-4">
                     <Panel title="Transponder & Identity">
-                        <div className="space-y-3">
+                        <div className="space-y-space-3">
                             <Field label="Transponder Status">
-                                <div className="grid grid-cols-2 gap-2">
+                                <div className="grid grid-cols-2 gap-space-2">
                                     <Button onClick={() => handleUpdate('transponderOn', true)} variant={shipData.transponderOn ? 'primary' : 'tertiary'} size="sm">ON</Button>
                                     <Button onClick={() => handleUpdate('transponderOn', false)} variant={!shipData.transponderOn ? 'primary' : 'tertiary'} size="sm">OFF</Button>
                                 </div>
@@ -49,7 +49,7 @@ export const ShipManifestBody: React.FC<ShipManifestBodyProps> = ({ shipData, on
                         </div>
                     </Panel>
                     <Panel title="Core Stats">
-                        <div className="flex justify-around py-2">
+                        <div className="flex justify-around py-space-2">
                             <StatInput id="thrusters" label="Thrusters" value={shipData.stats.thrusters} onChange={(e) => handleUpdate('stats.thrusters', parseInt(e.target.value))} tooltipContent="Governs ship speed and maneuverability." />
                             <StatInput id="battle" label="Battle" value={shipData.stats.battle} onChange={(e) => handleUpdate('stats.battle', parseInt(e.target.value))} tooltipContent="Determines combat effectiveness and weapons accuracy." />
                             <StatInput id="systems" label="Systems" value={shipData.stats.systems} onChange={(e) => handleUpdate('stats.systems', parseInt(e.target.value))} tooltipContent="Represents the power and efficiency of onboard electronics, scanners, and defenses." />
@@ -62,14 +62,14 @@ export const ShipManifestBody: React.FC<ShipManifestBodyProps> = ({ shipData, on
                 </div>
 
                 {/* Column 2 */}
-                <div className="space-y-4">
+                <div className="space-y-space-4">
                      <Panel title="Hull & Damage">
-                        <div className="space-y-4">
+                        <div className="space-y-space-4">
                              <SplitStatInput label="Hull Points" id="hull" currentValue={shipData.hullPoints} maxValue={2} onCurrentChange={(e) => handleUpdate('hullPoints', parseInt(e.target.value))} onMaxChange={() => {}} tooltipContent="Ship's structural integrity. Can be improved with upgrades." isMaxReadOnly/>
                              <StatInput label="Megadamage" id="megadamage" value={shipData.megadamageLevel} onChange={(e) => handleUpdate('megadamageLevel', parseInt(e.target.value))} tooltipContent="Catastrophic damage level. Each point corresponds to a severe system failure." />
-                            <div className="space-y-1 text-xs max-h-48 overflow-y-auto">
+                            <div className="space-y-space-1 text-xs max-h-48 overflow-y-auto">
                                 {MEGADAMAGE_EFFECTS.map((effect, index) => (
-                                    <div key={index} className={`flex gap-2 items-start p-1 rounded-sm ${shipData.megadamageLevel === index ? 'bg-danger text-background' : 'bg-black/20'}`}>
+                                    <div key={index} className={`flex gap-space-2 items-start p-space-1 rounded-sm ${shipData.megadamageLevel === index ? 'bg-danger text-background' : 'bg-black/20'}`}>
                                         <span className="font-bold w-6 text-center">{index}</span>
                                         <p className="flex-1">{effect}</p>
                                     </div>
@@ -78,7 +78,7 @@ export const ShipManifestBody: React.FC<ShipManifestBodyProps> = ({ shipData, on
                         </div>
                     </Panel>
                     <Panel title="Defenses & Payload">
-                        <div className="space-y-4">
+                        <div className="space-y-space-4">
                             <SplitStatInput label="Weapons" id="weapons" currentValue={shipData.weapons.base} maxValue={shipData.weapons.total} onCurrentChange={(e) => handleUpdate('weapons.base', parseInt(e.target.value))} onMaxChange={(e) => handleUpdate('weapons.total', parseInt(e.target.value))} tooltipContent="Base weapon power vs. total power including upgrades." />
                             <SplitStatInput label="Megadamage" id="megadamage" currentValue={shipData.megadamage.base} maxValue={shipData.megadamage.total} onCurrentChange={(e) => handleUpdate('megadamage.base', parseInt(e.target.value))} onMaxChange={(e) => handleUpdate('megadamage.total', parseInt(e.target.value))} tooltipContent="Base vs. total megadamage output." />
                             <SplitStatInput label="Hardpoints" id="hardpoints" currentValue={shipData.hardpoints.installed} maxValue={shipData.hardpoints.max} onCurrentChange={(e) => handleUpdate('hardpoints.installed', parseInt(e.target.value))} onMaxChange={(e) => handleUpdate('hardpoints.max', parseInt(e.target.value))} tooltipContent="Installed weapon/module hardpoints vs. ship's maximum." />
@@ -87,9 +87,9 @@ export const ShipManifestBody: React.FC<ShipManifestBodyProps> = ({ shipData, on
                 </div>
 
                 {/* Column 3 */}
-                <div className="space-y-4">
+                <div className="space-y-space-4">
                     <Panel title="Propulsion & Power">
-                        <div className="space-y-4">
+                        <div className="space-y-space-4">
                              <SplitStatInput label="Fuel" id="fuel" currentValue={shipData.fuel.current} maxValue={shipData.fuel.max} onCurrentChange={(e) => handleUpdate('fuel.current', parseInt(e.target.value))} onMaxChange={(e) => handleUpdate('fuel.max', parseInt(e.target.value))} tooltipContent="Current and maximum fuel units." />
                              <div className="flex justify-around">
                                 <StatInput label="Warp Cores" id="warpcores" value={shipData.warpCores} onChange={(e) => handleUpdate('warpCores', parseInt(e.target.value))} tooltipContent="Power source for Jump Drives." />
