@@ -12,10 +12,12 @@ The UI is built around a flexible system of dockable panels, allowing you to arr
 
 ### Built With
 
-*   **[React](https://reactjs.org/)**: For building the user interface.
-*   **[TypeScript](https://www.typescriptlang.org/)**: For robust, type-safe code.
-*   **[Tailwind CSS](https://tailwindcss.com/)**: For rapid, utility-first styling.
-*   **[Google Gemini API](https://ai.google.dev/)**: For generative AI features like atmospheric descriptions, character backstories, and portrait generation.
+- React 19 + TypeScript
+- Vite 6 (SWC React plugin)
+- Tailwind CSS (compiled via PostCSS)
+- Ollama (local LLM for story generation)
+- Google Gemini (image generation)
+- @randsum/roller (dice engine)
 
 ## Features
 
@@ -23,12 +25,12 @@ The Mothership RPG Companion is packed with features to help you get your next s
 
 *   **Derelict Generator & AI Gamemaster**:
     *   Instantly generate a complete derelict ship using the official random tables.
-    *   With a single click, use the Gemini API to weave the random data points into a cohesive, atmospheric, and spooky narrative description, providing instant adventure hooks.
+    *   With a single click, use a local Ollama model to weave the random data points into a cohesive, atmospheric, and spooky narrative description, providing instant adventure hooks.
 
 *   **Comprehensive Character Hangar**:
     *   A full-featured character creation and management suite with multiple creation paths:
         *   **Character Wizard**: A step-by-step guide to building a new character from scratch.
-        *   **Random Recruit Generator**: Create a complete, ready-to-play character in one click, including an AI-generated backstory and portrait.
+        *   **Random Recruit Generator**: Create a complete, ready-to-play character in one click, including an AI-generated backstory (Ollama) and portrait (Gemini).
         *   **Pre-Generated Characters**: Choose from a list of ready-made characters to jump right into the action.
         *   **Load/Save Functionality**: Export your character to a `.json` file and load them back in later.
 
@@ -48,23 +50,99 @@ The Mothership RPG Companion is packed with features to help you get your next s
 
 ## Getting Started
 
-To get a local copy up and running, follow these simple steps.
+Run the app locally with Vite.
 
 ### Prerequisites
 
-You will need a modern web browser and a Google Gemini API key.
+- Node.js 18+ (LTS recommended)
+- Ollama installed and running locally
+  - Start the server: `ollama serve`
+  - Pull the storytelling model: `ollama pull tohur/natsumura-storytelling-rp-llama-3.1`
+- Google Gemini API key (optional; required only for AI portrait generation)
 
-### Installation
+### Setup
 
-1.  Clone the repo:
-    ```sh
-    git clone https://github.com/your_username/your_repository.git
-    ```
-2.  Set up your API key. The application expects the Google Gemini API key to be available as an environment variable named `API_KEY`. You will need to create a mechanism to load it (e.g., using a `.env` file with a build tool like Vite, or by setting it in your deployment environment).
-    ```
-    API_KEY='YOUR_API_KEY'
-    ```
-3.  Open `index.html` in your browser. Since the project uses ES modules and an import map, it should run directly in modern browsers without a build step.
+1) Clone and install dependencies
+
+```bash
+git clone <this-repo-url>
+cd <repo>
+npm install
+```
+
+2) Configure environment variables (for AI features)
+
+Copy `.env.example` to `.env` and set your key:
+
+```bash
+cp .env.example .env
+# then edit .env.local (or .env) and set your keys
+# Google Gemini (images only)
+VITE_GEMINI_API_KEY=your_api_key_here
+
+# Optional: Ollama overrides (auto-detect usually works)
+# VITE_OLLAMA_BASE_URL=http://localhost:11434
+# VITE_OLLAMA_MODEL=tohur/natsumura-storytelling-rp-llama-3.1
+```
+
+Notes:
+- The key is used client-side via `import.meta.env.VITE_GEMINI_API_KEY` in `src/services/geminiService.ts`.
+- For production deployments, consider proxying Gemini requests server-side to avoid exposing the key in client bundles.
+
+3) Start the dev server
+
+```bash
+npm run dev
+```
+
+Build and preview:
+
+```bash
+npm run build
+npm run preview
+```
+
+Vite will serve `index.html`, which loads the app from `src/index.tsx`.
+
+Dev proxy for Ollama:
+- In development, requests to `/ollama` are proxied to `http://localhost:11434` (see `vite.config.ts`).
+- In production, set `VITE_OLLAMA_BASE_URL` or run your own reverse proxy to forward `/ollama` to your Ollama server (and enable CORS if needed).
+
+### Project Structure
+
+```
+src/
+  App.tsx
+  index.tsx
+  index.css                # Tailwind + tokens import
+  styles/
+    tokens.css             # Design tokens (CSS variables)
+  components/              # UI components (feature + ui subfolders)
+  context/                 # React Contexts (state containers)
+  hooks/                   # Reusable logic hooks
+  views/                   # Top-level routes/views
+  services/                # External API integrations (Gemini + Ollama client)
+  utils/                   # Pure utilities (dice, helpers, character gen)
+  data/                    # Data (e.g., shipData)
+  constants.ts             # Source of truth for rules/items/tables
+  constants/               # Domain-specific re-exports (rules, items, names, derelict)
+  types.ts                 # Shared TypeScript types
+tailwind.config.ts         # Tailwind configuration
+postcss.config.js          # Tailwind + Autoprefixer
+vite.config.ts             # Vite config (`@` alias → `src`)
+```
+
+### Path Aliases
+
+- Import from `@` to reference files under `src/` (configured in both `vite.config.ts` and `tsconfig.json`).
+
+Examples:
+
+```ts
+import { useDiceRoller } from '@/hooks/useDiceRoller';
+import { SHIP_DATA } from '@/data/shipData';
+import { TRINKETS } from '@/constants/items';
+```
 
 ## Roadmap
 
@@ -77,6 +155,28 @@ This project is actively being developed. Here are some features planned for the
 *   [ ] **Mobile-First Responsive Overhaul**: Further improvements to the experience on mobile devices.
 
 See the [open issues](https://github.com/your_username/your_repository/issues) for a full list of proposed features (and known issues).
+
+## Development Notes
+
+- Tailwind is compiled via PostCSS. Global tokens are imported at the top of `src/index.css`.
+- Dice Engine: The custom roller was replaced with `@randsum/roller` behind an adapter in `src/utils/dice.ts`.
+  - API: `parseAndRoll(formula, { zeroBased? })` and `rollDice(formula, { zeroBased? })`.
+  - Percentile rolls and table lookups use 0-based d100 (0–99) for Mothership compatibility.
+  - Counts like salvage, damage, and credits are now 1-based. This also fixes `1d1` always yielding 0; it now yields 1.
+  - If you want legacy ranges for stats/saves/credits, call with `{ zeroBased: true }` at those sites.
+- Story Generation: Gemini text endpoints were replaced with a local Ollama model for narratives (derelicts and character backstories).
+  - Model defaults to `tohur/natsumura-storytelling-rp-llama-3.1`.
+  - The app auto-detects an Ollama base URL among: `VITE_OLLAMA_BASE_URL`, `/ollama` (dev proxy), `http://localhost:11434`, `http://127.0.0.1:11434`.
+  - A status badge in the header shows connectivity and model presence; see `src/components/OllamaStatusBadge.tsx`.
+  - Tools → “Test Story AI” performs a quick end-to-end prompt to verify output.
+- Portrait Generation: Still uses Gemini image API (requires `VITE_GEMINI_API_KEY`).
+- The app uses multiple dockable panels (`src/context/PanelsContext.tsx`) that persist position/minimized state in `localStorage`.
+
+## Scripts
+
+- `npm run dev` — Start Vite dev server
+- `npm run build` — Production build
+- `npm run preview` — Preview the production build
 
 ## Contributing
 

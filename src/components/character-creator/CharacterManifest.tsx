@@ -1,0 +1,598 @@
+
+
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import type { Character, CharacterClass, CharacterSaveData, ClassName, SkillDefinition, Stat, ShopItem } from '@/types';
+import { ALL_SKILLS, CLASSES_DATA } from '@/constants/rules';
+import { TRINKETS, PATCHES, SHOP_ITEMS } from '@/constants/items';
+import { PRONOUNS } from '@/constants/names';
+import { set } from '@/utils/helpers';
+import { SkillSelector } from '@/components/SkillSelector';
+import { useTooltip } from '@/components/Tooltip';
+import { CharacterRoller } from '@/components/CharacterRoller';
+import { generateCharacterPortrait, generateCharacterBackstory } from '@/services/geminiService';
+import { Button } from '@/components/Button';
+import { Panel } from '@/components/ui/Panel';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import { Field } from '@/components/ui/Field';
+import { StatInput } from '@/components/ui/StatInput';
+import { SplitStatInput } from '@/components/ui/SplitStatInput';
+
+
+const STAT_DESCRIPTIONS: { [key: string]: React.ReactNode } = {
+    'Strength': "Represents physical power, lifting capacity, and melee damage. Crucial for Body Saves and physically demanding tasks.",
+    'Speed': "Determines agility, reaction time, and movement. Important for avoiding hazards, acting quickly, and piloting.",
+    'Intellect': "Measures problem-solving, technical skills, and knowledge. Key for tasks involving computers, science, and resisting mental strain (Sanity Saves).",
+    'Combat': "Governs accuracy and effectiveness with ranged weaponry and military tactics. A high Combat stat makes you a deadly shot.",
+    'Sanity': "Your ability to rationalize and withstand psychological horrors. When this save fails, you gain Stress. Governs resistance to mental trauma.",
+    'Fear': "Your courage and ability to act under pressure. When this save fails, you gain Stress. A low Fear Save makes you more likely to Panic.",
+    'Body': "Represents physical resilience and endurance. Governs resistance to pain, poison, disease, and physical trauma.",
+    'Health': "Your physical well-being. When this reaches zero, you take a Wound. Wounds are serious injuries that can kill you.",
+    'Wounds': "The number of critical injuries you can sustain before dying. All characters start with a base of 2.",
+    'Stress': "Your accumulated anxiety and terror. The higher your Stress, the more likely you are to Panic when things go wrong."
+};
+
+interface CharacterManifestProps {
+  characterData: CharacterSaveData | null;
+  onCharacterUpdate: (character: CharacterSaveData | null) => void;
+  onOpenSheet: () => void;
+}
+
+const FormattedBackstory: React.FC<{ text: string }> = ({ text }) => {
+    const parts = text.split('\n').map((line, index) => {
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('### ')) {
+            return <h3 key={index} className="text-xl font-semibold text-secondary tracking-wide uppercase mt-4 mb-2">{trimmedLine.substring(4)}</h3>;
+        }
+        if (trimmedLine.startsWith('* ')) {
+            const content = trimmedLine.substring(2);
+            const styledContent = content.replace(/\*\*(.*?):\*\*/g, '<strong class="text-primary font-bold">$1:</strong>');
+            return <li key={index} className="ml-4 list-disc" dangerouslySetInnerHTML={{ __html: styledContent }} />;
+        }
+        if (trimmedLine) {
+            return <p key={index} className="mt-2">{trimmedLine}</p>;
+        }
+        return null;
+    });
+
+    const groupedParts: React.ReactNode[] = [];
+    let currentList: React.ReactNode[] = [];
+
+    parts.forEach((part, index) => {
+        if (part && part.type === 'li') {
+            currentList.push(part);
+        } else {
+            if (currentList.length > 0) {
+                groupedParts.push(<ul key={`ul-${index}`} className="space-y-1">{currentList}</ul>);
+                currentList = [];
+            }
+            if (part) {
+                groupedParts.push(part);
+            }
+        }
+    });
+
+    if (currentList.length > 0) {
+        groupedParts.push(<ul key="ul-end" className="space-y-1">{currentList}</ul>);
+    }
+
+    return <div>{groupedParts}</div>;
+};
+
+const ShopAndInventory: React.FC<{
+    characterData: CharacterSaveData;
+    onCharacterUpdate: (newSaveData: CharacterSaveData) => void;
+}> = ({ characterData, onCharacterUpdate }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const { showTooltip, hideTooltip } = useTooltip();
+    const { character } = characterData;
+
+    const handleBuyItem = (item: ShopItem) => {
+        const price = parseInt(item.price.replace(/,/g, '').replace('cr', '').replace('kcr', '000'));
+        if (character.credits >= price) {
+            const newSaveData = JSON.parse(JSON.stringify(characterData));
+            newSaveData.character.credits -= price;
+            newSaveData.character.equipment.inventory.push(item.name);
+            onCharacterUpdate(newSaveData);
+        }
+    };
+
+    const handleDropItem = (itemIndex: number) => {
+        const newSaveData = JSON.parse(JSON.stringify(characterData));
+        newSaveData.character.equipment.inventory.splice(itemIndex, 1);
+        onCharacterUpdate(newSaveData);
+    };
+
+    if (!isOpen) {
+        return (
+            <Panel title="Shop & Inventory" actions={<span className="text-xs text-muted">[Click to Open]</span>} className="cursor-pointer" >
+                <div onClick={() => setIsOpen(true)} className="h-0"></div>
+            </Panel>
+        );
+    }
+    
+    return (
+        <Panel title="Shop & Inventory" actions={<span className="text-xs text-muted">[Click to Close]</span>} className="cursor-pointer">
+            <div onClick={() => setIsOpen(false)} className="absolute inset-0 top-12"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Inventory */}
+                <div>
+                    <h4 className="text-xl font-semibold text-secondary mb-2">Inventory</h4>
+                    <div className="bg-black/30 p-2 min-h-[200px] max-h-96 overflow-y-auto">
+                        {character.equipment.inventory.length > 0 ? (
+                            <ul className="space-y-1">
+                                {character.equipment.inventory.map((itemName, index) => (
+                                    <li key={`${itemName}-${index}`} className="flex justify-between items-center bg-black/50 p-2 text-sm">
+                                        <span>{itemName}</span>
+                                        <Button variant="ghost" size="sm" onClick={() => handleDropItem(index)} className="text-danger/80 hover:text-danger">[Drop]</Button>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-muted text-center italic p-4">Inventory is empty.</p>
+                        )}
+                    </div>
+                </div>
+
+                {/* Shop */}
+                <div>
+                    <h4 className="text-xl font-semibold text-secondary mb-2">Purchase Gear</h4>
+                     <div className="bg-black/30 p-2 min-h-[200px] max-h-96 overflow-y-auto">
+                        <ul className="space-y-1">
+                            {SHOP_ITEMS.map(item => {
+                                const price = parseInt(item.price.replace(/,/g, '').replace('cr', '').replace('kcr', '000').replace(/ ea\./, ''));
+                                const canAfford = character.credits >= price;
+                                return (
+                                <li key={item.name} className="flex justify-between items-center bg-black/50 p-2 text-sm"
+                                     onMouseEnter={(e) => showTooltip(
+                                        <div>
+                                            <h5 className="font-bold text-secondary">{item.name}</h5>
+                                            <p className="text-foreground">{item.description}</p>
+                                        </div>, e
+                                    )}
+                                    onMouseLeave={hideTooltip}
+                                >
+                                    <span className="flex-1">{item.name}</span>
+                                    <span className="text-primary/80 font-mono w-20 text-right">{item.price}</span>
+                                    <Button 
+                                        variant="tertiary"
+                                        size="sm"
+                                        onClick={() => handleBuyItem(item)}
+                                        disabled={!canAfford}
+                                        className="ml-4"
+                                    >Buy</Button>
+                                </li>
+                            )})}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </Panel>
+    );
+};
+
+
+export const CharacterManifest: React.FC<CharacterManifestProps> = ({ characterData, onCharacterUpdate, onOpenSheet }) => {
+    if (!characterData) {
+        return <div>Error: No character data provided to manifest.</div>;
+    }
+    
+    const { character: char, baseStats, baseSaves, androidPenalty, scientistBonus, scientistMasterSkill } = characterData;
+
+    const [isCustomPronoun, setIsCustomPronoun] = useState(false);
+    const [isGeneratingPortrait, setIsGeneratingPortrait] = useState(false);
+    const [isEditingBackstory, setIsEditingBackstory] = useState(false);
+
+    const { showTooltip, hideTooltip } = useTooltip();
+
+    const [rollerState, setRollerState] = useState({
+        isVisible: false,
+        isMinimized: false,
+        position: { x: window.innerWidth - 420, y: 100 },
+        activeCheck: null as { type: 'stat' | 'save' | 'wound' | 'panic' | 'creation', name: string } | null,
+    });
+    const lastPositionRef = useRef(rollerState.position);
+
+    const handleRollerStateChange = useCallback((newState: Partial<typeof rollerState>) => {
+        setRollerState(prev => {
+            const updatedState = { ...prev, ...newState };
+            if (newState.position) lastPositionRef.current = newState.position;
+            if (newState.isVisible === false) {
+                lastPositionRef.current = prev.position;
+                updatedState.activeCheck = null; 
+            }
+            return updatedState;
+        });
+    }, []);
+
+    const handleRollRequest = useCallback((type: 'stat' | 'save' | 'wound' | 'panic' | 'creation', name: string) => {
+        setRollerState(prev => ({
+            ...prev,
+            isVisible: true,
+            isMinimized: false,
+            position: lastPositionRef.current,
+            activeCheck: { type, name },
+        }));
+    }, []);
+
+    const { finalStats, finalSaves, finalMaxWounds } = useMemo(() => {
+        const classData = char.class;
+        let stats = { ...baseStats };
+        let saves = { ...baseSaves };
+        let maxWounds = 2;
+
+        if (classData) {
+            maxWounds += classData.max_wounds_mod;
+
+            for (const [stat, mod] of Object.entries(classData.stats_mods)) {
+                stats[stat as keyof typeof stats] += mod;
+            }
+            for (const [save, mod] of Object.entries(classData.saves_mods)) {
+                saves[save as keyof typeof saves] += mod;
+            }
+            if (classData.name === 'Android' && androidPenalty) stats[androidPenalty] -= 10;
+            if (classData.name === 'Scientist' && scientistBonus) stats[scientistBonus] += 5;
+        }
+        return { finalStats: stats, finalSaves: saves, finalMaxWounds: maxWounds };
+    }, [char.class, baseStats, baseSaves, androidPenalty, scientistBonus]);
+
+    const finalCharacter = useMemo<Character>(() => ({
+        ...char,
+        stats: finalStats,
+        saves: finalSaves,
+        wounds: { ...char.wounds, max: finalMaxWounds },
+    }), [char, finalStats, finalSaves, finalMaxWounds]);
+
+    useEffect(() => {
+        // This effect synchronizes the calculated character stats back to the main app state.
+        // It's crucial for ensuring components like the FloatingCharacterSheet get the correct,
+        // fully calculated values. A simple check prevents unnecessary re-renders/loops.
+        if (
+            characterData.character.stats.strength !== finalStats.strength ||
+            characterData.character.saves.sanity !== finalSaves.sanity ||
+            characterData.character.wounds.max !== finalMaxWounds
+        ) {
+            onCharacterUpdate({
+                ...characterData,
+                character: {
+                    ...characterData.character,
+                    stats: finalStats,
+                    saves: finalSaves,
+                    wounds: { ...characterData.character.wounds, max: finalMaxWounds },
+                }
+            });
+        }
+    }, [finalStats, finalSaves, finalMaxWounds, characterData, onCharacterUpdate]);
+
+    useEffect(() => {
+        if (char.pronouns && !PRONOUNS.includes(char.pronouns)) {
+            setIsCustomPronoun(true);
+        } else {
+            setIsCustomPronoun(false);
+        }
+    }, [char.pronouns]);
+
+
+    const handleRollerUpdate = useCallback((updatedCharacter: Character) => {
+        onCharacterUpdate({
+            ...characterData,
+            character: updatedCharacter,
+        });
+    }, [characterData, onCharacterUpdate]);
+
+    const handleFieldChange = useCallback((path: string, value: string) => {
+        const numValue = parseInt(value, 10) || 0;
+        const newSaveData = JSON.parse(JSON.stringify(characterData));
+        const [statType, statName] = path.split('.');
+
+        if (statType === 'stats') newSaveData.baseStats[statName] = numValue;
+        else if (statType === 'saves') newSaveData.baseSaves[statName] = numValue;
+        else {
+            set(newSaveData.character, path, numValue);
+            if (path === 'health.max') {
+                if (newSaveData.character.health.current > numValue || newSaveData.character.health.current === 0) {
+                    set(newSaveData.character, 'health.current', numValue);
+                }
+            }
+        }
+        onCharacterUpdate(newSaveData);
+    }, [characterData, onCharacterUpdate]);
+    
+    const handleApplyRoll = useCallback((path: string, value: number) => {
+        handleFieldChange(path, String(value));
+        setRollerState(prev => ({ ...prev, activeCheck: null }));
+    }, [handleFieldChange]);
+
+    const handleSkillsChange = useCallback((newSkills: Character['skills']) => {
+        onCharacterUpdate({
+            ...characterData,
+            character: { ...characterData.character, skills: newSkills },
+        });
+    }, [characterData, onCharacterUpdate]);
+
+    const handleScientistMasterSkillChange = useCallback((skillName: string | null) => {
+        onCharacterUpdate({
+            ...characterData,
+            scientistMasterSkill: skillName
+        })
+    }, [characterData, onCharacterUpdate]);
+
+    const handleSelectClass = useCallback((className: ClassName) => {
+        const classData = CLASSES_DATA.find(c => c.name === className)!;
+        const isDeselecting = characterData.character.class?.name === className;
+
+        const currentNotes = characterData.character.notes || '';
+        const traumaRegex = /^Trauma Response: .*\n*(\r\n)*/;
+        const userNotes = currentNotes.replace(traumaRegex, '').trim();
+
+        let newNotes = userNotes;
+        if (!isDeselecting) {
+            const traumaNote = `Trauma Response: ${classData.trauma_response}`;
+            newNotes = userNotes ? `${traumaNote}\n\n${userNotes}` : traumaNote;
+        }
+
+        const newSkills = isDeselecting ? { trained: [], expert: [], master: [] }
+            : (classData.starting_skills ? { trained: [...classData.starting_skills], expert: [], master: [] } : { trained: [], expert: [], master: [] });
+
+        const newSaveData: CharacterSaveData = {
+            ...characterData,
+            androidPenalty: isDeselecting ? null : (className === 'Android' ? characterData.androidPenalty : null),
+            scientistBonus: isDeselecting ? null : (className === 'Scientist' ? characterData.scientistBonus : null),
+            scientistMasterSkill: isDeselecting ? null : (className === 'Scientist' ? characterData.scientistMasterSkill : null),
+            character: {
+                ...characterData.character,
+                class: isDeselecting ? null : classData,
+                skills: newSkills,
+                notes: newNotes,
+            }
+        };
+
+        onCharacterUpdate(newSaveData);
+    }, [characterData, onCharacterUpdate]);
+
+    const handleGeneratePortrait = useCallback(async () => {
+        if (!finalCharacter.class) {
+            alert("Please select a class before generating a portrait.");
+            return;
+        }
+        setIsGeneratingPortrait(true);
+        try {
+            let prompt = `A vibrant cyberpunk illustration in a comic book anime style of a Mothership RPG character. A ${finalCharacter.class.name}.`;
+            if (finalCharacter.pronouns) prompt += ` Pronouns: ${finalCharacter.pronouns}.`;
+            const topSkills = [...finalCharacter.skills.master, ...finalCharacter.skills.expert, ...finalCharacter.skills.trained].slice(0, 3);
+            if (topSkills.length > 0) prompt += ` Key Skills: ${topSkills.join(', ')}.`;
+            if (finalCharacter.equipment.trinket) prompt += ` They are holding a ${finalCharacter.equipment.trinket}.`;
+            prompt += ` Art Style: Bold colors, defined line art, high contrast, dramatic neon lighting. Bust shot.`;
+            const imageUrl = await generateCharacterPortrait(prompt);
+            onCharacterUpdate({
+                ...characterData,
+                character: { ...char, portrait: imageUrl },
+            });
+        } catch (error) {
+            console.error(error);
+            alert("Failed to generate portrait. Please try again.");
+        } finally {
+            setIsGeneratingPortrait(false);
+        }
+    }, [finalCharacter, characterData, onCharacterUpdate, char]);
+
+    const handleUploadPortrait = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) {
+            alert('File is too large. Please upload an image under 2MB.');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const result = e.target?.result;
+            if (typeof result === 'string') {
+                 onCharacterUpdate({
+                    ...characterData,
+                    character: { ...char, portrait: result },
+                });
+            } else {
+                alert('Failed to read the image file.');
+            }
+        };
+        reader.onerror = () => alert('Error reading file.');
+        reader.readAsDataURL(file);
+        if (event.target) event.target.value = '';
+    }, [characterData, onCharacterUpdate, char]);
+
+    const handleSaveCharacter = useCallback(() => {
+        const saveData: CharacterSaveData = { ...characterData, character: finalCharacter };
+        const jsonString = JSON.stringify(saveData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const fileName = finalCharacter.name.replace(/ /g, '_') || 'mothership_character';
+        a.href = url;
+        a.download = `${fileName}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, [finalCharacter, characterData]);
+    
+    return (
+        <div>
+            <div className="border border-primary/50 p-6 bg-black/30 space-y-6 max-w-4xl mx-auto">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <h2 className="text-3xl font-bold leading-tight text-primary uppercase tracking-wider">
+                        <span className="block">Character</span>
+                        <span className="block">Manifest</span>
+                    </h2>
+                    <div className="flex flex-col items-stretch gap-2 w-full sm:w-auto sm:min-w-[280px]">
+                         <Button onClick={() => onCharacterUpdate(null)}>
+                            Back to Hangar
+                        </Button>
+                        <Button variant="tertiary" onClick={onOpenSheet}>
+                            Open In-Game Sheet
+                        </Button>
+                        <Button variant="secondary" size="sm" onClick={handleSaveCharacter}>
+                            Export Character
+                        </Button>
+                    </div>
+                </div>
+                
+                <div className="border border-primary/30 p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="md:col-span-1 space-y-2">
+                        <div className="aspect-square w-full bg-black/50 border border-muted flex items-center justify-center relative overflow-hidden">
+                            {char.portrait ? <img src={char.portrait} alt="Character Portrait" className="w-full h-full object-cover" /> : (
+                                <div className="text-center text-muted p-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg>
+                                    <p className="text-xs mt-2">Profile Picture</p>
+                                </div>
+                            )}
+                             {isGeneratingPortrait && (
+                                <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center text-center p-4">
+                                    <svg className="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    <p className="mt-2 text-primary/80 animate-pulse text-xs">RENDERING PORTRAIT...</p>
+                                </div>
+                            )}
+                        </div>
+                         <Button variant="secondary" size="sm" onClick={handleGeneratePortrait} disabled={isGeneratingPortrait || !char.class} className="w-full">
+                            {isGeneratingPortrait ? 'Generating...' : 'Generate Picture'}
+                         </Button>
+                         <Button as="label" variant="tertiary" size="sm" className="w-full cursor-pointer">
+                            Upload Picture
+                            <input type="file" accept="image/png, image/jpeg, image/webp" className="hidden" onChange={handleUploadPortrait} />
+                        </Button>
+                    </div>
+                    <div className="md:col-span-2 flex flex-col gap-4">
+                        <Field label="Name">
+                            <Input type="text" placeholder="Name" onChange={e => onCharacterUpdate({...characterData, character: {...char, name: e.target.value}})} value={char.name} />
+                        </Field>
+                        <Field label="Pronouns">
+                            <div className="flex gap-2">
+                                <select className={`bg-black/50 border border-muted p-2 focus:ring-0 focus:outline-none focus:border-primary transition-all duration-200 ${isCustomPronoun ? 'w-1/2' : 'w-full'}`} value={isCustomPronoun ? 'custom' : char.pronouns} onChange={(e) => { e.target.value === 'custom' ? (setIsCustomPronoun(true), onCharacterUpdate({...characterData, character: {...char, pronouns: ''}})) : (setIsCustomPronoun(false), onCharacterUpdate({...characterData, character: {...char, pronouns: e.target.value}})) }}>
+                                    <option value="" disabled>Select Pronouns</option>
+                                    {PRONOUNS.map(p => <option key={p} value={p}>{p}</option>)}
+                                    <option value="custom">Custom...</option>
+                                </select>
+                                {isCustomPronoun && <Input type="text" placeholder="Enter pronouns" className="w-1/2" value={char.pronouns} onChange={e => onCharacterUpdate({...characterData, character: {...char, pronouns: e.target.value}})} aria-label="Custom pronouns" />}
+                            </div>
+                        </Field>
+                        <Field label="Backstory">
+                            <div className="flex-grow bg-black/50 border border-muted p-2 focus-within:border-primary min-h-[100px] resize-y overflow-auto relative transition-colors">
+                                {char.backstory && !isEditingBackstory ? (
+                                    <>
+                                        <FormattedBackstory text={char.backstory} />
+                                        <Button variant="ghost" size="sm" onClick={() => setIsEditingBackstory(true)} className="absolute top-1 right-1" aria-label="Edit backstory">Edit</Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Textarea placeholder="Character Story" className="w-full h-full bg-transparent border-none focus:ring-0 focus:outline-none resize-none" onChange={e => onCharacterUpdate({...characterData, character: {...char, backstory: e.target.value}})} value={char.backstory} />
+                                        {isEditingBackstory && <Button size="sm" onClick={() => setIsEditingBackstory(false)} className="absolute top-1 right-1" aria-label="Save backstory">Save</Button>}
+                                    </>
+                                )}
+                            </div>
+                        </Field>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Panel title="Stats">
+                        <div className="flex justify-around">
+                            <StatInput id="stats.strength" label="Strength" value={finalCharacter.stats.strength} baseValue={baseStats.strength} onChange={(e) => handleFieldChange('stats.strength', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Strength']} onRollRequest={() => handleRollRequest('stat', 'strength')} />
+                            <StatInput id="stats.speed" label="Speed" value={finalCharacter.stats.speed} baseValue={baseStats.speed} onChange={(e) => handleFieldChange('stats.speed', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Speed']} onRollRequest={() => handleRollRequest('stat', 'speed')} />
+                            <StatInput id="stats.intellect" label="Intellect" value={finalCharacter.stats.intellect} baseValue={baseStats.intellect} onChange={(e) => handleFieldChange('stats.intellect', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Intellect']} onRollRequest={() => handleRollRequest('stat', 'intellect')} />
+                            <StatInput id="stats.combat" label="Combat" value={finalCharacter.stats.combat} baseValue={baseStats.combat} onChange={(e) => handleFieldChange('stats.combat', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Combat']} onRollRequest={() => handleRollRequest('stat', 'combat')} />
+                        </div>
+                    </Panel>
+                     <Panel title="Saves">
+                        <div className="flex justify-around">
+                            <StatInput id="saves.sanity" label="Sanity" value={finalCharacter.saves.sanity} baseValue={baseSaves.sanity} onChange={(e) => handleFieldChange('saves.sanity', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Sanity']} onRollRequest={() => handleRollRequest('save', 'sanity')} />
+                            <StatInput id="saves.fear" label="Fear" value={finalCharacter.saves.fear} baseValue={baseSaves.fear} onChange={(e) => handleFieldChange('saves.fear', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Fear']} onRollRequest={() => handleRollRequest('save', 'fear')} />
+                            <StatInput id="saves.body" label="Body" value={finalCharacter.saves.body} baseValue={baseSaves.body} onChange={(e) => handleFieldChange('saves.body', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Body']} onRollRequest={() => handleRollRequest('save', 'body')} />
+                        </div>
+                    </Panel>
+                </div>
+                
+                {char.class?.flexible_stats_mod && (
+                    <Panel title={char.class.name === 'Android' ? 'Android Penalty (-10)' : 'Scientist Bonus (+5)'}>
+                        <p className="text-xs text-muted mb-3 text-center">
+                            {char.class.name === 'Android' 
+                                ? 'Androids have a specific operational flaw. Choose one stat to reduce by 10.'
+                                : 'Scientists have a particular field of expertise. Choose one stat to improve by 5.'
+                            }
+                        </p>
+                        <div className="flex gap-4">
+                            {(['strength', 'speed', 'intellect', 'combat'] as const).map(stat => {
+                                const isAndroid = char.class?.name === 'Android';
+                                const isSelected = isAndroid ? androidPenalty === stat : scientistBonus === stat;
+                                const path = isAndroid ? 'androidPenalty' : 'scientistBonus';
+                                return (
+                                    <Button 
+                                        key={stat}
+                                        variant="tertiary"
+                                        size="sm"
+                                        onClick={() => onCharacterUpdate({ ...characterData, [path]: stat })}
+                                        className={`flex-1 ${isSelected ? 'bg-tertiary text-background' : ''}`}
+                                    >
+                                        {stat}
+                                    </Button>
+                                );
+                            })}
+                        </div>
+                    </Panel>
+                )}
+                
+                <Panel title="Select Your Class">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {CLASSES_DATA.map(classData => {
+                            const isSelected = char.class?.name === classData.name;
+                            return (
+                                <Button 
+                                    key={classData.name} 
+                                    variant="tertiary"
+                                    size="sm"
+                                    onClick={() => handleSelectClass(classData.name as ClassName)} 
+                                    className={`p-4 h-full text-left normal-case items-start ${isSelected ? 'bg-tertiary text-background' : ''}`}
+                                >
+                                    <div>
+                                        <h4 className="font-bold text-lg uppercase text-secondary">{classData.name}</h4>
+                                        <p className="text-xs text-muted mt-2">{classData.description}</p>
+                                    </div>
+                                </Button>
+                            );
+                        })}
+                    </div>
+                </Panel>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <Panel title="Vitals">
+                         <div className="flex justify-around items-center">
+                            <SplitStatInput label="Health" id="health" currentValue={char.health.current} maxValue={char.health.max} onCurrentChange={(e) => handleFieldChange('health.current', e.target.value)} onMaxChange={(e) => handleFieldChange('health.max', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Health']} onRollRequestCurrent={() => handleRollRequest('save', 'body')} onRollRequestMax={() => handleRollRequest('creation', 'health.max')} />
+                         </div>
+                    </Panel>
+                    <Panel title="Condition">
+                         <div className="flex justify-around items-center gap-4">
+                            <SplitStatInput label="Wounds" id="wounds" currentValue={char.wounds.current} maxValue={finalCharacter.wounds.max} onCurrentChange={(e) => handleFieldChange('wounds.current', e.target.value)} onMaxChange={() => {}} tooltipContent={STAT_DESCRIPTIONS['Wounds']} isMaxReadOnly={true} onRollRequestCurrent={() => handleRollRequest('wound', 'wound')} />
+                            <StatInput id="stress.current" label="Stress" value={char.stress.current} onChange={(e) => handleFieldChange('stress.current', e.target.value)} tooltipContent={STAT_DESCRIPTIONS['Stress']} onRollRequest={() => handleRollRequest('panic', 'panic')} />
+                         </div>
+                    </Panel>
+                </div>
+                
+                <Panel title="Skills">
+                    {char.class ? <SkillSelector characterClass={char.class} selectedSkills={char.skills} onSkillsChange={handleSkillsChange} scientistMasterSkill={scientistMasterSkill} onScientistMasterSkillChange={handleScientistMasterSkillChange} /> : <p className="text-xs text-muted">Select a class to see available skills.</p>}
+                </Panel>
+
+                <Panel title="Equipment">
+                    <div className="space-y-2 text-sm">
+                        <p><strong className="text-primary/80">Loadout:</strong> {char.equipment.loadout || '...'}</p>
+                        <p><strong className="text-primary/80">Trinket:</strong> {char.equipment.trinket || '...'}</p>
+                        <p><strong className="text-primary/80">Patch:</strong> {char.equipment.patch || '...'}</p>
+                         <Field label="Credits">
+                            <Input type="number" className="w-24" value={char.credits || ''} onChange={e => handleFieldChange('credits', e.target.value)} placeholder="0" />
+                        </Field>
+                    </div>
+                </Panel>
+                <ShopAndInventory characterData={characterData} onCharacterUpdate={onCharacterUpdate} />
+            </div>
+             
+            <CharacterRoller character={finalCharacter} onUpdate={handleRollerUpdate} isVisible={rollerState.isVisible} isMinimized={rollerState.isMinimized} initialPosition={rollerState.position} onStateChange={handleRollerStateChange} activeCheck={rollerState.activeCheck} onApplyRoll={handleApplyRoll} />
+        </div>
+    );
+};
