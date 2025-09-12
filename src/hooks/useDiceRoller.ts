@@ -65,7 +65,15 @@ export const useDiceRoller = ({ characterData, activeCheck, onCharacterUpdate }:
         clearActiveDiceCheck();
     }, [clearActiveDiceCheck]);
 
-    const addToHistory = useCallback((entry: Omit<HistoryEntry, 'timestamp'>) => {
+    // Explicit percentile roll: two d10 (tens and ones), zero-based 0-9 each
+    const rollPercentile = useCallback((): RollResult => {
+        const tens = parseAndRoll('1d10', { zeroBased: true });
+        const ones = parseAndRoll('1d10', { zeroBased: true });
+        const total = tens.total * 10 + ones.total;
+        return { total, rolls: [tens.total, ones.total], modifier: 0, formula: '2d10' };
+    }, []);
+
+    const addToHistory = useCallback((entry: Omit<HistoryEntry, 'timestamp'>, appliedSkills: string[] = []) => {
         const newEntry = { ...entry, timestamp: Date.now() };
         setHistory(prev => [newEntry, ...prev].slice(0, 10));
         setResult(newEntry);
@@ -78,6 +86,16 @@ export const useDiceRoller = ({ characterData, activeCheck, onCharacterUpdate }:
         // Gain stress on any check/save failure
         if (entry.success === false && (entry.name.includes('Save') || entry.name.includes('Check'))) {
             newChar.stress.current = Math.min(20, newChar.stress.current + 1);
+            needsUpdate = true;
+        }
+
+        // Skill advancement: on successful checks, increment progress marks for skills used
+        if (entry.success === true && appliedSkills.length > 0) {
+            if (!newChar.skillProgress) newChar.skillProgress = {};
+            for (const s of appliedSkills) {
+                const current = newChar.skillProgress[s] ?? 0;
+                newChar.skillProgress[s] = Math.min(3, current + 1);
+            }
             needsUpdate = true;
         }
 
@@ -102,19 +120,15 @@ export const useDiceRoller = ({ characterData, activeCheck, onCharacterUpdate }:
         const skillBonus = selectedSkills.reduce((acc, skillName) => acc + getSkillBonus(skillName, character), 0);
         const finalTarget = targetValue + skillBonus;
         
-        let roll1 = parseAndRoll('1d100', { zeroBased: true });
+        let roll1 = rollPercentile();
         let finalRoll = roll1;
 
         if (advantage !== 'none') {
-            let roll2 = parseAndRoll('1d100', { zeroBased: true });
-            
-            const originalRolls = { roll1: finalRoll, roll2 };
-            if (advantage === 'adv') {
-                finalRoll = finalRoll.total < roll2.total ? originalRolls.roll1 : originalRolls.roll2;
-            } else { // disadv
-                finalRoll = finalRoll.total > roll2.total ? originalRolls.roll1 : originalRolls.roll2;
-            }
-            finalRoll.formula = `2d100 (${advantage})`;
+            const roll2 = rollPercentile();
+            const chosen = advantage === 'adv'
+                ? (roll1.total < roll2.total ? roll1 : roll2)
+                : (roll1.total > roll2.total ? roll1 : roll2);
+            finalRoll = { ...chosen, formula: `2d10 (${advantage})` };
         }
 
         const tens = Math.floor(finalRoll.total / 10);
@@ -136,7 +150,7 @@ export const useDiceRoller = ({ characterData, activeCheck, onCharacterUpdate }:
             success: isSuccess,
             target: finalTarget,
             isCritical: isCritical,
-        });
+        }, selectedSkills);
 
         resetCheckState();
         setScreen('main');

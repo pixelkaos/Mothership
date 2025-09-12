@@ -42,9 +42,18 @@ export const Button = <E extends ElementType = typeof defaultElement>({
   isActive,
   ...rest
 }: ButtonProps<E>) => {
-  const Component = as || defaultElement;
+  // Ensure JSX can instantiate the polymorphic element
+  const Component = (as || defaultElement) as ElementType;
 
-  const activeClasses = (variant === 'nav' || variant === 'tab') && isActive ? 'bg-secondary text-background' : '';
+  let activeClasses = '';
+  if (isActive) {
+    if (variant === 'nav') {
+      activeClasses = 'bg-secondary text-background';
+    } else if (variant === 'tab') {
+      // Highlight active tab with primary color and stronger border
+      activeClasses = 'border-primary text-primary bg-black/40';
+    }
+  }
 
   const combinedClasses = [
     baseClasses,

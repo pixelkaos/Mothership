@@ -3,6 +3,7 @@ import type { ShipManifestData } from '@/types';
 import { set } from '@/utils/helpers';
 import { DeckplanEditor } from '@/components/DeckplanEditor';
 import { Panel } from '@/components/ui/Panel';
+import { Tabs } from '@/components/ui/Tabs';
 import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
@@ -32,8 +33,15 @@ export const ShipManifestBody: React.FC<ShipManifestBodyProps> = ({ shipData, on
     }, [shipData, onUpdate]);
 
     return (
-        <div className="p-space-4 space-y-space-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-space-4">
+        <div className="p-space-4">
+            <Tabs defaultValue="stats">
+                <Tabs.List>
+                    <Tabs.Trigger value="stats">Stats</Tabs.Trigger>
+                    <Tabs.Trigger value="map">Map</Tabs.Trigger>
+                </Tabs.List>
+
+                <Tabs.Content value="stats">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-space-4 mt-space-4">
                 {/* Column 1 */}
                 <div className="space-y-space-4">
                     <Panel title="Transponder & Identity">
@@ -110,13 +118,21 @@ export const ShipManifestBody: React.FC<ShipManifestBodyProps> = ({ shipData, on
                         <Field label="Major Repairs"><Textarea className="h-20" value={shipData.repairs.major} onChange={(e) => handleUpdate('repairs.major', e.target.value)} /></Field>
                     </Panel>
                 </div>
-            </div>
-             <Panel title="Deckplan" className="h-[500px] flex flex-col">
-                <DeckplanEditor 
-                    deckplanData={shipData.deckplan} 
-                    onUpdate={(newDeckplan) => handleUpdate('deckplan', newDeckplan)}
-                />
-            </Panel>
+                    </div>
+                </Tabs.Content>
+
+                <Tabs.Content value="map">
+                    <div className="mt-space-4">
+                        <Panel title="Deckplan" className="min-h-[340px] max-h-[60vh] flex flex-col overflow-hidden">
+                            <DeckplanEditor
+                                deckplanData={shipData.deckplan}
+                                onUpdate={(newDeckplan) => handleUpdate('deckplan', newDeckplan)}
+                            />
+                        </Panel>
+                    </div>
+                </Tabs.Content>
+
+            </Tabs>
         </div>
     );
 };

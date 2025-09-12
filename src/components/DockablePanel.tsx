@@ -75,9 +75,10 @@ export const DockablePanel: React.FC<DockablePanelProps> = ({
         return null;
     }
 
+    // Unify drop shadow tint to primary for all floating panels
     const shadowClass = isActive
-        ? 'shadow-elev2 shadow-primary/20'
-        : 'shadow-elev1 shadow-black/50';
+        ? 'shadow-elev2 shadow-primary/25'
+        : 'shadow-elev1 shadow-primary/15';
 
     return (
         <div

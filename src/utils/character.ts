@@ -18,6 +18,7 @@ export const initialCharacter: Character = {
     wounds: { current: 0, max: 2 },
     stress: { current: 2, minimum: 2 },
     skills: { trained: [], expert: [], master: [] },
+    skillProgress: {},
     equipment: { loadout: '', trinket: '', patch: '', inventory: [] },
     credits: 0,
 };

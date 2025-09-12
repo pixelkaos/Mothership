@@ -1,0 +1,564 @@
+{
+    "files": [
+        {
+            "type": "file",
+            "id": 1022,
+            "date": "2025-09-10 11:04:46",
+            "created_date": "2025-09-10 11:04:46",
+            "size": "2.83 MB",
+            "is_under_scanned_path": true,
+            "bytes": 2965454,
+            "name": "00015-4046201922.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-10/00015-4046201922.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 4046201922,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((female)) Mothership RPG Android character, modern model, brand new.\nhe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n(Holding Data Crystal:1.8), (Distinctive Feature: sleek metallic skull plate:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is futuristic laboratory filled with strange equipment, detailed yet subtle, adding depth without distracting from the character,\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((female)) Mothership RPG Android character, modern model, brand new.\n\nhe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n\n(Holding Data Crystal:1.8), (Distinctive Feature: sleek metallic skull plate:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is futuristic laboratory filled with strange equipment, detailed yet subtle, adding depth without distracting from the character,\n\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 4046201922, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 1021,
+            "date": "2025-09-10 10:56:03",
+            "created_date": "2025-09-10 10:56:03",
+            "size": "3.02 MB",
+            "is_under_scanned_path": true,
+            "bytes": 3167649,
+            "name": "00014-4046201921.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-10/00014-4046201921.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 4046201921,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((female)) Mothership RPG Android character, modern model, brand new.\nhe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n(Holding Data Crystal:1.8), (Distinctive Feature: sleek metallic skull plate:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is futuristic laboratory filled with strange equipment, detailed yet subtle, adding depth without distracting from the character,\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((female)) Mothership RPG Android character, modern model, brand new.\n\nhe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n\n(Holding Data Crystal:1.8), (Distinctive Feature: sleek metallic skull plate:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is futuristic laboratory filled with strange equipment, detailed yet subtle, adding depth without distracting from the character,\n\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 4046201921, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 850,
+            "date": "2025-09-10 10:04:12",
+            "created_date": "2025-09-10 10:04:12",
+            "size": "2.96 MB",
+            "is_under_scanned_path": true,
+            "bytes": 3105512,
+            "name": "00008-991220128.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-10/00008-991220128.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 991220128,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((robot like, non human)) Mothership RPG Android character, retro model, signs of wear.\nhe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n(Holding Encrypted ID Chip:1.8), (Distinctive Feature: holographic eye:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is neon-lit maintenance hangar, detailed yet subtle, adding depth without distracting from the character,\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((robot like, non human)) Mothership RPG Android character, retro model, signs of wear.\n\nhe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n\n(Holding Encrypted ID Chip:1.8), (Distinctive Feature: holographic eye:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is neon-lit maintenance hangar, detailed yet subtle, adding depth without distracting from the character,\n\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 991220128, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 170,
+            "date": "2025-09-09 20:59:36",
+            "created_date": "2025-09-09 20:59:36",
+            "size": "2.75 MB",
+            "is_under_scanned_path": true,
+            "bytes": 2880101,
+            "name": "00128-3400075705.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00128-3400075705.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 3400075705,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Android character, (retro model, signs of repair:2.0).\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n(Holding Synthetic Flower:1.8), (Distinctive Feature: visible servo joints:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  ZIP2D",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Android character, (retro model, signs of repair:2.0).\n\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n\n(Holding Synthetic Flower:1.8), (Distinctive Feature: visible servo joints:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  ZIP2D\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 3400075705, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 158,
+            "date": "2025-09-09 20:52:01",
+            "created_date": "2025-09-09 20:52:01",
+            "size": "2.88 MB",
+            "is_under_scanned_path": true,
+            "bytes": 3015595,
+            "name": "00127-3400075704.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00127-3400075704.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 3400075704,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "ZIP2D: 353cf9be0675, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Android character, (retro model, signs of repair:2.0).\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n(Holding Synthetic Flower:1.8), (Distinctive Feature: visible servo joints:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  ZIP2D",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Android character, (retro model, signs of repair:2.0).\n\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n\n(Holding Synthetic Flower:1.8), (Distinctive Feature: visible servo joints:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  ZIP2D\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 3400075704, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"ZIP2D: 353cf9be0675, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 89,
+            "date": "2025-09-09 20:04:33",
+            "created_date": "2025-09-09 20:04:33",
+            "size": "2.88 MB",
+            "is_under_scanned_path": true,
+            "bytes": 3015970,
+            "name": "00124-348815301.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00124-348815301.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 348815301,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((no gender)) Mothership RPG Android character, (retro model, signs of repair:2.0).\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n(Holding Data Crystal:1.8), (Distinctive Feature: sleek metallic skull plate:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech,  ZIP2D",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((no gender)) Mothership RPG Android character, (retro model, signs of repair:2.0).\n\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n\n(Holding Data Crystal:1.8), (Distinctive Feature: sleek metallic skull plate:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech,  ZIP2D\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 348815301, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 72,
+            "date": "2025-09-09 19:56:57",
+            "created_date": "2025-09-09 19:56:57",
+            "size": "2.86 MB",
+            "is_under_scanned_path": true,
+            "bytes": 2999817,
+            "name": "00123-348815300.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00123-348815300.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 348815300,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((no gender)) Mothership RPG Android character, (retro model, signs of repair:2.0).\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n(Holding Data Crystal:1.8), (Distinctive Feature: sleek metallic skull plate:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech,  ZIP2D",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((no gender)) Mothership RPG Android character, (retro model, signs of repair:2.0).\n\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n\n(Holding Data Crystal:1.8), (Distinctive Feature: sleek metallic skull plate:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech,  ZIP2D\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 348815300, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 137,
+            "date": "2025-09-09 19:49:17",
+            "created_date": "2025-09-09 19:49:17",
+            "size": "2.79 MB",
+            "is_under_scanned_path": true,
+            "bytes": 2920449,
+            "name": "00122-1363391699.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00122-1363391699.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 1363391699,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA genderless Mothership RPG Android character, (older model, signs of wear:2.0).\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n(Holding Encrypted ID Chip:1.8), (Distinctive Feature: holographic eye:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech,  ZIP2D",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA genderless Mothership RPG Android character, (older model, signs of wear:2.0).\n\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n\n(Holding Encrypted ID Chip:1.8), (Distinctive Feature: holographic eye:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech,  ZIP2D\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 1363391699, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 181,
+            "date": "2025-09-09 19:41:37",
+            "created_date": "2025-09-09 19:41:37",
+            "size": "2.78 MB",
+            "is_under_scanned_path": true,
+            "bytes": 2918011,
+            "name": "00121-1363391698.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00121-1363391698.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 1363391698,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA genderless Mothership RPG Android character, (older model, signs of wear:2.0).\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n(Holding Encrypted ID Chip:1.8), (Distinctive Feature: holographic eye:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech,  ZIP2D",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA genderless Mothership RPG Android character, (older model, signs of wear:2.0).\n\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n\n(Holding Encrypted ID Chip:1.8), (Distinctive Feature: holographic eye:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech,  ZIP2D\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 1363391698, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 139,
+            "date": "2025-09-09 19:33:39",
+            "created_date": "2025-09-09 19:33:39",
+            "size": "2.80 MB",
+            "is_under_scanned_path": true,
+            "bytes": 2938083,
+            "name": "00120-3714319405.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00120-3714319405.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 3714319405,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA Mothership RPG Android character, (brand new, hyper modern:2.0).\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n(Holding Encrypted ID Chip:1.8), (Distinctive Feature: holographic eye:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech,  ZIP2D",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA Mothership RPG Android character, (brand new, hyper modern:2.0).\n\nThe character is skilled in Robotics, Computers, and Cybernetics.\nThese skills are represented visually through specific details:\n- Robotics → servo tool belt and mechanical arms\n- Computers → holographic UI projections\n- Cybernetics → cranial ports and visible implants\n\n(Holding Encrypted ID Chip:1.8), (Distinctive Feature: holographic eye:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech,  ZIP2D\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 3714319405, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 220,
+            "date": "2025-09-08 23:03:43",
+            "created_date": "2025-09-08 23:03:43",
+            "size": "783.61 KB",
+            "is_under_scanned_path": true,
+            "bytes": 802415,
+            "name": "00006-821498321779274.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-08/00006-821498321779274.png",
+            "gen_info_obj": {
+                "steps": 30,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 821498321779274,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0, Guidance End: 1, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA Mothership RPG character — a Android.\nFOCUS SKILLS (visualized): Computers, Cybernetics, Linguistics.\n- Convey these skills through wardrobe, pose, and small gear details.\nThey are holding a Data Crystal.\nSpecial feature: a sleek metallic skull plate. Keep it readable at portrait scale.\nArt Direction (locked): Bold colors, defined line art, high contrast, dramatic neon lighting. Framing: Bust shot, centered composition, neutral/dark gradient background. Clarity: Clean silhouette; minimal background clutter; no extra text or logos.",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA Mothership RPG character — a Android.\nFOCUS SKILLS (visualized): Computers, Cybernetics, Linguistics.\n- Convey these skills through wardrobe, pose, and small gear details.\nThey are holding a Data Crystal.\nSpecial feature: a sleek metallic skull plate. Keep it readable at portrait scale.\nArt Direction (locked): Bold colors, defined line art, high contrast, dramatic neon lighting. Framing: Bust shot, centered composition, neutral/dark gradient background. Clarity: Clean silhouette; minimal background clutter; no extra text or logos.\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo\nSteps: 30, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 821498321779274, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0, Guidance End: 1, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 223,
+            "date": "2025-09-08 23:01:54",
+            "created_date": "2025-09-08 23:01:54",
+            "size": "793.72 KB",
+            "is_under_scanned_path": true,
+            "bytes": 812771,
+            "name": "00005-821498321779274.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-08/00005-821498321779274.png",
+            "gen_info_obj": {
+                "steps": 30,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 821498321779274,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0, Guidance End: 1, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA Mothership RPG character — a Android.\nFOCUS SKILLS (visualized): Computers, Cybernetics, Linguistics.\n- Convey these skills through wardrobe, pose, and small gear details.\nThey are holding a Encrypted ID Chip.\nSpecial feature: a holographic eye. Keep it readable at portrait scale.\nArt Direction (locked): Bold colors, defined line art, high contrast, dramatic neon lighting. Framing: Bust shot, centered composition, neutral/dark gradient background. Clarity: Clean silhouette; minimal background clutter; no extra text or logos.",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA Mothership RPG character — a Android.\nFOCUS SKILLS (visualized): Computers, Cybernetics, Linguistics.\n- Convey these skills through wardrobe, pose, and small gear details.\nThey are holding a Encrypted ID Chip.\nSpecial feature: a holographic eye. Keep it readable at portrait scale.\nArt Direction (locked): Bold colors, defined line art, high contrast, dramatic neon lighting. Framing: Bust shot, centered composition, neutral/dark gradient background. Clarity: Clean silhouette; minimal background clutter; no extra text or logos.\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo\nSteps: 30, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 821498321779274, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0, Guidance End: 1, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        }
+    ]
+}

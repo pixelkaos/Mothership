@@ -129,6 +129,8 @@ export interface Character {
     expert: string[];
     master: string[];
   };
+  // Tracks successful uses per skill (0-3). Optional for backward compatibility with older save files.
+  skillProgress?: Record<string, number>;
   equipment: {
     loadout: string;
     trinket: string;

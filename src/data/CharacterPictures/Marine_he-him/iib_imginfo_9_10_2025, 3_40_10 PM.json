@@ -1,0 +1,555 @@
+{
+    "files": [
+        {
+            "type": "file",
+            "id": 1029,
+            "date": "2025-09-10 11:40:36",
+            "created_date": "2025-09-10 11:40:36",
+            "size": "2.70 MB",
+            "is_under_scanned_path": true,
+            "bytes": 2829372,
+            "name": "00019-3703835597.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-10/00019-3703835597.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 3703835597,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.nA ((female)) Mothership RPG Marine character, 36 years old.nnThe character is skilled in Military Training, Firearms, and Command.nThese skills are represented visually through specific details:n- Military Training → unit patches and insignian- Firearms → visible rifle sling and ammo clipsn- Command → confident posture with subtle headset devicenn(Holding Rusty Combat Knife:1.8), (Distinctive Feature: scarred half of his face:1.6).nThese must be clearly visible and easily identifiable.nnThe background is starship command deck with holographic displays, detailed yet subtle, adding depth without distracting from the character,nnBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((male)) Mothership RPG Marine character, 36 years old.\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n(Holding Rusty Combat Knife:1.8), (Distinctive Feature: scarred half of his face:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is industrial ship bay with mist, detailed yet subtle, adding depth without distracting from the character,\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((male)) Mothership RPG Marine character, 36 years old.\n\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n\n(Holding Rusty Combat Knife:1.8), (Distinctive Feature: scarred half of his face:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is industrial ship bay with mist, detailed yet subtle, adding depth without distracting from the character,\n\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 3703835597, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires prompt: \"A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\\nA ((female)) Mothership RPG Marine character, 36 years old.\\n\\nThe character is skilled in Military Training, Firearms, and Command.\\nThese skills are represented visually through specific details:\\n- Military Training → unit patches and insignia\\n- Firearms → visible rifle sling and ammo clips\\n- Command → confident posture with subtle headset device\\n\\n(Holding Rusty Combat Knife:1.8), (Distinctive Feature: scarred half of his face:1.6).\\nThese must be clearly visible and easily identifiable.\\n\\nThe background is starship command deck with holographic displays, detailed yet subtle, adding depth without distracting from the character,\\n\\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 1031,
+            "date": "2025-09-10 11:23:00",
+            "created_date": "2025-09-10 11:23:00",
+            "size": "2.85 MB",
+            "is_under_scanned_path": true,
+            "bytes": 2991045,
+            "name": "00017-3703835595.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-10/00017-3703835595.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 3703835595,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.nA ((female)) Mothership RPG Marine character, 36 years old.nnThe character is skilled in Military Training, Firearms, and Command.nThese skills are represented visually through specific details:n- Military Training → unit patches and insignian- Firearms → visible rifle sling and ammo clipsn- Command → confident posture with subtle headset devicenn(Holding Rusty Combat Knife:1.8), (Distinctive Feature: scarred half of his face:1.6).nThese must be clearly visible and easily identifiable.nnThe background is starship command deck with holographic displays, detailed yet subtle, adding depth without distracting from the character,nnBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((male)) Mothership RPG Marine character, 22 years old.\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n(Holding Rusty Combat Knife:1.8), (Distinctive Feature: scarred half of his face:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is starship command deck with holographic displays, detailed yet subtle, adding depth without distracting from the character,\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA ((male)) Mothership RPG Marine character, 22 years old.\n\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n\n(Holding Rusty Combat Knife:1.8), (Distinctive Feature: scarred half of his face:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is starship command deck with holographic displays, detailed yet subtle, adding depth without distracting from the character,\n\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 3703835595, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires prompt: \"A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\\nA ((female)) Mothership RPG Marine character, 36 years old.\\n\\nThe character is skilled in Military Training, Firearms, and Command.\\nThese skills are represented visually through specific details:\\n- Military Training → unit patches and insignia\\n- Firearms → visible rifle sling and ammo clips\\n- Command → confident posture with subtle headset device\\n\\n(Holding Rusty Combat Knife:1.8), (Distinctive Feature: scarred half of his face:1.6).\\nThese must be clearly visible and easily identifiable.\\n\\nThe background is starship command deck with holographic displays, detailed yet subtle, adding depth without distracting from the character,\\n\\nBust shot, centered composition, clean silhouette, no extra text or logos, ZIP2D,  CXL-Mech\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, ZIP2D: 353cf9be0675, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 144,
+            "date": "2025-09-09 17:25:46",
+            "created_date": "2025-09-09 17:25:46",
+            "size": "2.80 MB",
+            "is_under_scanned_path": true,
+            "bytes": 2933269,
+            "name": "00106-465309962.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00106-465309962.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 465309962,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.nA male Mothership RPG Marine character, (age 42 years old:2.0).nnThe character is skilled in Military Training, Firearms, and Command.nThese skills are represented visually through specific details:n- Military Training → unit patches and insignian- Firearms → visible rifle sling and ammo clipsn- Command → confident posture with subtle headset devicenn(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).nThese must be clearly visible and easily identifiable.nnThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.nnBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Marine character, (age 29 years old:2.0).\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Marine character, (age 29 years old:2.0).\n\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n\n(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 465309962, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires prompt: \"A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\\nA male Mothership RPG Marine character, (age 42 years old:2.0).\\n\\nThe character is skilled in Military Training, Firearms, and Command.\\nThese skills are represented visually through specific details:\\n- Military Training → unit patches and insignia\\n- Firearms → visible rifle sling and ammo clips\\n- Command → confident posture with subtle headset device\\n\\n(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).\\nThese must be clearly visible and easily identifiable.\\n\\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\\n\\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 171,
+            "date": "2025-09-09 17:17:55",
+            "created_date": "2025-09-09 17:17:55",
+            "size": "2.96 MB",
+            "is_under_scanned_path": true,
+            "bytes": 3098602,
+            "name": "00105-465309961.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00105-465309961.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 465309961,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.nA male Mothership RPG Marine character, (age 42 years old:2.0).nnThe character is skilled in Military Training, Firearms, and Command.nThese skills are represented visually through specific details:n- Military Training → unit patches and insignian- Firearms → visible rifle sling and ammo clipsn- Command → confident posture with subtle headset devicenn(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).nThese must be clearly visible and easily identifiable.nnThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.nnBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Marine character, (age 36 years old:2.0).\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Marine character, (age 36 years old:2.0).\n\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n\n(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 465309961, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires prompt: \"A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\\nA male Mothership RPG Marine character, (age 42 years old:2.0).\\n\\nThe character is skilled in Military Training, Firearms, and Command.\\nThese skills are represented visually through specific details:\\n- Military Training → unit patches and insignia\\n- Firearms → visible rifle sling and ammo clips\\n- Command → confident posture with subtle headset device\\n\\n(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).\\nThese must be clearly visible and easily identifiable.\\n\\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\\n\\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 112,
+            "date": "2025-09-09 17:10:17",
+            "created_date": "2025-09-09 17:10:17",
+            "size": "2.62 MB",
+            "is_under_scanned_path": true,
+            "bytes": 2750489,
+            "name": "00104-465309960.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00104-465309960.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 465309960,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.nA male Mothership RPG Marine character, (age 42 years old:2.0).nnThe character is skilled in Military Training, Firearms, and Command.nThese skills are represented visually through specific details:n- Military Training → unit patches and insignian- Firearms → visible rifle sling and ammo clipsn- Command → confident posture with subtle headset devicenn(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).nThese must be clearly visible and easily identifiable.nnThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.nnBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Marine character, (age 36 years old:2.0).\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Marine character, (age 36 years old:2.0).\n\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n\n(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 465309960, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires prompt: \"A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\\nA male Mothership RPG Marine character, (age 42 years old:2.0).\\n\\nThe character is skilled in Military Training, Firearms, and Command.\\nThese skills are represented visually through specific details:\\n- Military Training → unit patches and insignia\\n- Firearms → visible rifle sling and ammo clips\\n- Command → confident posture with subtle headset device\\n\\n(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).\\nThese must be clearly visible and easily identifiable.\\n\\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\\n\\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 114,
+            "date": "2025-09-09 17:02:33",
+            "created_date": "2025-09-09 17:02:33",
+            "size": "2.89 MB",
+            "is_under_scanned_path": true,
+            "bytes": 3035555,
+            "name": "00103-465309959.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00103-465309959.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 465309959,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Marine character, (age 42 years old:2.0).\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Marine character, (age 42 years old:2.0).\n\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n\n(Holding Old Dog Tags:1.8), (Distinctive Feature: cybernetic eye:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is BACKGROUND, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 465309959, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 1, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.9, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 121,
+            "date": "2025-09-09 16:00:16",
+            "created_date": "2025-09-09 16:00:16",
+            "size": "893.23 KB",
+            "is_under_scanned_path": true,
+            "bytes": 914666,
+            "name": "00092-167829245.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00092-167829245.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 167829245,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "RNG": "CPU",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Pad conds": "True",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Marine character, age 22.\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n(Holding Rusty Combat Knife:1.8), (Distinctive Feature: scarred half of his face:1.6).\nThese must be clearly visible and easily identifiable.\nThe background is sci-fi corridor with glowing panels, detailed yet subtle, adding depth without distracting from the character.\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting.\nA male Mothership RPG Marine character, age 22.\n\nThe character is skilled in Military Training, Firearms, and Command.\nThese skills are represented visually through specific details:\n- Military Training → unit patches and insignia\n- Firearms → visible rifle sling and ammo clips\n- Command → confident posture with subtle headset device\n\n(Holding Rusty Combat Knife:1.8), (Distinctive Feature: scarred half of his face:1.6).\nThese must be clearly visible and easily identifiable.\n\nThe background is sci-fi corridor with glowing panels, detailed yet subtle, adding depth without distracting from the character.\n\nBust shot, centered composition, clean silhouette, no extra text or logos,  CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 167829245, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Pad conds: True, Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 113,
+            "date": "2025-09-09 15:30:51",
+            "created_date": "2025-09-09 15:30:51",
+            "size": "890.44 KB",
+            "is_under_scanned_path": true,
+            "bytes": 911806,
+            "name": "00089-4155068265.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00089-4155068265.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 4155068265,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "RNG": "CPU",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting,\nmale Mothership RPG Marine, age 36,\n(Military Training insignia:1.4), (Firearms gear:1.3), (Command pose:1.2),\n(Holding a Rusty Combat Knife:1.8), (scarred half of his face:1.6),\n(background: sci-fi corridor, softly lit:0.7),\nBust shot, centered composition, clean silhouette, no extra text or logos, CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration, comic-book/anime hybrid, bold colors, defined line art, high-contrast neon lighting,\nmale Mothership RPG Marine, age 36,\n(Military Training insignia:1.4), (Firearms gear:1.3), (Command pose:1.2),\n(Holding a Rusty Combat Knife:1.8), (scarred half of his face:1.6),\n(background: sci-fi corridor, softly lit:0.7),\nBust shot, centered composition, clean silhouette, no extra text or logos, CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 4155068265, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 87,
+            "date": "2025-09-09 15:22:04",
+            "created_date": "2025-09-09 15:22:04",
+            "size": "781.41 KB",
+            "is_under_scanned_path": true,
+            "bytes": 800164,
+            "name": "00088-4219262688.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00088-4219262688.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 4219262688,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "RNG": "CPU",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA male Mothership RPG human Marine character, 36yo with the following skills, ((Military Training, Firearms, Command)), Convey these skills through wardrobe, pose, and small gear details.\n(holding a, Rusty Combat Knife:1.8), Special feature, (a scarred face:1.6). Keep it readable at portrait scale.\nBold colors, defined line art, high contrast, dramatic neon lighting. Bust shot, centered composition, clean silhouette; minimal clutter, no extra text or logos, CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA male Mothership RPG human Marine character, 36yo with the following skills, ((Military Training, Firearms, Command)), Convey these skills through wardrobe, pose, and small gear details.\n(holding a, Rusty Combat Knife:1.8), Special feature, (a scarred face:1.6). Keep it readable at portrait scale.\nBold colors, defined line art, high contrast, dramatic neon lighting. Bust shot, centered composition, clean silhouette; minimal clutter, no extra text or logos, CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 4219262688, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 95,
+            "date": "2025-09-09 15:19:40",
+            "created_date": "2025-09-09 15:19:40",
+            "size": "890.47 KB",
+            "is_under_scanned_path": true,
+            "bytes": 911841,
+            "name": "00087-3623749216.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00087-3623749216.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 3623749216,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "RNG": "CPU",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA male Mothership RPG human Marine character, 36yo with the following skills, ((Military Training, Firearms, Command)), Convey these skills through wardrobe, pose, and small gear details.\n(holding a, Rusty Combat Knife:1.8), Special feature, (a scarred face:1.6). Keep it readable at portrait scale.\nBold colors, defined line art, high contrast, dramatic neon lighting. Bust shot, centered composition, clean silhouette; minimal clutter, no extra text or logos, CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA male Mothership RPG human Marine character, 36yo with the following skills, ((Military Training, Firearms, Command)), Convey these skills through wardrobe, pose, and small gear details.\n(holding a, Rusty Combat Knife:1.8), Special feature, (a scarred face:1.6). Keep it readable at portrait scale.\nBold colors, defined line art, high contrast, dramatic neon lighting. Bust shot, centered composition, clean silhouette; minimal clutter, no extra text or logos, CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 3623749216, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 178,
+            "date": "2025-09-09 15:16:15",
+            "created_date": "2025-09-09 15:16:15",
+            "size": "2.73 MB",
+            "is_under_scanned_path": true,
+            "bytes": 2859290,
+            "name": "00086-2466779015.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00086-2466779015.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 2466779015,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "Denoising strength": 0.3,
+                "RNG": "CPU",
+                "Hires CFG Scale": 7,
+                "Hires upscale": 2,
+                "Hires steps": 15,
+                "Hires upscaler": "ESRGAN_4x",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA male Mothership RPG human Marine character, 36yo with the following skills, ((Military Training, Firearms, Command)), Convey these skills through wardrobe, pose, and small gear details.\n(holding a, Rusty Combat Knife:1.8), Special feature, (a scarred face:1.6). Keep it readable at portrait scale.\nBold colors, defined line art, high contrast, dramatic neon lighting. Bust shot, centered composition, clean silhouette; minimal clutter, no extra text or logos, CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA male Mothership RPG human Marine character, 36yo with the following skills, ((Military Training, Firearms, Command)), Convey these skills through wardrobe, pose, and small gear details.\n(holding a, Rusty Combat Knife:1.8), Special feature, (a scarred face:1.6). Keep it readable at portrait scale.\nBold colors, defined line art, high contrast, dramatic neon lighting. Bust shot, centered composition, clean silhouette; minimal clutter, no extra text or logos, CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo, zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 2466779015, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, Denoising strength: 0.3, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.35, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", Hires CFG Scale: 7, Hires upscale: 2, Hires steps: 15, Hires upscaler: ESRGAN_4x, TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        },
+        {
+            "type": "file",
+            "id": 127,
+            "date": "2025-09-09 14:34:57",
+            "created_date": "2025-09-09 14:34:57",
+            "size": "890.07 KB",
+            "is_under_scanned_path": true,
+            "bytes": 911434,
+            "name": "00081-673300631.png",
+            "fullpath": "/Users/pixelkaos/Library/Application Support/StabilityMatrix/Packages/Stable Diffusion WebUI reForge/outputs/txt2img-images/2025-09-09/00081-673300631.png",
+            "gen_info_obj": {
+                "steps": 40,
+                "sampler": "DPM++ 2M",
+                "Schedule type": "Karras",
+                "cfgScale": 7,
+                "seed": 673300631,
+                "size": "832x832",
+                "Model hash": "6330883d2c",
+                "Model": "artium_v20",
+                "RNG": "CPU",
+                "TI hashes": "CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd",
+                "Version": "f1.0.0v2-v1.10.1RC-latest-2454-g9086b215",
+                "Source Identifier": "Stable Diffusion web UI",
+                "ControlNet 0": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.2, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "ControlNet 1": "Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH",
+                "prompt": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA male Mothership RPG human Marine character, 36yo with the following skills, ((Military Training, Firearms, Command)), Convey these skills through wardrobe, pose, and small gear details.\n(holding a, Rusty Combat Knife:1.8), Special feature, (a scarred face:1.6). Keep it readable at portrait scale.\nBold colors, defined line art, high contrast, dramatic neon lighting. Bust shot, centered composition, clean silhouette; minimal clutter, no extra text or logos, CXL-Mech",
+                "negativePrompt": "Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo,  zip2d_neg",
+                "width": 832,
+                "height": 832,
+                "hashes": {
+                    "model": "6330883d2c"
+                },
+                "resources": [
+                    {
+                        "type": "model",
+                        "name": "artium_v20",
+                        "hash": "6330883d2c"
+                    }
+                ]
+            },
+            "gen_info_raw": "A vibrant cyberpunk illustration in a comic-book/anime hybrid style.\nA male Mothership RPG human Marine character, 36yo with the following skills, ((Military Training, Firearms, Command)), Convey these skills through wardrobe, pose, and small gear details.\n(holding a, Rusty Combat Knife:1.8), Special feature, (a scarred face:1.6). Keep it readable at portrait scale.\nBold colors, defined line art, high contrast, dramatic neon lighting. Bust shot, centered composition, clean silhouette; minimal clutter, no extra text or logos, CXL-Mech\nNegative prompt: Compression artifacts, bad art, worst quality, low quality, plastic, fake, bad limbs, conjoined, featureless, bad features, incorrect objects, watermark, ((signature):1.25), logo,  zip2d_neg\nSteps: 40, Sampler: DPM++ 2M, Schedule type: Karras, CFG scale: 7, Seed: 673300631, Size: 832x832, Model hash: 6330883d2c, Model: artium_v20, RNG: CPU, ControlNet 0: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus_sdxl_vit-h [bc449f62], Weight: 0.2, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.3, Guidance End: 0.7, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", ControlNet 1: \"Module: CLIP-ViT-H (IPAdapter), Model: ip-adapter-plus-face_sdxl_vit-h [368cf551], Weight: 0.9, Resize Mode: ResizeMode.INNER_FIT, Processor Res: 0.5, Threshold A: 0.5, Threshold B: 0.5, Guidance Start: 0.1, Guidance End: 0.8, Pixel Perfect: False, Control Mode: ControlMode.BALANCED, Hr Option: HiResFixOption.BOTH\", TI hashes: \"CXL-Mech: 000b204acc87, CXL-Mech: 000b204acc87, zip2d_neg: a764ec702efd, zip2d_neg: a764ec702efd\", Version: f1.0.0v2-v1.10.1RC-latest-2454-g9086b215, Source Identifier: Stable Diffusion web UI"
+        }
+    ]
+}
