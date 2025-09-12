@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo } from 'react';
 
-export type PanelId = 'dice-roller' | 'character-sheet' | 'ship-manifest';
+export type PanelId = 'dice-roller' | 'character-sheet' | 'ship-manifest' | 'gm-chat';
 
 export type PanelState = {
   isOpen: boolean;
@@ -35,12 +35,13 @@ export const usePanels = () => {
     return context;
 };
 
-const PANEL_IDS: PanelId[] = ['dice-roller', 'character-sheet', 'ship-manifest'];
+const PANEL_IDS: PanelId[] = ['dice-roller', 'character-sheet', 'ship-manifest', 'gm-chat'];
 
 const INITIAL_POSITIONS: Record<PanelId, { x: number; y: number }> = {
     'dice-roller': { x: window.innerWidth / 2 - 224, y: 100 },
     'character-sheet': { x: 100, y: 100 },
     'ship-manifest': { x: 50, y: 50 },
+    'gm-chat': { x: Math.max(24, window.innerWidth - 420), y: 120 },
 };
 
 const getInitialStore = (): PanelsStore => {

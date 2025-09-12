@@ -9,7 +9,8 @@ import { Modal } from '@/components/ui/Modal';
 // Supported extensions: png, jpg, jpeg, webp, gif
 const ALL_IMAGES = import.meta.glob('/src/data/CharacterPictures/**/*.{png,jpg,jpeg,webp,gif}', {
   eager: true,
-  as: 'url',
+  query: '?url',
+  import: 'default',
 }) as Record<string, string>;
 
 const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '_');

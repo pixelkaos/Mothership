@@ -9,6 +9,7 @@ import { TutorialModal } from '@/components/TutorialModal';
 import { TooltipProvider } from '@/components/Tooltip';
 import { FloatingCharacterSheet } from '@/components/FloatingCharacterSheet';
 import { FloatingShipManifest } from '@/components/FloatingShipManifest';
+import { FloatingGMChat } from '@/components/FloatingGMChat';
 import { ShipyardView } from '@/views/ShipyardView';
 import { useNavigation } from '@/context/NavigationContext';
 import { useUIState } from '@/context/UIStateContext';
@@ -49,6 +50,7 @@ const App: React.FC = () => {
                     shipData={activeShipManifest}
                     onUpdate={setActiveShipManifest}
                 />
+                <FloatingGMChat />
                 
                 <main className={`flex-grow ${view === 'home' ? '' : 'p-space-4 sm:p-space-6 md:p-space-8 mt-space-6'}`}>
                     {view === 'home' && <HomeView />}

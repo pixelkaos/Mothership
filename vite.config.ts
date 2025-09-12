@@ -16,6 +16,13 @@ export default defineConfig(() => ({
         target: 'http://localhost:11434',
         changeOrigin: true,
         secure: false,
+        rewrite: (path) => path.replace(/^\/ollama/, ''),
+      },
+      // Proxy Python RAG service (FastAPI)
+      '/rag': {
+        target: 'http://localhost:8790',
+        changeOrigin: true,
+        secure: false,
       },
     },
   },

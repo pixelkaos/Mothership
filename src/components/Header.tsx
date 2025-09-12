@@ -18,7 +18,7 @@ export const Header: React.FC = () => {
     const panels = usePanels();
     
     const handleSetView = (targetView: NavigationView | PanelId) => {
-        if (targetView === 'dice-roller' || targetView === 'character-sheet' || targetView === 'ship-manifest') {
+        if (targetView === 'dice-roller' || targetView === 'character-sheet' || targetView === 'ship-manifest' || targetView === 'gm-chat') {
             const panelState = panels.getState(targetView);
             
             if (targetView === 'character-sheet' && !isCharacterLoaded) return;
@@ -75,6 +75,9 @@ export const Header: React.FC = () => {
                     </DropdownMenu.Item>
                     <DropdownMenu.Item onSelect={() => handleSetView('ship-manifest')} disabled={!isShipManifestLoaded}>
                         Ship Manifest
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item onSelect={() => handleSetView('gm-chat')}>
+                        GM Chat
                     </DropdownMenu.Item>
                     <DropdownMenu.Item onSelect={async () => {
                         try {
