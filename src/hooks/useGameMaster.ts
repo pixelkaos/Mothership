@@ -23,7 +23,7 @@ async function ragQuery(query: string): Promise<{ context: string; cites: string
     const res = await fetch('/rag/query', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ query, k: 6 }),
+      body: JSON.stringify({ query, k: 10 }),
     });
     if (!res.ok) throw new Error(`RAG query failed: ${res.status}`);
     const j = await res.json();
