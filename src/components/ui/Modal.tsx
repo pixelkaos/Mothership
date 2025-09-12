@@ -67,7 +67,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, 
 
     return createPortal(
         <div
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-modal p-4 animate-fadeIn"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[10000] p-4 animate-fadeIn"
             onClick={onClose}
             role="dialog"
             aria-modal="true"

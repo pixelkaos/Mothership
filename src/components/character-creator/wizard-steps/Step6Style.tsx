@@ -8,11 +8,13 @@ import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/Button';
+import { PortraitPicker } from '@/components/character-creator/PortraitPicker';
 
 export const Step6Style: React.FC<StepProps> = ({ saveData, onUpdate }) => {
     const { character } = saveData;
     const [isGeneratingIdentity, setIsGeneratingIdentity] = useState(false);
     const [isGeneratingPortrait, setIsGeneratingPortrait] = useState(false);
+    const [isPickerOpen, setIsPickerOpen] = useState(false);
 
     const handleRandomizeIdentity = async () => {
         setIsGeneratingIdentity(true);
@@ -46,6 +48,11 @@ export const Step6Style: React.FC<StepProps> = ({ saveData, onUpdate }) => {
         } finally {
             setIsGeneratingPortrait(false);
         }
+    };
+
+    const handlePickPortrait = () => setIsPickerOpen(true);
+    const handlePortraitSelected = (url: string) => {
+        onUpdate('character.portrait', url);
     };
     
     const handleUploadPortrait = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,9 +95,21 @@ export const Step6Style: React.FC<StepProps> = ({ saveData, onUpdate }) => {
                         {character.portrait ? <img src={character.portrait} alt="Portrait" className="w-full h-full object-cover"/> : <span className="text-muted text-xs">No Portrait</span>}
                         {(isGeneratingIdentity || isGeneratingPortrait) && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-primary animate-pulse">{isGeneratingPortrait ? 'Rendering...' : 'Writing...'}</div>}
                     </div>
-                     <Button variant="secondary" size="sm" onClick={handleGeneratePortrait} disabled={isGeneratingPortrait} className="w-48">
-                        {isGeneratingPortrait ? 'Generating...' : 'Generate Portrait'}
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button variant="secondary" size="sm" onClick={handlePickPortrait} className="w-48">
+                            Choose Portrait
+                        </Button>
+                        <Button variant="tertiary" size="sm" onClick={handleGeneratePortrait} disabled={isGeneratingPortrait} className="w-48">
+                            {isGeneratingPortrait ? 'Generating...' : 'AI Generate'}
+                        </Button>
+                    </div>
+                    <PortraitPicker
+                        isOpen={isPickerOpen}
+                        onClose={() => setIsPickerOpen(false)}
+                        onSelect={handlePortraitSelected}
+                        className={character.class?.name ?? null}
+                        pronouns={character.pronouns}
+                    />
                     <Button as="label" variant="tertiary" size="sm" className="w-48 cursor-pointer">
                         Upload Portrait
                         <input type="file" accept="image/*" className="hidden" onChange={handleUploadPortrait} />

@@ -30,7 +30,8 @@ The Mothership RPG Companion is packed with features to help you get your next s
 *   **Comprehensive Character Hangar**:
     *   A full-featured character creation and management suite with multiple creation paths:
         *   **Character Wizard**: A step-by-step guide to building a new character from scratch.
-        *   **Random Recruit Generator**: Create a complete, ready-to-play character in one click, including an AI-generated backstory (Ollama) and portrait (Gemini).
+        *   **Random Recruit Generator**: Create a complete, ready-to-play character in one click, including an AI-generated backstory (Ollama) and a portrait (from local picker or optional AI).
+        *   **Portrait Picker**: Choose a portrait from local assets filtered by Class and Pronouns. Also supports optional AI Generate fallback.
         *   **Pre-Generated Characters**: Choose from a list of ready-made characters to jump right into the action.
         *   **Load/Save Functionality**: Export your character to a `.json` file and load them back in later.
 
@@ -40,9 +41,9 @@ The Mothership RPG Companion is packed with features to help you get your next s
 
 *   **Interactive Dockable UI Panels**:
     *   A persistent, multi-window UI that lets you manage your tools on screen. Panels remember their positions and can be opened, closed, and minimized.
-    *   **Dice Roller**: A full-featured dice roller that can handle simple rolls, stat/save checks for the active character, damage rolls, and more.
-    *   **In-Game Character Sheet**: A compact, persistent view of your active character for quick reference during play. You can trigger stat and save rolls directly from the sheet.
-    *   **Ship Manifest**: A fully editable sheet for tracking your ship's status, from hull points and megadamage to crew and cargo. Can be populated from the Derelict Generator or the Shipyard.
+    *   **Dice Roller**: Handles simple rolls and explicit 2d10 percentile Stat/Save checks (with adv/disadv) and logs digits correctly.
+    *   **In-Game Character Sheet**: Tabbed view (Stats / Story) with a fullscreen portrait viewer on click; skills development (marks + level‑up), T/E/M indicator, and equipment table with AP and Credits indicators and AP +/- controls.
+    *   **Ship Manifest**: Tabbed view (Stats / Map). Map includes the Deckplan editor.
 
 *   **Navigable Rules Database**:
     *   An easy-to-navigate reference for the core player-facing rules of Mothership 1e.
@@ -108,6 +109,20 @@ Dev proxy for Ollama:
 - In development, requests to `/ollama` are proxied to `http://localhost:11434` (see `vite.config.ts`).
 - In production, set `VITE_OLLAMA_BASE_URL` or run your own reverse proxy to forward `/ollama` to your Ollama server (and enable CORS if needed).
 
+4) (Optional) Add local portraits for the Portrait Picker
+
+Place images under `src/data/CharacterPictures/<Class>/<Pronouns>/...` for example:
+
+```
+src/data/CharacterPictures/Marine/he_him/00001_Marine_he_him.png
+src/data/CharacterPictures/Scientist/she_her/scientist_01.jpg
+src/data/CharacterPictures/Teamster/they_them/teamster_portrait.webp
+```
+
+Notes:
+- Pronouns folders: `he_him`, `she_her`, `they_them` (case-insensitive; underscores or separators are normalized).
+- This directory is `.gitignored` by default to avoid committing large binaries. See `src/data/CharacterPictures/README.md`.
+
 ### Project Structure
 
 ```
@@ -161,7 +176,7 @@ See the [open issues](https://github.com/your_username/your_repository/issues) f
 - Tailwind is compiled via PostCSS. Global tokens are imported at the top of `src/index.css`.
 - Dice Engine: The custom roller was replaced with `@randsum/roller` behind an adapter in `src/utils/dice.ts`.
   - API: `parseAndRoll(formula, { zeroBased? })` and `rollDice(formula, { zeroBased? })`.
-  - Percentile rolls and table lookups use 0-based d100 (0–99) for Mothership compatibility.
+  - Percentile Stat/Save checks now roll explicit 2d10 (tens/ones) and record digits; table lookups still use 0–99 indexing for Mothership compatibility.
   - Counts like salvage, damage, and credits are now 1-based. This also fixes `1d1` always yielding 0; it now yields 1.
   - If you want legacy ranges for stats/saves/credits, call with `{ zeroBased: true }` at those sites.
 - Story Generation: Gemini text endpoints were replaced with a local Ollama model for narratives (derelicts and character backstories).
@@ -170,6 +185,7 @@ See the [open issues](https://github.com/your_username/your_repository/issues) f
   - A status badge in the header shows connectivity and model presence; see `src/components/OllamaStatusBadge.tsx`.
   - Tools → “Test Story AI” performs a quick end-to-end prompt to verify output.
 - Portrait Generation: Still uses Gemini image API (requires `VITE_GEMINI_API_KEY`).
+- Portrait Picker: Local assets filtered by Class and Pronouns; fullscreen viewer on the Character Sheet.
 - The app uses multiple dockable panels (`src/context/PanelsContext.tsx`) that persist position/minimized state in `localStorage`.
 
 ## Scripts

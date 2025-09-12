@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local character portraits (do not commit large binary assets)
+src/data/CharacterPictures/
+!src/data/CharacterPictures/.gitkeep
+!src/data/CharacterPictures/README.md
